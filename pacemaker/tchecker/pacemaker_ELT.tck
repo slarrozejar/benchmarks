@@ -222,13 +222,13 @@ edge:PELT_det:AS1:err:AR
 edge:PELT_det:AS1:err:ABLOCK
 edge:PELT_det:AS1:err:VS
 edge:PELT_det:AS1:err:VB
-edge:PELT_det:AS1:VP1:AS
+edge:PELT_det:AS1:VP1:VP
 edge:PELT_det:VP1:err:VB
 edge:PELT_det:VP1:err:AR
 edge:PELT_det:VP1:err:ABLOCK
 edge:PELT_det:VP1:err:AP
 edge:PELT_det:VP1:err:VP
-edge:PELT_det:VP1:AS1:VP
+edge:PELT_det:VP1:AS1:AS
 
 # Process Detection
 process:Detection

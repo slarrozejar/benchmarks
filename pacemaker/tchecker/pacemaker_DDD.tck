@@ -39,6 +39,8 @@ event:Vget
 #int:1:50:50:50:TPVAB
 #int:1:0:0:0:Aminwait
 #int:1:10000:10000:10000:Amaxwait
+#int:1:0:0:0:Vminwait
+#int:1:10000:10000:10000:Vmaxwait
 clock:1:clk
 
 # Process LRI
@@ -101,40 +103,48 @@ edge:VRP:Idle:inter:Vget
 edge:VRP:inter:VRP:VS{do:t4=0}
 edge:VRP:VRP:Idle:tau{provided:t4>=150}
 
-# Process RHM
-process:RHM
+# Process RHM_A
+process:RHM_A
 clock:1:t5
-location:RHM:AReady{initial::invariant:t5<10000}
-edge:RHM:AReady:AReady:AP{do:t5=0}
-edge:RHM:AReady:AReady:Aget{provided:t5>0 : do:t5=0}
+location:RHM_A:AReady{initial::invariant:t5<10000}
+edge:RHM_A:AReady:AReady:AP{do:t5=0}
+edge:RHM_A:AReady:AReady:Aget{provided:t5>0 : do:t5=0}
+
+# Process RHM_V
+process:RHM_V
+clock:1:t6
+location:RHM_V:VReady{initial::invariant:t6<10000}
+edge:RHM_V:VReady:VReady:VP{do:t6=0}
+edge:RHM_V:VReady:VReady:Vget{provided:t6>0 : do:t6=0}
 
 # Process Pvv
 process:Pvv
-clock:1:t6
+clock:1:t7
 location:Pvv:wait_1st{initial:}
 location:Pvv:wait_2nd
 location:Pvv:two_a{committed:}
-edge:Pvv:wait_1st:wait_2nd:VS{do:t6=0}
-edge:Pvv:wait_1st:wait_2nd:VP{do:t6=0}
+edge:Pvv:wait_1st:wait_2nd:VS{do:t7=0}
+edge:Pvv:wait_1st:wait_2nd:VP{do:t7=0}
 edge:Pvv:wait_2nd:two_a:VS
 edge:Pvv:wait_2nd:two_a:VP
-edge:Pvv:two_a:wait_2nd:tau{do:t6=0}
+edge:Pvv:two_a:wait_2nd:tau{do:t7=0}
 
 # Process PURI_test
 process:PURI_test
-clock:1:t7
+clock:1:t8
 location:PURI_test:wait_v{initial:}
 location:PURI_test:wait_vp
 location:PURI_test:interval{committed:}
-edge:PURI_test:wait_v:wait_vp:VP{do:t7=0}
-edge:PURI_test:wait_v:wait_vp:VS{do:t7=0}
-edge:PURI_test:wait_vp:wait_vp:VS{do:t7=0}
+edge:PURI_test:wait_v:wait_vp:VP{do:t8=0}
+edge:PURI_test:wait_v:wait_vp:VS{do:t8=0}
+edge:PURI_test:wait_vp:wait_vp:VS{do:t8=0}
 edge:PURI_test:wait_vp:interval:VP
-edge:PURI_test:interval:wait_vp:tau{do:t7=0}
+edge:PURI_test:interval:wait_vp:tau{do:t8=0}
 
 # Synchros
-sync:LRI@AP:AVI@AP?:RHM@AP?
-sync:AVI@VP:LRI@VP?:URI@VP?:PVARP@VP?:VRP@VP?:Pvv@VP?:PURI_test@VP?
+sync:LRI@AP:AVI@AP?:RHM_A@AP?
+sync:AVI@VP:LRI@VP?:URI@VP?:PVARP@VP?:VRP@VP?:Pvv@VP?:PURI_test@VP?:RHM_V@VP?
 sync:PVARP@AS:LRI@AS?:AVI@AS?
 sync:VRP@VS:LRI@VS?:AVI@VS?:URI@VS?:PVARP@VS?:Pvv@VS?:PURI_test@VS?
-sync:RHM@Aget:PVARP@Aget?
+sync:RHM_A@Aget:PVARP@Aget?
+sync:RHM_A@Vget:VRP@Vget?

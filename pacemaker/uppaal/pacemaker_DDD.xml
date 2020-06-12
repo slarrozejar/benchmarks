@@ -20,6 +20,8 @@ const int TPVAB = 50;
 //Interval of a heart event covering all possible input to the pacemaker
 const int Aminwait = 0; 
 const int Amaxwait = 10000; 
+const int Vminwait = 0; 
+const int Vmaxwait = 10000; 
 
 clock clk;
 
@@ -283,7 +285,7 @@ broadcast chan AS, AP, AR, VP, VS, Aget, Vget;</declaration>
 		</transition>
 	</template>
 	<template>
-		<name>RHM</name>
+		<name>RHM_A</name>
 		<declaration>clock t;</declaration>
 		<location id="id14" x="0" y="0">
 			<name x="-25" y="-34">AReady</name>
@@ -309,48 +311,74 @@ broadcast chan AS, AP, AR, VP, VS, Aget, Vget;</declaration>
 		</transition>
 	</template>
 	<template>
-		<name>Pvv</name>
+		<name>RHM_V</name>
 		<declaration>clock t;</declaration>
-		<location id="id15" x="-229" y="0">
-			<name x="-255" y="-34">wait_1st</name>
-		</location>
-		<location id="id16" x="-76" y="0">
-			<name x="-102" y="-34">wait_2nd</name>
-		</location>
-		<location id="id17" x="76" y="0">
-			<name x="66" y="-34">two_a</name>
-			<committed/>
+		<location id="id15" x="0" y="0">
+			<name x="-25" y="-34">VReady</name>
+			<label kind="invariant" x="-25" y="-51">t &lt; Vmaxwait</label>
 		</location>
 		<init ref="id15"/>
 		<transition>
-			<source ref="id17"/>
-			<target ref="id16"/>
+			<source ref="id15"/>
+			<target ref="id15"/>
+			<label kind="guard" x="-144" y="-34">t &gt; Vminwait</label>
+			<label kind="synchronisation" x="-102" y="-17">Vget!</label>
+			<label kind="assignment" x="-102" y="0">t = 0</label>
+			<nail x="-59" y="25"/>
+			<nail x="-59" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id15"/>
+			<target ref="id15"/>
+			<label kind="synchronisation" x="68" y="-17">VP?</label>
+			<label kind="assignment" x="68" y="0">t = 0</label>
+			<nail x="59" y="25"/>
+			<nail x="59" y="-25"/>
+		</transition>
+	</template>
+	<template>
+		<name>Pvv</name>
+		<declaration>clock t;</declaration>
+		<location id="id16" x="-229" y="0">
+			<name x="-255" y="-34">wait_1st</name>
+		</location>
+		<location id="id17" x="-76" y="0">
+			<name x="-102" y="-34">wait_2nd</name>
+		</location>
+		<location id="id18" x="76" y="0">
+			<name x="66" y="-34">two_a</name>
+			<committed/>
+		</location>
+		<init ref="id16"/>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id17"/>
 			<label kind="assignment" x="-8" y="42">t = 0</label>
 			<nail x="76" y="59"/>
 			<nail x="-76" y="59"/>
 		</transition>
 		<transition>
-			<source ref="id16"/>
-			<target ref="id17"/>
+			<source ref="id17"/>
+			<target ref="id18"/>
 			<label kind="synchronisation" x="-8" y="8">VP?</label>
 			<nail x="0" y="34"/>
 		</transition>
 		<transition>
-			<source ref="id15"/>
-			<target ref="id16"/>
+			<source ref="id16"/>
+			<target ref="id17"/>
 			<label kind="synchronisation" x="-161" y="8">VP?</label>
 			<label kind="assignment" x="-161" y="34">t = 0</label>
 			<nail x="-153" y="34"/>
 		</transition>
 		<transition>
-			<source ref="id16"/>
-			<target ref="id17"/>
+			<source ref="id17"/>
+			<target ref="id18"/>
 			<label kind="synchronisation" x="-8" y="-51">VS?</label>
 			<nail x="0" y="-34"/>
 		</transition>
 		<transition>
-			<source ref="id15"/>
-			<target ref="id16"/>
+			<source ref="id16"/>
+			<target ref="id17"/>
 			<label kind="synchronisation" x="-161" y="-51">VS?</label>
 			<label kind="assignment" x="-161" y="-25">t = 0</label>
 			<nail x="-153" y="-34"/>
@@ -359,54 +387,54 @@ broadcast chan AS, AP, AR, VP, VS, Aget, Vget;</declaration>
 	<template>
 		<name>PURI_test</name>
 		<declaration>clock t;</declaration>
-		<location id="id18" x="-229" y="-8">
+		<location id="id19" x="-229" y="-8">
 			<name x="-246" y="-42">wait_v</name>
 		</location>
-		<location id="id19" x="-76" y="-8">
+		<location id="id20" x="-76" y="-8">
 			<name x="-93" y="-42">wait_vp</name>
 		</location>
-		<location id="id20" x="68" y="-8">
+		<location id="id21" x="68" y="-8">
 			<name x="51" y="-42">interval</name>
 			<committed/>
 		</location>
-		<init ref="id18"/>
+		<init ref="id19"/>
 		<transition>
-			<source ref="id20"/>
-			<target ref="id19"/>
+			<source ref="id21"/>
+			<target ref="id20"/>
 			<label kind="assignment" x="8" y="42">t = 0</label>
 			<nail x="68" y="59"/>
 			<nail x="-25" y="59"/>
 		</transition>
 		<transition>
-			<source ref="id19"/>
-			<target ref="id19"/>
+			<source ref="id20"/>
+			<target ref="id20"/>
 			<label kind="synchronisation" x="-85" y="25">VS?</label>
 			<label kind="assignment" x="-85" y="42">t = 0</label>
 			<nail x="-140" y="42"/>
 			<nail x="-97" y="68"/>
 		</transition>
 		<transition>
-			<source ref="id18"/>
-			<target ref="id19"/>
+			<source ref="id19"/>
+			<target ref="id20"/>
 			<label kind="synchronisation" x="-212" y="8">VS?</label>
 			<label kind="assignment" x="-212" y="25">t = 0</label>
 			<nail x="-153" y="17"/>
 		</transition>
 		<transition>
-			<source ref="id18"/>
-			<target ref="id19"/>
+			<source ref="id19"/>
+			<target ref="id20"/>
 			<label kind="synchronisation" x="-161" y="-51">VP?</label>
 			<label kind="assignment" x="-170" y="-25">t = 0</label>
 			<nail x="-153" y="-34"/>
 		</transition>
 		<transition>
-			<source ref="id19"/>
-			<target ref="id20"/>
+			<source ref="id20"/>
+			<target ref="id21"/>
 			<label kind="synchronisation" x="-8" y="-25">VP?</label>
 		</transition>
 	</template>
 	<system>// List one or more processes to be composed into a system.
-system LRI, AVI, URI, PVARP, VRP, RHM, Pvv, PURI_test;
+system LRI, AVI, URI, PVARP, VRP, RHM_A, RHM_V, Pvv, PURI_test;
     </system>
 	<queries>
 		<query>

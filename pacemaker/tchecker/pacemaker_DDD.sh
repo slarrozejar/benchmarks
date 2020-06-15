@@ -73,7 +73,7 @@ event:Aget
 event:Vget
 "
 
-# Blobal variables
+# Global variables
 echo "clock:1:clk
 "
 

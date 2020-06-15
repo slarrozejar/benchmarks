@@ -4,7 +4,7 @@
 	<declaration>// This file is a part of the TickTac benchmarks project.
 // See files AUTHORS and LICENSE for copyright details.
 
-// Inspired from UPPAAL demo model of a pacemaker DDD introduced in:
+// Inspired from UPPAAL demo model of a pacemaker DDD introduced in section 5.2 in:
 //Zhihao Jiang, Miroslav Pajic, Salar Moarref, Rajeev Alur, Rahul Mangharam:
 //Modeling and Verification of a Dual Chamber Implantable Pacemaker. 
 //TACAS 2012: 188-203
@@ -389,507 +389,16 @@ broadcast chan AS, AP, AR, VP, VS, Aget, Vget, VDI, DDD, Fast, Slow, du_end, du_
 		</transition>
 	</template>
 	<template>
-		<name>Interval</name>
-		<declaration>clock t;</declaration>
-		<location id="id17" x="-195" y="-127">
-			<name x="-221" y="-110">Wait1st</name>
-		</location>
-		<location id="id18" x="-34" y="-127">
-			<name x="-59" y="-161">wait2nd</name>
-		</location>
-		<location id="id19" x="127" y="-127">
-			<name x="117" y="-161">Resett</name>
-			<committed/>
-		</location>
-		<location id="id20" x="-195" y="34">
-			<name x="-212" y="0">APed</name>
-			<committed/>
-		</location>
-		<init ref="id17"/>
-		<transition>
-			<source ref="id18"/>
-			<target ref="id20"/>
-			<label kind="synchronisation" x="-144" y="-34">AP?</label>
-			<nail x="-110" y="-17"/>
-		</transition>
-		<transition>
-			<source ref="id18"/>
-			<target ref="id20"/>
-			<label kind="synchronisation" x="-170" y="34">Slow!</label>
-			<label kind="assignment" x="-119" y="34">t = 0</label>
-			<nail x="-85" y="34"/>
-		</transition>
-		<transition>
-			<source ref="id19"/>
-			<target ref="id18"/>
-			<label kind="guard" x="17" y="17">t &gt; thresh</label>
-			<label kind="synchronisation" x="-8" y="42">Slow!</label>
-			<label kind="assignment" x="76" y="42">t = 0</label>
-			<nail x="127" y="42"/>
-			<nail x="-34" y="42"/>
-		</transition>
-		<transition>
-			<source ref="id19"/>
-			<target ref="id18"/>
-			<label kind="guard" x="17" y="-51">t &lt;= thresh</label>
-			<label kind="synchronisation" x="8" y="-25">Fast!</label>
-			<label kind="assignment" x="59" y="-25">t = 0</label>
-			<nail x="93" y="-25"/>
-			<nail x="0" y="-25"/>
-		</transition>
-		<transition>
-			<source ref="id18"/>
-			<target ref="id19"/>
-			<label kind="synchronisation" x="42" y="-178">AS?</label>
-			<nail x="51" y="-161"/>
-		</transition>
-		<transition>
-			<source ref="id18"/>
-			<target ref="id19"/>
-			<label kind="synchronisation" x="34" y="-144">AR?</label>
-		</transition>
-		<transition>
-			<source ref="id17"/>
-			<target ref="id18"/>
-			<label kind="synchronisation" x="-153" y="-102">AS?</label>
-			<label kind="assignment" x="-102" y="-102">t = 0</label>
-			<nail x="-110" y="-93"/>
-		</transition>
-		<transition>
-			<source ref="id17"/>
-			<target ref="id18"/>
-			<label kind="synchronisation" x="-153" y="-178">AP?</label>
-			<label kind="assignment" x="-102" y="-178">t = 0</label>
-			<nail x="-110" y="-161"/>
-		</transition>
-		<transition>
-			<source ref="id17"/>
-			<target ref="id18"/>
-			<label kind="synchronisation" x="-153" y="-144">AR?</label>
-			<label kind="assignment" x="-110" y="-144">t = 0</label>
-		</transition>
-	</template>
-	<template>
-		<name>Counter</name>
-		<location id="id21" x="-340" y="0">
-			<name x="-350" y="-34">Init</name>
-		</location>
-		<location id="id22" x="-280" y="25">
-			<name x="-339" y="17">switch1</name>
-			<committed/>
-		</location>
-		<location id="id23" x="-212" y="0">
-			<name x="-229" y="8">fast1</name>
-		</location>
-		<location id="id24" x="-93" y="0">
-			<name x="-110" y="17">fast2</name>
-		</location>
-		<location id="id25" x="17" y="0">
-			<name x="0" y="17">fast3</name>
-		</location>
-		<location id="id26" x="119" y="0">
-			<name x="102" y="17">fast4</name>
-		</location>
-		<location id="id27" x="221" y="0">
-			<name x="204" y="17">fast5</name>
-		</location>
-		<location id="id28" x="331" y="0">
-			<name x="314" y="17">fast6</name>
-		</location>
-		<location id="id29" x="442" y="0">
-			<name x="425" y="17">fast7</name>
-		</location>
-		<location id="id30" x="569" y="0">
-			<name x="552" y="17">fast8</name>
-		</location>
-		<location id="id31" x="671" y="0">
-			<name x="661" y="-34">switch2</name>
-			<committed/>
-		</location>
-		<location id="id32" x="510" y="-34">
-			<committed/>
-		</location>
-		<location id="id33" x="442" y="-153">
-			<committed/>
-		</location>
-		<location id="id34" x="331" y="-153">
-			<committed/>
-		</location>
-		<location id="id35" x="221" y="-153">
-			<committed/>
-		</location>
-		<location id="id36" x="119" y="-153">
-			<committed/>
-		</location>
-		<location id="id37" x="17" y="-153">
-			<committed/>
-		</location>
-		<location id="id38" x="-93" y="-153">
-			<committed/>
-		</location>
-		<location id="id39" x="-212" y="-153">
-			<committed/>
-		</location>
-		<init ref="id21"/>
-		<transition>
-			<source ref="id32"/>
-			<target ref="id30"/>
-			<label kind="synchronisation" x="527" y="-42">du_beg!</label>
-		</transition>
-		<transition>
-			<source ref="id39"/>
-			<target ref="id23"/>
-			<label kind="synchronisation" x="-263" y="-110">VDI!</label>
-			<nail x="-238" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id23"/>
-			<target ref="id39"/>
-			<label kind="synchronisation" x="-195" y="-119">du_end?</label>
-			<nail x="-187" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id38"/>
-			<target ref="id24"/>
-			<label kind="synchronisation" x="-144" y="-93">VDI!</label>
-			<nail x="-119" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id24"/>
-			<target ref="id38"/>
-			<label kind="synchronisation" x="-76" y="-119">du_end?</label>
-			<nail x="-93" y="-17"/>
-			<nail x="-68" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id37"/>
-			<target ref="id25"/>
-			<label kind="synchronisation" x="-34" y="-93">VDI!</label>
-			<nail x="-8" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id25"/>
-			<target ref="id37"/>
-			<label kind="synchronisation" x="34" y="-127">du_end?</label>
-			<nail x="42" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id36"/>
-			<target ref="id26"/>
-			<label kind="synchronisation" x="68" y="-85">VDI!</label>
-			<nail x="93" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id26"/>
-			<target ref="id36"/>
-			<label kind="synchronisation" x="136" y="-119">du_end?</label>
-			<nail x="144" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id35"/>
-			<target ref="id27"/>
-			<label kind="synchronisation" x="170" y="-85">VDI!</label>
-			<nail x="195" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id27"/>
-			<target ref="id35"/>
-			<label kind="synchronisation" x="238" y="-119">du_end?</label>
-			<nail x="246" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id34"/>
-			<target ref="id28"/>
-			<label kind="synchronisation" x="280" y="-85">VDI!</label>
-			<nail x="323" y="-136"/>
-			<nail x="306" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id28"/>
-			<target ref="id34"/>
-			<label kind="synchronisation" x="348" y="-119">du_end?</label>
-			<nail x="357" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id33"/>
-			<target ref="id29"/>
-			<label kind="synchronisation" x="391" y="-85">VDI!</label>
-			<nail x="416" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id29"/>
-			<target ref="id33"/>
-			<label kind="synchronisation" x="459" y="-119">du_end?</label>
-			<nail x="467" y="-76"/>
-		</transition>
-		<transition>
-			<source ref="id31"/>
-			<target ref="id30"/>
-			<label kind="synchronisation" x="603" y="25">VDI!</label>
-			<nail x="663" y="8"/>
-			<nail x="620" y="25"/>
-		</transition>
-		<transition>
-			<source ref="id30"/>
-			<target ref="id31"/>
-			<label kind="synchronisation" x="595" y="-42">du_end?</label>
-			<nail x="620" y="-25"/>
-		</transition>
-		<transition>
-			<source ref="id30"/>
-			<target ref="id29"/>
-			<label kind="synchronisation" x="484" y="25">Slow?</label>
-			<nail x="510" y="25"/>
-		</transition>
-		<transition>
-			<source ref="id29"/>
-			<target ref="id32"/>
-			<label kind="synchronisation" x="459" y="-42">Fast?</label>
-		</transition>
-		<transition>
-			<source ref="id29"/>
-			<target ref="id28"/>
-			<label kind="synchronisation" x="374" y="25">Slow?</label>
-			<nail x="391" y="25"/>
-		</transition>
-		<transition>
-			<source ref="id28"/>
-			<target ref="id29"/>
-			<label kind="synchronisation" x="374" y="-42">Fast?</label>
-			<nail x="391" y="-25"/>
-		</transition>
-		<transition>
-			<source ref="id28"/>
-			<target ref="id27"/>
-			<label kind="synchronisation" x="255" y="25">Slow?</label>
-			<nail x="280" y="25"/>
-		</transition>
-		<transition>
-			<source ref="id27"/>
-			<target ref="id28"/>
-			<label kind="synchronisation" x="255" y="-42">Fast?</label>
-			<nail x="272" y="-25"/>
-		</transition>
-		<transition>
-			<source ref="id27"/>
-			<target ref="id26"/>
-			<label kind="synchronisation" x="153" y="25">Slow?</label>
-			<nail x="170" y="25"/>
-		</transition>
-		<transition>
-			<source ref="id26"/>
-			<target ref="id27"/>
-			<label kind="synchronisation" x="153" y="-42">Fast?</label>
-			<nail x="170" y="-25"/>
-		</transition>
-		<transition>
-			<source ref="id26"/>
-			<target ref="id25"/>
-			<label kind="synchronisation" x="51" y="25">Slow?</label>
-			<nail x="68" y="25"/>
-		</transition>
-		<transition>
-			<source ref="id25"/>
-			<target ref="id26"/>
-			<label kind="synchronisation" x="51" y="-42">Fast?</label>
-			<nail x="68" y="-25"/>
-		</transition>
-		<transition>
-			<source ref="id25"/>
-			<target ref="id24"/>
-			<label kind="synchronisation" x="-51" y="25">Slow?</label>
-			<nail x="-34" y="25"/>
-		</transition>
-		<transition>
-			<source ref="id24"/>
-			<target ref="id25"/>
-			<label kind="synchronisation" x="-51" y="-42">Fast?</label>
-			<nail x="-34" y="-25"/>
-		</transition>
-		<transition>
-			<source ref="id24"/>
-			<target ref="id23"/>
-			<label kind="synchronisation" x="-170" y="25">Slow?</label>
-			<nail x="-153" y="25"/>
-		</transition>
-		<transition>
-			<source ref="id23"/>
-			<target ref="id24"/>
-			<label kind="synchronisation" x="-170" y="-42">Fast?</label>
-			<nail x="-153" y="-25"/>
-		</transition>
-		<transition>
-			<source ref="id21"/>
-			<target ref="id23"/>
-			<label kind="synchronisation" x="-297" y="-42">Fast?</label>
-			<nail x="-280" y="-25"/>
-		</transition>
-		<transition>
-			<source ref="id23"/>
-			<target ref="id22"/>
-			<label kind="synchronisation" x="-263" y="17">Slow?</label>
-		</transition>
-		<transition>
-			<source ref="id22"/>
-			<target ref="id21"/>
-			<label kind="synchronisation" x="-314" y="-8">DDD!</label>
-		</transition>
-	</template>
-	<template>
-		<name>Duration </name>
-		<location id="id40" x="-331" y="-17">
-			<name x="-340" y="-8">Init</name>
-		</location>
-		<location id="id41" x="-221" y="-17">
-			<name x="-231" y="-51">V0</name>
-		</location>
-		<location id="id42" x="-102" y="-17">
-			<name x="-112" y="-51">V1</name>
-		</location>
-		<location id="id43" x="17" y="-17">
-			<name x="7" y="-51">V2</name>
-		</location>
-		<location id="id44" x="153" y="-17">
-			<name x="143" y="-51">V3</name>
-		</location>
-		<location id="id45" x="289" y="-17">
-			<name x="279" y="-51">V4</name>
-		</location>
-		<location id="id46" x="425" y="-17">
-			<name x="415" y="-51">V5</name>
-		</location>
-		<location id="id47" x="569" y="-17">
-			<name x="559" y="-51">V6</name>
-		</location>
-		<location id="id48" x="714" y="-17">
-			<name x="704" y="-51">V7</name>
-		</location>
-		<location id="id49" x="858" y="-17">
-			<name x="858" y="-51">V8</name>
-			<committed/>
-		</location>
-		<init ref="id40"/>
-		<transition>
-			<source ref="id49"/>
-			<target ref="id40"/>
-			<label kind="synchronisation" x="212" y="-93">du_end!</label>
-			<nail x="850" y="-25"/>
-			<nail x="850" y="-68"/>
-			<nail x="-331" y="-68"/>
-		</transition>
-		<transition>
-			<source ref="id48"/>
-			<target ref="id49"/>
-			<label kind="synchronisation" x="782" y="8">VP?</label>
-			<nail x="790" y="8"/>
-		</transition>
-		<transition>
-			<source ref="id48"/>
-			<target ref="id49"/>
-			<label kind="synchronisation" x="773" y="-59">VS?</label>
-			<nail x="790" y="-42"/>
-		</transition>
-		<transition>
-			<source ref="id47"/>
-			<target ref="id48"/>
-			<label kind="synchronisation" x="629" y="8">VP?</label>
-			<nail x="646" y="8"/>
-		</transition>
-		<transition>
-			<source ref="id47"/>
-			<target ref="id48"/>
-			<label kind="synchronisation" x="637" y="-59">VS?</label>
-			<nail x="646" y="-42"/>
-		</transition>
-		<transition>
-			<source ref="id46"/>
-			<target ref="id47"/>
-			<label kind="synchronisation" x="484" y="8">VP?</label>
-			<nail x="501" y="8"/>
-		</transition>
-		<transition>
-			<source ref="id46"/>
-			<target ref="id47"/>
-			<label kind="synchronisation" x="493" y="-59">VS?</label>
-			<nail x="501" y="-42"/>
-		</transition>
-		<transition>
-			<source ref="id45"/>
-			<target ref="id46"/>
-			<label kind="synchronisation" x="340" y="8">VP?</label>
-			<nail x="357" y="8"/>
-		</transition>
-		<transition>
-			<source ref="id45"/>
-			<target ref="id46"/>
-			<label kind="synchronisation" x="348" y="-59">VS?</label>
-			<nail x="357" y="-42"/>
-		</transition>
-		<transition>
-			<source ref="id44"/>
-			<target ref="id45"/>
-			<label kind="synchronisation" x="204" y="8">VP?</label>
-			<nail x="221" y="8"/>
-		</transition>
-		<transition>
-			<source ref="id44"/>
-			<target ref="id45"/>
-			<label kind="synchronisation" x="204" y="-59">VS?</label>
-			<nail x="221" y="-42"/>
-		</transition>
-		<transition>
-			<source ref="id43"/>
-			<target ref="id44"/>
-			<label kind="synchronisation" x="68" y="8">VP?</label>
-			<nail x="85" y="8"/>
-		</transition>
-		<transition>
-			<source ref="id43"/>
-			<target ref="id44"/>
-			<label kind="synchronisation" x="76" y="-59">VS?</label>
-			<nail x="85" y="-42"/>
-		</transition>
-		<transition>
-			<source ref="id42"/>
-			<target ref="id43"/>
-			<label kind="synchronisation" x="-51" y="8">VP?</label>
-			<nail x="-42" y="8"/>
-		</transition>
-		<transition>
-			<source ref="id42"/>
-			<target ref="id43"/>
-			<label kind="synchronisation" x="-51" y="-59">VS?</label>
-			<nail x="-42" y="-42"/>
-		</transition>
-		<transition>
-			<source ref="id41"/>
-			<target ref="id42"/>
-			<label kind="synchronisation" x="-170" y="8">VP?</label>
-			<nail x="-161" y="8"/>
-		</transition>
-		<transition>
-			<source ref="id41"/>
-			<target ref="id42"/>
-			<label kind="synchronisation" x="-170" y="-59">VS?</label>
-			<nail x="-161" y="-42"/>
-		</transition>
-		<transition>
-			<source ref="id40"/>
-			<target ref="id41"/>
-			<label kind="synchronisation" x="-306" y="-42">du_beg?</label>
-		</transition>
-	</template>
-	<template>
 		<name>RHM_A</name>
 		<declaration>clock t;</declaration>
-		<location id="id50" x="0" y="0">
+		<location id="id17" x="0" y="0">
 			<name x="-25" y="-34">AReady</name>
 			<label kind="invariant" x="-25" y="-51">t &lt; Amaxwait</label>
 		</location>
-		<init ref="id50"/>
+		<init ref="id17"/>
 		<transition>
-			<source ref="id50"/>
-			<target ref="id50"/>
+			<source ref="id17"/>
+			<target ref="id17"/>
 			<label kind="guard" x="-144" y="-34">t &gt; Aminwait</label>
 			<label kind="synchronisation" x="-102" y="-17">Aget!</label>
 			<label kind="assignment" x="-102" y="0">t = 0</label>
@@ -897,8 +406,8 @@ broadcast chan AS, AP, AR, VP, VS, Aget, Vget, VDI, DDD, Fast, Slow, du_end, du_
 			<nail x="-59" y="-25"/>
 		</transition>
 		<transition>
-			<source ref="id50"/>
-			<target ref="id50"/>
+			<source ref="id17"/>
+			<target ref="id17"/>
 			<label kind="synchronisation" x="68" y="-17">AP?</label>
 			<label kind="assignment" x="68" y="0">t = 0</label>
 			<nail x="59" y="25"/>
@@ -908,14 +417,14 @@ broadcast chan AS, AP, AR, VP, VS, Aget, Vget, VDI, DDD, Fast, Slow, du_end, du_
 	<template>
 		<name>RHM_V</name>
 		<declaration>clock t;</declaration>
-		<location id="id51" x="0" y="0">
+		<location id="id18" x="0" y="0">
 			<name x="-25" y="-34">VReady</name>
 			<label kind="invariant" x="-25" y="-51">t &lt; Vmaxwait</label>
 		</location>
-		<init ref="id51"/>
+		<init ref="id18"/>
 		<transition>
-			<source ref="id51"/>
-			<target ref="id51"/>
+			<source ref="id18"/>
+			<target ref="id18"/>
 			<label kind="guard" x="-144" y="-34">t &gt; Vminwait</label>
 			<label kind="synchronisation" x="-102" y="-17">Vget!</label>
 			<label kind="assignment" x="-102" y="0">t = 0</label>
@@ -923,12 +432,503 @@ broadcast chan AS, AP, AR, VP, VS, Aget, Vget, VDI, DDD, Fast, Slow, du_end, du_
 			<nail x="-59" y="-25"/>
 		</transition>
 		<transition>
-			<source ref="id51"/>
-			<target ref="id51"/>
+			<source ref="id18"/>
+			<target ref="id18"/>
 			<label kind="synchronisation" x="68" y="-17">VP?</label>
 			<label kind="assignment" x="68" y="0">t = 0</label>
 			<nail x="59" y="25"/>
 			<nail x="59" y="-25"/>
+		</transition>
+	</template>
+	<template>
+		<name>Interval</name>
+		<declaration>clock t;</declaration>
+		<location id="id19" x="-195" y="-127">
+			<name x="-221" y="-110">Wait1st</name>
+		</location>
+		<location id="id20" x="-34" y="-127">
+			<name x="-59" y="-161">wait2nd</name>
+		</location>
+		<location id="id21" x="127" y="-127">
+			<name x="117" y="-161">Resett</name>
+			<committed/>
+		</location>
+		<location id="id22" x="-195" y="34">
+			<name x="-212" y="0">APed</name>
+			<committed/>
+		</location>
+		<init ref="id19"/>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id22"/>
+			<label kind="synchronisation" x="-144" y="-34">AP?</label>
+			<nail x="-110" y="-17"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id22"/>
+			<label kind="synchronisation" x="-170" y="34">Slow!</label>
+			<label kind="assignment" x="-119" y="34">t = 0</label>
+			<nail x="-85" y="34"/>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id20"/>
+			<label kind="guard" x="17" y="17">t &gt; thresh</label>
+			<label kind="synchronisation" x="-8" y="42">Slow!</label>
+			<label kind="assignment" x="76" y="42">t = 0</label>
+			<nail x="127" y="42"/>
+			<nail x="-34" y="42"/>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id20"/>
+			<label kind="guard" x="17" y="-51">t &lt;= thresh</label>
+			<label kind="synchronisation" x="8" y="-25">Fast!</label>
+			<label kind="assignment" x="59" y="-25">t = 0</label>
+			<nail x="93" y="-25"/>
+			<nail x="0" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="42" y="-178">AS?</label>
+			<nail x="51" y="-161"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="34" y="-144">AR?</label>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-153" y="-102">AS?</label>
+			<label kind="assignment" x="-102" y="-102">t = 0</label>
+			<nail x="-110" y="-93"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-153" y="-178">AP?</label>
+			<label kind="assignment" x="-102" y="-178">t = 0</label>
+			<nail x="-110" y="-161"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-153" y="-144">AR?</label>
+			<label kind="assignment" x="-110" y="-144">t = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>Counter</name>
+		<location id="id23" x="-340" y="0">
+			<name x="-350" y="-34">Init</name>
+		</location>
+		<location id="id24" x="-280" y="25">
+			<name x="-339" y="17">switch1</name>
+			<committed/>
+		</location>
+		<location id="id25" x="-212" y="0">
+			<name x="-229" y="8">fast1</name>
+		</location>
+		<location id="id26" x="-93" y="0">
+			<name x="-110" y="17">fast2</name>
+		</location>
+		<location id="id27" x="17" y="0">
+			<name x="0" y="17">fast3</name>
+		</location>
+		<location id="id28" x="119" y="0">
+			<name x="102" y="17">fast4</name>
+		</location>
+		<location id="id29" x="221" y="0">
+			<name x="204" y="17">fast5</name>
+		</location>
+		<location id="id30" x="331" y="0">
+			<name x="314" y="17">fast6</name>
+		</location>
+		<location id="id31" x="442" y="0">
+			<name x="425" y="17">fast7</name>
+		</location>
+		<location id="id32" x="569" y="0">
+			<name x="552" y="17">fast8</name>
+		</location>
+		<location id="id33" x="671" y="0">
+			<name x="661" y="-34">switch2</name>
+			<committed/>
+		</location>
+		<location id="id34" x="510" y="-34">
+			<committed/>
+		</location>
+		<location id="id35" x="442" y="-153">
+			<committed/>
+		</location>
+		<location id="id36" x="331" y="-153">
+			<committed/>
+		</location>
+		<location id="id37" x="221" y="-153">
+			<committed/>
+		</location>
+		<location id="id38" x="119" y="-153">
+			<committed/>
+		</location>
+		<location id="id39" x="17" y="-153">
+			<committed/>
+		</location>
+		<location id="id40" x="-93" y="-153">
+			<committed/>
+		</location>
+		<location id="id41" x="-212" y="-153">
+			<committed/>
+		</location>
+		<init ref="id23"/>
+		<transition>
+			<source ref="id34"/>
+			<target ref="id32"/>
+			<label kind="synchronisation" x="527" y="-42">du_beg!</label>
+		</transition>
+		<transition>
+			<source ref="id41"/>
+			<target ref="id25"/>
+			<label kind="synchronisation" x="-263" y="-110">VDI!</label>
+			<nail x="-238" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id25"/>
+			<target ref="id41"/>
+			<label kind="synchronisation" x="-195" y="-119">du_end?</label>
+			<nail x="-187" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id40"/>
+			<target ref="id26"/>
+			<label kind="synchronisation" x="-144" y="-93">VDI!</label>
+			<nail x="-119" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id40"/>
+			<label kind="synchronisation" x="-76" y="-119">du_end?</label>
+			<nail x="-93" y="-17"/>
+			<nail x="-68" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id39"/>
+			<target ref="id27"/>
+			<label kind="synchronisation" x="-34" y="-93">VDI!</label>
+			<nail x="-8" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id39"/>
+			<label kind="synchronisation" x="34" y="-127">du_end?</label>
+			<nail x="42" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id38"/>
+			<target ref="id28"/>
+			<label kind="synchronisation" x="68" y="-85">VDI!</label>
+			<nail x="93" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id28"/>
+			<target ref="id38"/>
+			<label kind="synchronisation" x="136" y="-119">du_end?</label>
+			<nail x="144" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id37"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="170" y="-85">VDI!</label>
+			<nail x="195" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id37"/>
+			<label kind="synchronisation" x="238" y="-119">du_end?</label>
+			<nail x="246" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id36"/>
+			<target ref="id30"/>
+			<label kind="synchronisation" x="280" y="-85">VDI!</label>
+			<nail x="323" y="-136"/>
+			<nail x="306" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id30"/>
+			<target ref="id36"/>
+			<label kind="synchronisation" x="348" y="-119">du_end?</label>
+			<nail x="357" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id35"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="391" y="-85">VDI!</label>
+			<nail x="416" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id35"/>
+			<label kind="synchronisation" x="459" y="-119">du_end?</label>
+			<nail x="467" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id33"/>
+			<target ref="id32"/>
+			<label kind="synchronisation" x="603" y="25">VDI!</label>
+			<nail x="663" y="8"/>
+			<nail x="620" y="25"/>
+		</transition>
+		<transition>
+			<source ref="id32"/>
+			<target ref="id33"/>
+			<label kind="synchronisation" x="595" y="-42">du_end?</label>
+			<nail x="620" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id32"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="484" y="25">Slow?</label>
+			<nail x="510" y="25"/>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id34"/>
+			<label kind="synchronisation" x="459" y="-42">Fast?</label>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id30"/>
+			<label kind="synchronisation" x="374" y="25">Slow?</label>
+			<nail x="391" y="25"/>
+		</transition>
+		<transition>
+			<source ref="id30"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="374" y="-42">Fast?</label>
+			<nail x="391" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id30"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="255" y="25">Slow?</label>
+			<nail x="280" y="25"/>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id30"/>
+			<label kind="synchronisation" x="255" y="-42">Fast?</label>
+			<nail x="272" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id28"/>
+			<label kind="synchronisation" x="153" y="25">Slow?</label>
+			<nail x="170" y="25"/>
+		</transition>
+		<transition>
+			<source ref="id28"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="153" y="-42">Fast?</label>
+			<nail x="170" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id28"/>
+			<target ref="id27"/>
+			<label kind="synchronisation" x="51" y="25">Slow?</label>
+			<nail x="68" y="25"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id28"/>
+			<label kind="synchronisation" x="51" y="-42">Fast?</label>
+			<nail x="68" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id26"/>
+			<label kind="synchronisation" x="-51" y="25">Slow?</label>
+			<nail x="-34" y="25"/>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id27"/>
+			<label kind="synchronisation" x="-51" y="-42">Fast?</label>
+			<nail x="-34" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id25"/>
+			<label kind="synchronisation" x="-170" y="25">Slow?</label>
+			<nail x="-153" y="25"/>
+		</transition>
+		<transition>
+			<source ref="id25"/>
+			<target ref="id26"/>
+			<label kind="synchronisation" x="-170" y="-42">Fast?</label>
+			<nail x="-153" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id25"/>
+			<label kind="synchronisation" x="-297" y="-42">Fast?</label>
+			<nail x="-280" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id25"/>
+			<target ref="id24"/>
+			<label kind="synchronisation" x="-263" y="17">Slow?</label>
+		</transition>
+		<transition>
+			<source ref="id24"/>
+			<target ref="id23"/>
+			<label kind="synchronisation" x="-314" y="-8">DDD!</label>
+		</transition>
+	</template>
+	<template>
+		<name>Duration </name>
+		<location id="id42" x="-331" y="-17">
+			<name x="-340" y="-8">Init</name>
+		</location>
+		<location id="id43" x="-221" y="-17">
+			<name x="-231" y="-51">V0</name>
+		</location>
+		<location id="id44" x="-102" y="-17">
+			<name x="-112" y="-51">V1</name>
+		</location>
+		<location id="id45" x="17" y="-17">
+			<name x="7" y="-51">V2</name>
+		</location>
+		<location id="id46" x="153" y="-17">
+			<name x="143" y="-51">V3</name>
+		</location>
+		<location id="id47" x="289" y="-17">
+			<name x="279" y="-51">V4</name>
+		</location>
+		<location id="id48" x="425" y="-17">
+			<name x="415" y="-51">V5</name>
+		</location>
+		<location id="id49" x="569" y="-17">
+			<name x="559" y="-51">V6</name>
+		</location>
+		<location id="id50" x="714" y="-17">
+			<name x="704" y="-51">V7</name>
+		</location>
+		<location id="id51" x="858" y="-17">
+			<name x="858" y="-51">V8</name>
+			<committed/>
+		</location>
+		<init ref="id42"/>
+		<transition>
+			<source ref="id51"/>
+			<target ref="id42"/>
+			<label kind="synchronisation" x="212" y="-93">du_end!</label>
+			<nail x="850" y="-25"/>
+			<nail x="850" y="-68"/>
+			<nail x="-331" y="-68"/>
+		</transition>
+		<transition>
+			<source ref="id50"/>
+			<target ref="id51"/>
+			<label kind="synchronisation" x="782" y="8">VP?</label>
+			<nail x="790" y="8"/>
+		</transition>
+		<transition>
+			<source ref="id50"/>
+			<target ref="id51"/>
+			<label kind="synchronisation" x="773" y="-59">VS?</label>
+			<nail x="790" y="-42"/>
+		</transition>
+		<transition>
+			<source ref="id49"/>
+			<target ref="id50"/>
+			<label kind="synchronisation" x="629" y="8">VP?</label>
+			<nail x="646" y="8"/>
+		</transition>
+		<transition>
+			<source ref="id49"/>
+			<target ref="id50"/>
+			<label kind="synchronisation" x="637" y="-59">VS?</label>
+			<nail x="646" y="-42"/>
+		</transition>
+		<transition>
+			<source ref="id48"/>
+			<target ref="id49"/>
+			<label kind="synchronisation" x="484" y="8">VP?</label>
+			<nail x="501" y="8"/>
+		</transition>
+		<transition>
+			<source ref="id48"/>
+			<target ref="id49"/>
+			<label kind="synchronisation" x="493" y="-59">VS?</label>
+			<nail x="501" y="-42"/>
+		</transition>
+		<transition>
+			<source ref="id47"/>
+			<target ref="id48"/>
+			<label kind="synchronisation" x="340" y="8">VP?</label>
+			<nail x="357" y="8"/>
+		</transition>
+		<transition>
+			<source ref="id47"/>
+			<target ref="id48"/>
+			<label kind="synchronisation" x="348" y="-59">VS?</label>
+			<nail x="357" y="-42"/>
+		</transition>
+		<transition>
+			<source ref="id46"/>
+			<target ref="id47"/>
+			<label kind="synchronisation" x="204" y="8">VP?</label>
+			<nail x="221" y="8"/>
+		</transition>
+		<transition>
+			<source ref="id46"/>
+			<target ref="id47"/>
+			<label kind="synchronisation" x="204" y="-59">VS?</label>
+			<nail x="221" y="-42"/>
+		</transition>
+		<transition>
+			<source ref="id45"/>
+			<target ref="id46"/>
+			<label kind="synchronisation" x="68" y="8">VP?</label>
+			<nail x="85" y="8"/>
+		</transition>
+		<transition>
+			<source ref="id45"/>
+			<target ref="id46"/>
+			<label kind="synchronisation" x="76" y="-59">VS?</label>
+			<nail x="85" y="-42"/>
+		</transition>
+		<transition>
+			<source ref="id44"/>
+			<target ref="id45"/>
+			<label kind="synchronisation" x="-51" y="8">VP?</label>
+			<nail x="-42" y="8"/>
+		</transition>
+		<transition>
+			<source ref="id44"/>
+			<target ref="id45"/>
+			<label kind="synchronisation" x="-51" y="-59">VS?</label>
+			<nail x="-42" y="-42"/>
+		</transition>
+		<transition>
+			<source ref="id43"/>
+			<target ref="id44"/>
+			<label kind="synchronisation" x="-170" y="8">VP?</label>
+			<nail x="-161" y="8"/>
+		</transition>
+		<transition>
+			<source ref="id43"/>
+			<target ref="id44"/>
+			<label kind="synchronisation" x="-170" y="-59">VS?</label>
+			<nail x="-161" y="-42"/>
+		</transition>
+		<transition>
+			<source ref="id42"/>
+			<target ref="id43"/>
+			<label kind="synchronisation" x="-306" y="-42">du_beg?</label>
 		</transition>
 	</template>
 	<template>

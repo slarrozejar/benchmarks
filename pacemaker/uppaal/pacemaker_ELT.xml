@@ -4,7 +4,7 @@
 	<declaration>// This file is a part of the TickTac benchmarks project.
 // See files AUTHORS and LICENSE for copyright details.
 
-// Inspired from UPPAAL demo model of a pacemaker DDD introduced in:
+// Inspired from UPPAAL demo model of a pacemaker DDD introduced in section 5.3 in:
 //Zhihao Jiang, Miroslav Pajic, Salar Moarref, Rajeev Alur, Rahul Mangharam:
 //Modeling and Verification of a Dual Chamber Implantable Pacemaker. 
 //TACAS 2012: 188-203
@@ -432,13 +432,13 @@ broadcast chan AS, AP, AR, VP, VS, Aget, Vget, ABLOCK, VB, A_act, V_act, VP_AS, 
 		<transition>
 			<source ref="id19"/>
 			<target ref="id17"/>
-			<label kind="guard" x="76" y="-25">t &gt;= Tretromin</label>
 			<label kind="synchronisation" x="110" y="-59">AP?</label>
 			<nail x="119" y="-42"/>
 		</transition>
 		<transition>
 			<source ref="id19"/>
 			<target ref="id17"/>
+			<label kind="guard" x="76" y="-17">t &gt;= Tretromin</label>
 			<label kind="synchronisation" x="93" y="0">A_act!</label>
 		</transition>
 		<transition>
@@ -464,13 +464,13 @@ broadcast chan AS, AP, AR, VP, VS, Aget, Vget, ABLOCK, VB, A_act, V_act, VP_AS, 
 		<transition>
 			<source ref="id18"/>
 			<target ref="id17"/>
-			<label kind="guard" x="-170" y="-25">t &gt;= Tantemin</label>
 			<label kind="synchronisation" x="-136" y="-59">VP?</label>
 			<nail x="-119" y="-42"/>
 		</transition>
 		<transition>
 			<source ref="id18"/>
 			<target ref="id17"/>
+			<label kind="guard" x="-161" y="-17">t &gt;= Tantemin</label>
 			<label kind="synchronisation" x="-144" y="0">V_act!</label>
 		</transition>
 		<transition>

@@ -190,5 +190,5 @@ sync:AVI@VP:LRI@VP?:URI@VP?:PVARP@VP?:VRP@VP?:Pvv@VP?:PURI_test@VP?:RHM_V@VP?
 sync:PVARP@AS:LRI@AS?:AVI@AS?
 sync:VRP@VS:LRI@VS?:AVI@VS?:URI@VS?:PVARP@VS?:Pvv@VS?:PURI_test@VS?
 sync:RHM_A@Aget:PVARP@Aget?
-sync:RHM_A@Vget:VRP@Vget?
+sync:RHM_V@Vget:VRP@Vget?
 "

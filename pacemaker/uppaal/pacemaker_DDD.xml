@@ -4,7 +4,7 @@
 	<declaration>// This file is a part of the TickTac benchmarks project.
 // See files AUTHORS and LICENSE for copyright details.
 
-// Inspired from UPPAAL demo model of a pacemaker DDD introduced in:
+// Inspired from UPPAAL demo model of a pacemaker DDD introduced in section 3 in:
 //Zhihao Jiang, Miroslav Pajic, Salar Moarref, Rajeev Alur, Rahul Mangharam:
 //Modeling and Verification of a Dual Chamber Implantable Pacemaker. 
 //TACAS 2012: 188-203

@@ -14,6 +14,11 @@ Aminwait=0
 Amaxwait=10000
 Vminwait=0
 Vmaxwait=10000
+Tantemin=0
+Tantemax=10000
+Tretromin=0
+Tretromax=10000
+
 
 usage() {
     echo "Usage: $0 Aminwait Amaxwait Vminwait Vmaxwait";
@@ -86,9 +91,9 @@ int:1:100:500:100:TPVARP
 # Process LRI
 echo "process:LRI
 clock:1:t1
-location:LRI:LRI{initial::invariant:t1<=1000-150}
+location:LRI:LRI{initial::invariant:t1<=$TLRI-$TAVI}
 location:LRI:Ased
-edge:LRI:LRI:LRI:AP{provided:t1>=1000-150 : do:t1=0}
+edge:LRI:LRI:LRI:AP{provided:t1>=$TLRI-$TAVI : do:t1=0}
 edge:LRI:LRI:LRI:VS{do:t1=0}
 edge:LRI:LRI:LRI:VP{do:t1=0}
 edge:LRI:LRI:Ased:AS
@@ -100,14 +105,14 @@ edge:LRI:Ased:LRI:VS{do:t1=0}
 echo "process:AVI
 clock:1:t2
 location:AVI:Idle{initial:}
-location:AVI:AVI{invariant:t2<=150}
-location:AVI:WaitURI{invariant:clk<=400}
+location:AVI:AVI{invariant:t2<=$TAVI}
+location:AVI:WaitURI{invariant:clk<=$TURI}
 edge:AVI:Idle:AVI:AS{do:t2=0}
 edge:AVI:Idle:AVI:AP{do:t2=0}
-edge:AVI:AVI:Idle:VP{provided:t2>=150&&clk>=400}
+edge:AVI:AVI:Idle:VP{provided:t2>=$TAVI&&clk>=$TURI}
 edge:AVI:AVI:Idle:VS
-edge:AVI:AVI:WaitURI:tau{provided:t2>=150&&clk<400}
-edge:AVI:WaitURI:Idle:VP{provided:clk>=400}
+edge:AVI:AVI:WaitURI:tau{provided:t2>=$TAVI&&clk<$TURI}
+edge:AVI:WaitURI:Idle:VP{provided:clk>=$TURI}
 edge:AVI:WaitURI:Idle:VS
 "
 
@@ -123,14 +128,14 @@ echo "process:PVARP
 clock:1:t3
 location:PVARP:Idle{initial:}
 location:PVARP:inter{committed:}
-location:PVARP:PVAB{invariant:t3<=50}
-location:PVARP:PVARP{invariant:t3<=100}
+location:PVARP:PVAB{invariant:t3<=$TPVAB}
+location:PVARP:PVARP{invariant:t3<=TPVARP}
 location:PVARP:inter1{committed:}
 location:PVARP:ABI{committed:}
 edge:PVARP:Idle:PVAB:VS{do:t3=0}
 edge:PVARP:Idle:PVAB:VP{do:t3=0}
-edge:PVARP:PVAB:PVARP:tau{provided:t3>=50}
-edge:PVARP:PVARP:Idle:tau{provided:t3>=100 : do:TPVARP=100}
+edge:PVARP:PVAB:PVARP:tau{provided:t3>=$TPVAB}
+edge:PVARP:PVARP:Idle:tau{provided:t3>=TPVARP : do:TPVARP=100}
 edge:PVARP:PVARP:inter1:Aget
 edge:PVARP:inter1:PVARP:AR
 edge:PVARP:Idle:inter:Aget
@@ -147,28 +152,28 @@ echo "process:VRP
 clock:1:t4
 location:VRP:Idle{initial:}
 location:VRP:inter{committed:}
-location:VRP:VRP{invariant:t4<=150}
+location:VRP:VRP{invariant:t4<=$TVRP}
 edge:VRP:Idle:VRP:VP{do:t4=0}
 edge:VRP:Idle:inter:Vget
 edge:VRP:inter:VRP:VS{do:t4=0}
-edge:VRP:VRP:Idle:tau{provided:t4>=150}
+edge:VRP:VRP:Idle:tau{provided:t4>=$TVRP}
 "
 
 # Process RHM_A
 echo "process:RHM_A
 clock:1:t5
-location:RHM_A:AReady{initial::invariant:t5<10000}
+location:RHM_A:AReady{initial::invariant:t5<$Amaxwait}
 edge:RHM_A:AReady:AReady:AP{do:t5=0}
-edge:RHM_A:AReady:AReady:Aget{provided:t5>0 : do:t5=0}
+edge:RHM_A:AReady:AReady:Aget{provided:t5>$Aminwait : do:t5=0}
 edge:RHM_A:AReady:AReady:A_act{do:t5=0}
 "
 
 # Process RHM_V
 echo "process:RHM_V
 clock:1:t6
-location:RHM_V:VReady{initial::invariant:t6<10000}
+location:RHM_V:VReady{initial::invariant:t6<$Vmaxwait}
 edge:RHM_V:VReady:VReady:VP{do:t6=0}
-edge:RHM_V:VReady:VReady:Vget{provided:t6>0 : do:t6=0}
+edge:RHM_V:VReady:VReady:Vget{provided:t6>$Vminwait : do:t6=0}
 edge:RHM_V:VReady:VReady:V_act{do:t6=0}
 "
 
@@ -176,20 +181,20 @@ edge:RHM_V:VReady:VReady:V_act{do:t6=0}
 echo "process:Conduction
 clock:1:t7
 location:Conduction:Idle{initial:}
-location:Conduction:Ante{invariant:t7<=10000}
-location:Conduction:Retro{invariant:t7<=10000}
+location:Conduction:Ante{invariant:t7<=$Tantemax}
+location:Conduction:Retro{invariant:t7<=$Tretromax}
 edge:Conduction:Idle:Idle:Aget
 edge:Conduction:Idle:Idle:AP
 edge:Conduction:Idle:Idle:Vget
 edge:Conduction:Idle:Idle:VP
 edge:Conduction:Ante:Idle:VP
 edge:Conduction:Ante:Idle:Vget
-edge:Conduction:Ante:Idle:V_act{provided:t7>=0}
+edge:Conduction:Ante:Idle:V_act{provided:t7>=$Tantemin}
 edge:Conduction:Idle:Ante:Aget{do:t7=0}
 edge:Conduction:Idle:Ante:AP{do:t7=0}
 edge:Conduction:Retro:Idle:AP
 edge:Conduction:Retro:Idle:Aget
-edge:Conduction:Retro:Idle:A_act{provided:t7>=0}
+edge:Conduction:Retro:Idle:A_act{provided:t7>=$Tretromin}
 edge:Conduction:Idle:Retro:Vget{do:t7=0}
 edge:Conduction:Idle:Retro:VP{do:t7=0}
 "
@@ -273,8 +278,8 @@ location:Pv_v:V2{committed:}
 location:Pv_v:err
 edge:Pv_v:Init:V1:VP{do:t9=0}
 edge:Pv_v:V1:V2:VP
-edge:Pv_v:V2:V1:tau{provided:t9<=400 : do:t9=0}
-edge:Pv_v:V2:err:tau{provided:t9>400}
+edge:Pv_v:V2:V1:tau{provided:t9<=$TURI : do:t9=0}
+edge:Pv_v:V2:err:tau{provided:t9>$TURI}
 "
 
 # Process Detection

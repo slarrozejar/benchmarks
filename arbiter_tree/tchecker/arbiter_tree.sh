@@ -1,23 +1,22 @@
-#!/bin/sh
+#!/bin/bash
 
 # This file is a part of the TickTac benchmarks project.
 #
 # See files AUTHORS and LICENSE for copyright details.
 
 # Check parameters
-
-N=3
-
 usage() {
     echo "Usage: $0 N";
-    echo "       N number of arbiters";
+    echo "       N depth of the tree";
 }
 
 if [ $# -eq 1 ]; then
-    N=$1
+    N=$((2**$1-1))
 elif [ $# -ge 1 ]; then
   usage
   exit 1
+else
+    N=3
 fi
 
 # Model

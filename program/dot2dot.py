@@ -38,3 +38,10 @@ while(n!="" and n.find("%")!=-1):
 attributes_values = [] # Names of attributes' values we consider
 for i in range(len(lb)):
     attributes_values.append(initial[lb[i]+1:up[i]])
+
+# Create format string
+format_string = initial
+for i in range(len(lb)):
+    format_string = format_string.replace(initial[lb[i]:up[i]+1], '{'+str(i)+'}', 1)
+    print(initial[lb[i]:up[i]+1])
+print(format_string)

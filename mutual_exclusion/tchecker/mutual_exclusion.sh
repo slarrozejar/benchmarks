@@ -15,16 +15,16 @@ function usage() {
 }
 
 if [ $# -eq 2 ]; then
-    R1=$1
-    R2=$2
+    R[1]=$1
+    R[2]=$2
 elif [ $# -eq 0 ]; then
-    R1=0
-    R2=0
+    R[1]=0
+    R[2]=0
 else
     usage
     exit 1
 fi
-echo "R1 : $R1, R2 : $R2"
+
 # Model
 
 echo "#clock:size:name
@@ -39,14 +39,19 @@ echo "#clock:size:name
 #   events is a colon-separated list of process@event
 "
 
-echo "system:mutual_exclusion_${R1}_${R2}
+echo "# Inspired from UPPAAL demo model introduced in Section 5 in:
+#Martin Wehrle, Sebastian Kupferschmid:
+#Mcta: Heuristics and Search for Timed Systems. FORMATS 2012: 252-266
 "
-echo "R1 : $R1, R2 : $R2"
+
+echo "system:mutual_exclusion_${R[1]}_${R[2]}
+"
+
 # Events
 
 echo "event:tau
 "
-echo "R1 : $R1, R2 : $R2"
+
 # Global variables
 
 echo "clock:1:S1_z
@@ -63,67 +68,74 @@ int:1:0:1:0:polled_S2_grant
 int:1:0:1:0:S1_Safe
 int:1:0:1:0:polled_Ctrl_Safe1
 int:1:0:1:0:S2_Safe
-int:1:0:1:0:polled_Ctrl_Safe2
-"
-echo "R1 : $R1, R2 : $R2"
+int:1:0:1:0:polled_Ctrl_Safe2"
+
 for i in `seq 1 2`; do
-    if [ $R$i -eq 1 ]; then
-      echo "R$i : $R$i"
+    if [ "${R[$i]}" -eq 1 ]; then
         echo "int:1:0:1:0:Root_req$i
-    int:1:0:1:0:polled_S${i}_request
-    "
+int:1:0:1:0:polled_S${i}_request"
     fi
 done
-echo "R1 : $R1, R2 : $R2"
+
 # Processes
 for i in `seq 1 2`; do
-    echo "#Process S$i
+    echo "
+#Process S$i
 process:S$i
-location:S$i:start_S$i{initial: : invariant:S${i}_z<=0}
-location:S$i:I_am_safe{invariant:S${i}_z<=1000}
-location:S$i:I_am_unsafe{invariant:S${i}_z<=1000}
-edge:S$i:start_S$i:I_am_safe:tau{do:S${i}_safe=1; S${i}_IntStat=0}
-edge:S$i:I_am_unsafe:I_am_safe:tau{provided:S${i}_IntStat==2 : do:S${i}_IntStat=2; S${i}_z=0}
-edge:S$i:I_am_unsafe:I_am_safe:tau{provided:S${i}_IntStat==2 : do:S${i}_IntStat=2; S${i}_z=0}"
-    if [ $R$i -eq 1 ]; then
+location:S$i:start_S$i{initial: : invariant:S${i}_z<=0}"
+    if [ $i -eq 1 ]; then
+        echo "location:S$i:I_am_safe{invariant:S${i}_z<=1000}
+location:S$i:I_am_unsafe{invariant:S${i}_z<=1000}"
+    else
+      echo "location:S$i:I_am_safe{invariant:S${i}_z<=1001}
+location:S$i:I_am_unsafe{invariant:S${i}_z<=1001}"
+    fi
+    if [ "${R[$i]}" -eq 1 ]; then
+        echo "edge:S1:I_am_safe:I_am_safe:tau{provided:S${i}_IntStat==1&&polled_S${i}_request==0&&polled_S${i}_grant==1&&S${i}_Safe==1 : do:S${i}_IntStat=0;S${i}_z=0}"
+    fi
+    echo "edge:S$i:start_S$i:I_am_safe:tau{do:S${i}_Safe=1; S${i}_IntStat=0}
+edge:S$i:I_am_safe:I_am_safe:tau{provided:S${i}_IntStat==2 : do:S${i}_IntStat=0; S${i}_z=0}
+edge:S$i:I_am_unsafe:I_am_unsafe:tau{provided:S${i}_IntStat==2 : do:S${i}_IntStat=0; S${i}_z=0}"
+    if [ ${R[$i]} -eq 1 ]; then
         add=";polled_S${i}_request=Root_req$i"
     else
         add=""
     fi
     echo "edge:S$i:I_am_safe:I_am_safe:tau{provided:S${i}_IntStat==0&&S${i}_z>0 : do:polled_S${i}_grant=Ctrl_grant$i; S${i}_IntStat=1$add}
 edge:S$i:I_am_unsafe:I_am_unsafe:tau{provided:S${i}_IntStat==0&&S${i}_z>0 : do:polled_S${i}_grant=Ctrl_grant$i; S${i}_IntStat=1$add}"
-    if [ $R$i -eq 1 ]; then
-        add="polled_S${i}_request==0"
+    if [ ${R[$i]} -eq 1 ]; then
+        add="&&polled_S${i}_request==0"
     else
-        add="1"
+        add=""
     fi
-    echo "edge:S$i:I_am_safe:I_am_safe:tau{provided:S${i}_IntStat==1&&polled_S${i}_grant==0&&S${i}_Safe==1&&$add : do:S${i}_IntStat=0; S${i}_z=0}
-edge:S$i:I_am_safe:I_am_unsafe:tau{provided:S${i}_IntStat==1&&polled_S${i}_grant==1&&S${i}_Safe==1&&$add : do:S${i}_IntStat=0; S${i}_z=0; S${i}_Safe=0}
-edge:S$i:I_am_unsafe:I_am_safe:tau{provided:S${i}_IntStat==1&&S${i}_safe==0&&$add : do:S${i}_IntStat=0; S${i}_z=0; S${i}_Safe=1}"
-    if [ $R$i -eq 1 ]; then
-        add="polled_S${i}_request==1"
+    echo "edge:S$i:I_am_safe:I_am_safe:tau{provided:S${i}_IntStat==1&&polled_S${i}_grant==0&&S${i}_Safe==1$add : do:S${i}_IntStat=0; S${i}_z=0}
+edge:S$i:I_am_unsafe:I_am_safe:tau{provided:S${i}_IntStat==1&&S${i}_Safe==0$add : do:S${i}_IntStat=0; S${i}_z=0; S${i}_Safe=1}"
+    if [ ${R[$i]} -eq 1 ]; then
+        add="&&polled_S${i}_request==1"
     else
-        add="1"
+        add=""
     fi
-    echo "edge:S$i:I_am_unsafe:I_am_unsafe:tau{provided:S${i}_IntStat==1&&S${i}_Safe==0&&$add : do:S${i}_IntStat=0; S${i}_z=0}"
-    if [ $R$i -eq 1 ]; then
+    echo "edge:S$i:I_am_unsafe:I_am_unsafe:tau{provided:S${i}_IntStat==1&&S${i}_Safe==0$add : do:S${i}_IntStat=0; S${i}_z=0}
+edge:S$i:I_am_safe:I_am_unsafe:tau{provided:S${i}_IntStat==1&&polled_S${i}_grant==1&&S${i}_Safe==1$add : do:S${i}_IntStat=0; S${i}_z=0; S${i}_Safe=0}"
+    if [ ${R[$i]} -eq 1 ]; then
         add="polled_S${i}_request==1&&polled_S${i}_grant==0"
     else
         add="polled_S${i}_grant==1"
     fi
     echo "edge:S$i:I_am_safe:I_am_safe:tau{provided:S${i}_IntStat==1&&S${i}_Safe==1&&$add : do:S${i}_IntStat=0; S${i}_z=0}"
 
-    if [ $R$i -eq 1 ]; then
-        echo "# Process drive_Root_req$i
+    if [ ${R[$i]} -eq 1 ]; then
+        echo "
+# Process drive_Root_req$i
 process:drive_Root_req$i
 location:drive_Root_req$i:loop{initial:}
 edge:drive_Root_req$i:loop:loop:tau{provided:Root_req$i==1 : do:Root_req$i=0}
-edge:drive_Root_req$i:loop:loop:tau{provided:Root_req$i==0 : do:Root_req$i=1}
-"
+edge:drive_Root_req$i:loop:loop:tau{provided:Root_req$i==0 : do:Root_req$i=1}"
     fi
 done
 
-    echo "# Process Ctrl
+    echo "
+# Process Ctrl
 process:Ctrl
 location:Ctrl:start_Ctrl{initial: : invariant:Ctrl_z<=0}
 location:Ctrl:wait_for_s2{invariant:Ctrl_z<=1000}

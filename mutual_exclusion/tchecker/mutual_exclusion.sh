@@ -24,7 +24,7 @@ else
     usage
     exit 1
 fi
-
+echo "R1 : $R1, R2 : $R2"
 # Model
 
 echo "#clock:size:name
@@ -41,12 +41,12 @@ echo "#clock:size:name
 
 echo "system:mutual_exclusion_${R1}_${R2}
 "
-
+echo "R1 : $R1, R2 : $R2"
 # Events
 
 echo "event:tau
 "
-
+echo "R1 : $R1, R2 : $R2"
 # Global variables
 
 echo "clock:1:S1_z
@@ -65,14 +65,16 @@ int:1:0:1:0:polled_Ctrl_Safe1
 int:1:0:1:0:S2_Safe
 int:1:0:1:0:polled_Ctrl_Safe2
 "
+echo "R1 : $R1, R2 : $R2"
 for i in `seq 1 2`; do
     if [ $R$i -eq 1 ]; then
+      echo "R$i : $R$i"
         echo "int:1:0:1:0:Root_req$i
     int:1:0:1:0:polled_S${i}_request
     "
     fi
 done
-
+echo "R1 : $R1, R2 : $R2"
 # Processes
 for i in `seq 1 2`; do
     echo "#Process S$i
@@ -84,12 +86,12 @@ edge:S$i:start_S$i:I_am_safe:tau{do:S${i}_safe=1; S${i}_IntStat=0}
 edge:S$i:I_am_unsafe:I_am_safe:tau{provided:S${i}_IntStat==2 : do:S${i}_IntStat=2; S${i}_z=0}
 edge:S$i:I_am_unsafe:I_am_safe:tau{provided:S${i}_IntStat==2 : do:S${i}_IntStat=2; S${i}_z=0}"
     if [ $R$i -eq 1 ]; then
-        add="polled_S${i}_request=Root_req$i"
+        add=";polled_S${i}_request=Root_req$i"
     else
         add=""
     fi
-    echo "edge:S$i:I_am_safe:I_am_safe:tau{provided:S${i}_IntStat==0&&S${i}_z>0 : do:polled_S${i}_grant=Ctrl_grant$i; S${i}_IntStat=1; $add}
-edge:S$i:I_am_unsafe:I_am_unsafe:tau{provided:S${i}_IntStat==0&&S${i}_z>0 : do:polled_S${i}_grant=Ctrl_grant$i; S${i}_IntStat=1; $add}"
+    echo "edge:S$i:I_am_safe:I_am_safe:tau{provided:S${i}_IntStat==0&&S${i}_z>0 : do:polled_S${i}_grant=Ctrl_grant$i; S${i}_IntStat=1$add}
+edge:S$i:I_am_unsafe:I_am_unsafe:tau{provided:S${i}_IntStat==0&&S${i}_z>0 : do:polled_S${i}_grant=Ctrl_grant$i; S${i}_IntStat=1$add}"
     if [ $R$i -eq 1 ]; then
         add="polled_S${i}_request==0"
     else
@@ -120,3 +122,33 @@ edge:drive_Root_req$i:loop:loop:tau{provided:Root_req$i==0 : do:Root_req$i=1}
 "
     fi
 done
+
+    echo "# Process Ctrl
+process:Ctrl
+location:Ctrl:start_Ctrl{initial: : invariant:Ctrl_z<=0}
+location:Ctrl:wait_for_s2{invariant:Ctrl_z<=1000}
+location:Ctrl:g1{invariant:Ctrl_z<=1000}
+location:Ctrl:wait_for_s1{invariant:Ctrl_z<=1000}
+location:Ctrl:g2{invariant:Ctrl_z<=1000}
+edge:Ctrl:start_Ctrl:wait_for_s2:tau{do:Ctrl_grant1=0;Ctrl_grant2=0;Ctrl_IntStat=0}
+edge:Ctrl:wait_for_s2:wait_for_s2:tau{provided:Ctrl_IntStat==0&&Ctrl_z>0 : do:polled_Ctrl_Safe1=S1_Safe;polled_Ctrl_Safe2=S2_Safe;Ctrl_IntStat=1}
+edge:Ctrl:wait_for_s2:wait_for_s2:tau{provided:Ctrl_IntStat==2 : do:Ctrl_IntStat=0;Ctrl_z=0}
+edge:Ctrl:wait_for_s2:wait_for_s2:tau{provided:Ctrl_IntStat==1&&polled_Ctrl_Safe2==0&&Ctrl_grant1==0 : do:Ctrl_IntStat=0;Ctrl_z=0}
+edge:Ctrl:wait_for_s2:wait_for_s2:tau{provided:Ctrl_IntStat==1&&polled_Ctrl_Safe2==1&&Ctrl_grant1==0&&Ctrl_y0<2000 : do:Ctrl_IntStat=2}
+edge:Ctrl:wait_for_s2:g1:tau{provided:Ctrl_IntStat==1&&polled_Ctrl_Safe2==1&&Ctrl_grant1==0&&Ctrl_y0>=2000 : do:Ctrl_grant1=1;Ctrl_IntStat=0;Ctrl_z=0;Ctrl_y0=0}
+edge:Ctrl:g1:g1:tau{provided:Ctrl_IntStat==0&&Ctrl_z>0 : do:polled_Ctrl_Safe1=S1_Safe;polled_Ctrl_Safe2=S2_Safe;Ctrl_IntStat=1}
+edge:Ctrl:g1:g1:tau{provided:Ctrl_IntStat==2 : do:Ctrl_IntStat=0;Ctrl_z=0}
+edge:Ctrl:g1:wait_for_s1:tau{provided:Ctrl_IntStat==1&&polled_Ctrl_Safe1==0&&Ctrl_grant1==1 : do:Ctrl_grant1=0;Ctrl_IntStat=0;Ctrl_z=0;Ctrl_y0=0}
+edge:Ctrl:g1:g1:tau{provided:Ctrl_IntStat==1&&polled_Ctrl_Safe1==1&&Ctrl_grant1==1&&Ctrl_y0<2000 : do:Ctrl_IntStat=2}
+edge:Ctrl:g1:wait_for_s1:tau{provided:Ctrl_IntStat==1&&polled_Ctrl_Safe1==1&&Ctrl_grant1==1&&Ctrl_y0>=2000 : do:Ctrl_grant1=0;Ctrl_IntStat=0;Ctrl_z=0;Ctrl_y0=0}
+edge:Ctrl:wait_for_s1:wait_for_s1:tau{provided:Ctrl_IntStat==0&&Ctrl_z>0 : do:polled_Ctrl_Safe1=S1_Safe;polled_Ctrl_Safe2=S2_Safe;Ctrl_IntStat=1}
+edge:Ctrl:wait_for_s1:wait_for_s1:tau{provided:Ctrl_IntStat==2 : do:Ctrl_IntStat=0;Ctrl_z=0}
+edge:Ctrl:wait_for_s1:wait_for_s1:tau{provided:Ctrl_IntStat==1&&polled_Ctrl_Safe1==0&&Ctrl_grant2==0 : do:Ctrl_IntStat=0;Ctrl_z=0}
+edge:Ctrl:wait_for_s1:wait_for_s1:tau{provided:Ctrl_IntStat==1&&polled_Ctrl_Safe1==1&&Ctrl_grant2==0&&Ctrl_y0<2000 : do:Ctrl_IntStat=2}
+edge:Ctrl:wait_for_s1:g2:tau{provided:Ctrl_IntStat==1&&polled_Ctrl_Safe1==1&&Ctrl_grant2==0&&Ctrl_y0>=2000 : do:Ctrl_grant2=1;Ctrl_IntStat=0;Ctrl_z=0;Ctrl_y0=0}
+edge:Ctrl:g2:g2:tau{provided:Ctrl_IntStat==0&&Ctrl_z>0 : do:polled_Ctrl_Safe1=S1_Safe;polled_Ctrl_Safe2=S2_Safe;Ctrl_IntStat=1}
+edge:Ctrl:g2:g2:tau{provided:Ctrl_IntStat==2 : do:Ctrl_IntStat=0;Ctrl_z=0}
+edge:Ctrl:g2:wait_for_s2:tau{provided:Ctrl_IntStat==1&&polled_Ctrl_Safe2==0&&Ctrl_grant2==1 : do:Ctrl_grant2=0;Ctrl_IntStat=0;Ctrl_z=0;Ctrl_y0=0}
+edge:Ctrl:g2:g2:tau{provided:Ctrl_IntStat==1&&polled_Ctrl_Safe2==1&&Ctrl_grant2==1&&Ctrl_y0<2000 : do:Ctrl_IntStat=2}
+edge:Ctrl:g2:wait_for_s2:tau{provided:Ctrl_IntStat==1&&polled_Ctrl_Safe2==1&&Ctrl_grant2==1&&Ctrl_y0>=2000 : do:Ctrl_grant2=0;Ctrl_IntStat=0;Ctrl_z=0;Ctrl_y0=0}
+"

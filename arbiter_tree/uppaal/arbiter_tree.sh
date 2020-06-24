@@ -24,7 +24,10 @@ echo "<?xml version='1.0' encoding='utf-8'?>
 <nta>"
 
 # Synchros
-echo "<declaration>"
+echo "<declaration>
+//Inspired from UPPAAL demo model introduced in Section 5 in:
+//Martin Wehrle, Sebastian Kupferschmid:
+//Mcta: Heuristics and Search for Timed Systems. FORMATS 2012: 252-266"
 for i in `seq 0 $(($N*2))`; do
     echo "chan req_$i;
 chan gr_$i;

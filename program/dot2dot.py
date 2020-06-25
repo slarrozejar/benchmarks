@@ -28,9 +28,12 @@ def string_to_format(n):
         attributes_values.append(initial[lb[i]+1:up[i]])
 
     # Create format string
-    format_string = initial
-    for i in range(len(lb)):
-        format_string = format_string.replace(initial[lb[i]:up[i]+1], '%s', 1)
+    if(len(lb)>0):
+        format_string = initial[0:lb[0]] + "%s"
+    else:
+        format_string = initial
+    for i in range(len(lb)-1):
+        format_string += initial[up[i]+1:lb[i+1]] + "%s"
     return format_string, attribute_to_replace, attributes_values
 
 parser = argparse.ArgumentParser()

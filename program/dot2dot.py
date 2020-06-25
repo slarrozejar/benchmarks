@@ -35,27 +35,31 @@ def string_to_format(n):
 
 def change_nodes(format_string, attribute_to_replace, attributes_values):
     for n in G.nodes():
-        n.attr[attribute_to_replace] = format_string % tuple([n.attr[a] if (n.attr[a] != None) else "" for a in attributes_values])
+        n.attr[attribute_to_replace] = format_string % tuple([G_cpy.get_node(n).attr[a] if (G_cpy.get_node(n).attr[a] != None) else "" for a in attributes_values])
 
 def change_edges(format_string, attribute_to_replace, attributes_values):
     for e in G.edges():
-        e.attr[attribute_to_replace] = format_string % tuple([e.attr[a] if (e.attr[a] != None) else "" for a in attributes_values])
+        e.attr[attribute_to_replace] = format_string % tuple([G_cpy.get_edge(e).attr[a] if (G_cpy.get_edge(e).attr[a] != None) else "" for a in attributes_values])
 
 parser = argparse.ArgumentParser()
 parser.add_argument("graph", type=str, nargs=1, help="graph to change")
-parser.add_argument("-n", "--nodes", type=str, nargs=1,
+parser.add_argument("-n", "--nodes", type=str, nargs=1, action='append',
                     help="apply changes on nodes")
-parser.add_argument("-e", "--edges", type=str, nargs=1,
+parser.add_argument("-e", "--edges", type=str, nargs=1, action='append',
                     help="apply changes on edges")
 args = parser.parse_args()
 G=pgv.AGraph(args.graph[0])
+G_cpy = G.copy()
+
 if(args.nodes):
-    n=args.nodes[0]
-    format_string, attribute_to_replace, attributes_values=string_to_format(n)
-    change_nodes(format_string, attribute_to_replace, attributes_values)
+    for n in args.nodes:
+        n=n[0]
+        format_string, attribute_to_replace, attributes_values=string_to_format(n)
+        change_nodes(format_string, attribute_to_replace, attributes_values)
 if(args.edges):
-    e=args.edges[0]
-    format_string, attribute_to_replace, attributes_values=string_to_format(e)
-    change_edges(format_string, attribute_to_replace, attributes_values)
+    for e in args.edges:
+        e=e[0]
+        format_string, attribute_to_replace, attributes_values=string_to_format(e)
+        change_edges(format_string, attribute_to_replace, attributes_values)
 
 G.write(sys.stdout)

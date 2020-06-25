@@ -34,7 +34,6 @@ def string_to_format(n):
     return format_string, attribute_to_replace, attributes_values
 
 def change_nodes(format_string, attribute_to_replace, attributes_values):
-    for n in G.nodes():
         n.attr[attribute_to_replace] = format_string % tuple([G_cpy.get_node(n).attr[a] if (G_cpy.get_node(n).attr[a] != None) else "" for a in attributes_values])
 
 def change_edges(format_string, attribute_to_replace, attributes_values):
@@ -49,17 +48,25 @@ parser.add_argument("-e", "--edges", type=str, nargs=1, action='append',
                     help="apply changes on edges")
 args = parser.parse_args()
 G=pgv.AGraph(args.graph[0])
-G_cpy = G.copy()
 
 if(args.nodes):
-    for n in args.nodes:
-        n=n[0]
-        format_string, attribute_to_replace, attributes_values=string_to_format(n)
-        change_nodes(format_string, attribute_to_replace, attributes_values)
+    for n in G.nodes():
+        m=[]
+        for node in args.nodes:
+            node=node[0]
+            format_string, attribute_to_replace, attributes_values=string_to_format(node)
+            m.append((attribute_to_replace,format_string % tuple([n.attr[a] if (n.attr[a] != None) else "" for a in attributes_values])))
+        for atr,msg in m:
+            n.attr[atr]=msg
+
 if(args.edges):
-    for e in args.edges:
-        e=e[0]
-        format_string, attribute_to_replace, attributes_values=string_to_format(e)
-        change_edges(format_string, attribute_to_replace, attributes_values)
+    for e in G.edges():
+        m=[]
+        for edge in args.edges:
+            edge=edge[0]
+            format_string, attribute_to_replace, attributes_values=string_to_format(edge)
+            m.append((attribute_to_replace,format_string % tuple([e.attr[a] if (e.attr[a] != None) else "" for a in attributes_values])))
+        for atr,msg in m:
+            e.attr[atr]=msg
 
 G.write(sys.stdout)

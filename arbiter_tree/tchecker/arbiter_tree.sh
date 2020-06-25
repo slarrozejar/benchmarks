@@ -8,6 +8,7 @@
 usage() {
     echo "Usage: $0 N";
     echo "       N depth of the tree";
+    echo "       Default: N=3";
 }
 
 if [ $# -eq 1 ]; then
@@ -33,7 +34,7 @@ echo "#clock:size:name
 #   events is a colon-separated list of process@event
 "
 
-echo "# Inspired from UPPAAL demo model introduced in Section 5 in:
+echo "# Inspired from UPPAAL model introduced in Section 5 in:
 #Martin Wehrle, Sebastian Kupferschmid:
 #Mcta: Heuristics and Search for Timed Systems. FORMATS 2012: 252-266
 "
@@ -110,12 +111,14 @@ edge:Client_$i:idle:wait:req_$(($i+$N))
 edge:Client_$i:wait:work:gr_$(($i+$N))
 edge:Client_$i:work:idle:rel_$(($i+$N))
 edge:Client_$i:bounce:idle:rel_$(($i+$N))
-edge:Client_$i:idle:bounce:gr_$(($i+$N))
-"
+edge:Client_$i:idle:bounce:gr_$(($i+$N))"
 if [ $i -eq 0 ]; then
     echo "edge:Client_$i:idle:idle:rel_$N"
 fi
+echo "
+"
 done
+
 
 # Synchros
 #index for client channel

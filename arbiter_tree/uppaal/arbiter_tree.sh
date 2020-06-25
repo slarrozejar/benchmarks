@@ -8,6 +8,7 @@
 usage() {
     echo "Usage: $0 N";
     echo "       N depth of the tree";
+    echo "       Default: N=3";
 }
 
 if [ $# -eq 1 ]; then
@@ -25,7 +26,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
 
 # Synchros
 echo "<declaration>
-//Inspired from UPPAAL demo model introduced in Section 5 in:
+//Inspired from UPPAAL model introduced in Section 5 in:
 //Martin Wehrle, Sebastian Kupferschmid:
 //Mcta: Heuristics and Search for Timed Systems. FORMATS 2012: 252-266"
 for i in `seq 0 $(($N*2))`; do

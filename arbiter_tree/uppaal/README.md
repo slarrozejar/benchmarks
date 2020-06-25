@@ -4,5 +4,5 @@ This directory contains UPPAAL models for the arbiter tree model introduced in S
 *Martin Wehrle, Sebastian Kupferschmid:
 Mcta: Heuristics and Search for Timed Systems. FORMATS 2012: 252-266*
 
-- `arbiter_tree.sh` is inspired from the UPPAAL demo model introduced in the article above.
+- `arbiter_tree.sh` is inspired from the UPPAAL model introduced in the article above.
 Run `arbiter_tree.sh` for help on how to build a UPPAAL model from the script.

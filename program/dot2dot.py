@@ -45,21 +45,33 @@ G=pgv.AGraph(args.graph[0])
 if(args.nodes):
     for n in G.nodes():
         m=[]
+        warning=""
         for node in args.nodes:
             node=node[0]
             format_string, attribute_to_replace, attributes_values=string_to_format(node)
             m.append((attribute_to_replace,format_string % tuple([n.attr[a] if (n.attr[a] != None) else "" for a in attributes_values])))
+            for a in attributes_values:
+                if(n.attr[a]==None):
+                    if(not(a in warning)):
+                        warning += a
         for atr,msg in m:
             n.attr[atr]=msg
+        print("Warning: node " + n + " has no attribute(s): " + warning)
 
 if(args.edges):
     for e in G.edges():
         m=[]
+        warning=""
         for edge in args.edges:
             edge=edge[0]
             format_string, attribute_to_replace, attributes_values=string_to_format(edge)
             m.append((attribute_to_replace,format_string % tuple([e.attr[a] if (e.attr[a] != None) else "" for a in attributes_values])))
+            for a in attributes_values:
+                if(e.attr[a]==None):
+                    if(not(a in warning)):
+                        warning += a
         for atr,msg in m:
             e.attr[atr]=msg
+        print("Warning: edge " + e + " has no attribute(s): " + warning)
 
 G.write(sys.stdout)

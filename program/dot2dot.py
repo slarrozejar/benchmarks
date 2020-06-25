@@ -33,13 +33,6 @@ def string_to_format(n):
         format_string = format_string.replace(initial[lb[i]:up[i]+1], '%s', 1)
     return format_string, attribute_to_replace, attributes_values
 
-def change_nodes(format_string, attribute_to_replace, attributes_values):
-        n.attr[attribute_to_replace] = format_string % tuple([G_cpy.get_node(n).attr[a] if (G_cpy.get_node(n).attr[a] != None) else "" for a in attributes_values])
-
-def change_edges(format_string, attribute_to_replace, attributes_values):
-    for e in G.edges():
-        e.attr[attribute_to_replace] = format_string % tuple([G_cpy.get_edge(e).attr[a] if (G_cpy.get_edge(e).attr[a] != None) else "" for a in attributes_values])
-
 parser = argparse.ArgumentParser()
 parser.add_argument("graph", type=str, nargs=1, help="graph to change")
 parser.add_argument("-n", "--nodes", type=str, nargs=1, action='append',

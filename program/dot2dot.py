@@ -51,8 +51,11 @@ parser.add_argument("-n", "--nodes", type=str, nargs=1, action='append',
 parser.add_argument("-e", "--edges", type=str, nargs=1, action='append',
                     help="apply changes on edges")
 args = parser.parse_args()
-G=pgv.AGraph(args.graph[0])
 
+if(args.graph[0] == "-"):
+    G=pgv.AGraph(sys.stdin.read())
+else:
+    G=pgv.AGraph(args.graph[0])
 if(args.nodes):
     attributes_to_replace = []
     format_strings = []

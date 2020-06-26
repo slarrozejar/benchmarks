@@ -1,0 +1,7 @@
+digraph foo {
+    n1 [color=blue];
+    n2 ;
+    n3 [color=green, label="n3"];
+    n1 -> n2 [color=orchid];
+    n3 -> n1 [color=cyan];
+}

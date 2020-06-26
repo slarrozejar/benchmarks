@@ -4,9 +4,10 @@ import argparse
 import string
 import pygraphviz as pgv
 import sys
-import warnings
 
 def get_pieces(str):
+    """ Takes a string with format a=b where a and b are two substrings and a doesn't
+    contain '=' and return substrings a and b. """
     argts = str.partition("=")
     attribute_to_replace = argts[0]
     replace_string = argts[2]
@@ -14,6 +15,9 @@ def get_pieces(str):
 
 
 def parse_format(str):
+    """ Takes a string possibly containing some %str% where str is a string without
+    spaces and creates a formatted string where all %str% are replaced by '%s'.
+    Return the formatted string and a list of all words which were between '%'. """
     initial = str
     lb = [] # lower bounds of attributes to consider
     up = [] # upper bouds of attributes to consider
@@ -43,9 +47,25 @@ def parse_format(str):
         format_string += initial[up[i]+1:lb[i+1]] + "%s"
     return format_string, attributes_values
 
-def instiate_format(elmt, format_string, attributes_values):
-    return format_string % tuple([n.attr[a] if (n.attr[a] != None) else "" for a in attributes_values])
+def instiate_format(elmt, format_string, attributes_values, unknown_attributes):
+    """ elm is either a node or an edge of a pygraphviz graph, format_string is a formatted
+    string containing (multiple) '%s' to replace, attributes values are the names of
+    attributes of elmt which will replace the '%s' in the formated string, unknown_attributes
+    is a string in which attributes from attributes_values which do not exist in elmt
+    will be added. Returns the formatted string where '%s' have been replaced by
+    the attributes values and the modified string unknown_attributes. """
+    args = []
+    for a in attributes_values:
+        if((elmt.attr[a] == None) or (elmt.attr[a] == "")):
+            args.append("")
+            if(not (a in unknown_attributes)):
+                unknown_attributes += a
+        else:
+            args.append(elmt.attr[a])
+    return format_string % tuple(args), unknown_attributes
 
+
+# Create parser
 parser = argparse.ArgumentParser()
 parser.add_argument("graph", type=str, nargs=1, help="graph to change")
 parser.add_argument("-n", "--nodes", type=str, nargs=1, action='append',
@@ -54,14 +74,18 @@ parser.add_argument("-e", "--edges", type=str, nargs=1, action='append',
                     help="apply changes on edges")
 args = parser.parse_args()
 
+# Create graph
 if(args.graph[0] == "-"):
     G=pgv.AGraph(sys.stdin.read())
 else:
     G=pgv.AGraph(args.graph[0])
+
+# Apply changes on nodes
 if(args.nodes):
     attributes_to_replace = []
     format_strings = []
     attributes = []
+    # Creation of all the formatted strings
     for node in args.nodes:
         attribute_to_replace, replace_string = get_pieces(node[0])
         format_string, attributes_values = parse_format(replace_string)
@@ -74,20 +98,19 @@ if(args.nodes):
         Nodes = args.nodes
         for i in range(len(Nodes)):
             node = Nodes[i][0]
-            m.append((attributes_to_replace[i], instiate_format(n, format_strings[i], attributes[i])))
-            for a in attributes[i]:
-                if(n.attr[a] == None):
-                    if(not (a in unknown_attributes)):
-                        unknown_attributes += a
+            string, unknown_attributes = instiate_format(n, format_strings[i], attributes[i], unknown_attributes)
+            m.append((attributes_to_replace[i], string))
         for atr,msg in m:
             n.attr[atr] = msg
         if(len(unknown_attributes) > 0):
             sys.stderr.write("Warning: node " + str(n) + " has no attribute(s): " + unknown_attributes + "\n")
 
+# Apply changes on edges
 if(args.edges):
     attributes_to_replace = []
     format_strings = []
     attributes = []
+    # Creation of all the formatted strings
     for edge in args.edges:
         attribute_to_replace, replace_string = get_pieces(edge[0])
         format_string, attributes_values = parse_format(replace_string)
@@ -98,13 +121,10 @@ if(args.edges):
         m = []
         unknown_attributes = ""
         Edges = args.edges
-    for i in range(len(Edges)):
-        node = Edges[i][0]
-        m.append((attributes_to_replace[i], instiate_format(e, format_strings[i], attributes[i])))
-        for a in attributes[i]:
-            if(e.attr[a] == None):
-                if(not (a in unknown_attributes)):
-                    unknown_attributes += a
+        for i in range(len(Edges)):
+            node = Edges[i][0]
+            string, unknown_attributes = instiate_format(e, format_strings[i], attributes[i], unknown_attributes)
+            m.append((attributes_to_replace[i], string))
         for atr,msg in m:
             e.attr[atr]=msg
         if(len(unknown_attributes) > 0):

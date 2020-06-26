@@ -2,6 +2,7 @@ import argparse
 import string
 import pygraphviz as pgv
 import sys
+import warnings
 
 def string_to_format(n):
     argts = n.partition("=")
@@ -59,7 +60,7 @@ if(args.nodes):
                         warning += a
         for atr,msg in m:
             n.attr[atr]=msg
-        print("Warning: node " + n + " has no attribute(s): " + warning)
+        warnings.warn("node " + n + " has no attribute(s): " + warning)
 
 if(args.edges):
     for e in G.edges():
@@ -75,6 +76,6 @@ if(args.edges):
                         warning += a
         for atr,msg in m:
             e.attr[atr]=msg
-        print("Warning: edge " + e + " has no attribute(s): " + warning)
+        warnings.warn("edge " + e + " has no attribute(s): " + warning)
 
 G.write(sys.stdout)

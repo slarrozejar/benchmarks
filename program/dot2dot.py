@@ -4,25 +4,29 @@ import pygraphviz as pgv
 import sys
 import warnings
 
-def string_to_format(n):
-    argts = n.partition("=")
+def get_pieces(str):
+    argts = str.partition("=")
     attribute_to_replace = argts[0]
-    initial = argts[2]
-    n = argts[2]
+    replace_string = argts[2]
+    return attribute_to_replace, replace_string
+
+
+def parse_format(str):
+    initial = str
     lb = [] # lower bounds of attributes to consider
     up = [] # upper bouds of attributes to consider
     i = 0
 
     # Get lower and upper bounds
-    while(n!="" and n.find("%")!=-1):
-        tmp = n.find("%")
+    while(str!="" and str.find("%")!=-1):
+        tmp = str.find("%")
         lb.append(i+tmp)
         i += tmp + 1
-        n=n[tmp+1:]
-        tmp = n.find("%")
+        str=str[tmp+1:]
+        tmp = str.find("%")
         up.append(i+tmp)
         i += tmp + 1
-        n=n[tmp+1:]
+        str=str[tmp+1:]
 
     attributes_values = [] # Names of attributes' values to consider
     for i in range(len(lb)):
@@ -35,7 +39,10 @@ def string_to_format(n):
         format_string = initial
     for i in range(len(lb)-1):
         format_string += initial[up[i]+1:lb[i+1]] + "%s"
-    return format_string, attribute_to_replace, attributes_values
+    return format_string, attributes_values
+
+def instiate_format(elmt, format_string, attributes_values):
+    return format_string % tuple([n.attr[a] if (n.attr[a] != None) else "" for a in attributes_values])
 
 parser = argparse.ArgumentParser()
 parser.add_argument("graph", type=str, nargs=1, help="graph to change")
@@ -47,35 +54,55 @@ args = parser.parse_args()
 G=pgv.AGraph(args.graph[0])
 
 if(args.nodes):
+    attributes_to_replace = []
+    format_strings = []
+    attributes = []
+    for node in args.nodes:
+        attribute_to_replace, replace_string = get_pieces(node[0])
+        format_string, attributes_values = parse_format(replace_string)
+        attributes_to_replace.append(attribute_to_replace)
+        format_strings.append(format_string)
+        attributes.append(attributes_values)
     for n in G.nodes():
-        m=[]
-        warning=""
-        for node in args.nodes:
-            node=node[0]
-            format_string, attribute_to_replace, attributes_values=string_to_format(node)
-            m.append((attribute_to_replace,format_string % tuple([n.attr[a] if (n.attr[a] != None) else "" for a in attributes_values])))
-            for a in attributes_values:
-                if(n.attr[a]==None):
-                    if(not(a in warning)):
-                        warning += a
+        m = []
+        unknown_attributes = ""
+        Nodes = args.nodes
+        for i in range(len(Nodes)):
+            node = Nodes[i][0]
+            m.append((attributes_to_replace[i], instiate_format(n, format_strings[i], attributes[i])))
+            for a in attributes[i]:
+                if(n.attr[a] == None):
+                    if(not (a in unknown_attributes)):
+                        unknown_attributes += a
         for atr,msg in m:
-            n.attr[atr]=msg
-        warnings.warn("node " + n + " has no attribute(s): " + warning)
+            n.attr[atr] = msg
+        if(len(unknown_attributes) > 0):
+            warnings.warn("node " + str(n) + " has no attribute(s): " + unknown_attributes)
 
 if(args.edges):
+    attributes_to_replace = []
+    format_strings = []
+    attributes = []
+    for edge in args.edges:
+        attribute_to_replace, replace_string = get_pieces(edge[0])
+        format_string, attributes_values = parse_format(replace_string)
+        attributes_to_replace.append(attribute_to_replace)
+        format_strings.append(format_string)
+        attributes.append(attributes_values)
     for e in G.edges():
-        m=[]
-        warning=""
-        for edge in args.edges:
-            edge=edge[0]
-            format_string, attribute_to_replace, attributes_values=string_to_format(edge)
-            m.append((attribute_to_replace,format_string % tuple([e.attr[a] if (e.attr[a] != None) else "" for a in attributes_values])))
-            for a in attributes_values:
-                if(e.attr[a]==None):
-                    if(not(a in warning)):
-                        warning += a
+        m = []
+        unknown_attributes = ""
+        Edges = args.edges
+    for i in range(len(Edges)):
+        node = Edges[i][0]
+        m.append((attributes_to_replace[i], instiate_format(e, format_strings[i], attributes[i])))
+        for a in attributes[i]:
+            if(e.attr[a] == None):
+                if(not (a in unknown_attributes)):
+                    unknown_attributes += a
         for atr,msg in m:
             e.attr[atr]=msg
-        warnings.warn("edge " + e + " has no attribute(s): " + warning)
+        if(len(unknown_attributes) > 0):
+            warnings.warn("edge " + str(e) + " has no attribute(s): " + unknown_attributes)
 
 G.write(sys.stdout)

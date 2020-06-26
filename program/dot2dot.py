@@ -80,7 +80,7 @@ if(args.nodes):
         for atr,msg in m:
             n.attr[atr] = msg
         if(len(unknown_attributes) > 0):
-            warnings.warn("node " + str(n) + " has no attribute(s): " + unknown_attributes)
+            sys.stderr.write("Warning: node " + str(n) + " has no attribute(s): " + unknown_attributes + "\n")
 
 if(args.edges):
     attributes_to_replace = []
@@ -106,6 +106,6 @@ if(args.edges):
         for atr,msg in m:
             e.attr[atr]=msg
         if(len(unknown_attributes) > 0):
-            warnings.warn("edge " + str(e) + " has no attribute(s): " + unknown_attributes)
+            sys.stderr.write("Warning: edge " + str(e) + " has no attribute(s): " + unknown_attributes + "\n")
 
 G.write(sys.stdout)

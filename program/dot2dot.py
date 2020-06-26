@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 import argparse
 import string
 import pygraphviz as pgv

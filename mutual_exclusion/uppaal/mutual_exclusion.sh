@@ -42,7 +42,7 @@ echo "<?xml version='1.0' encoding='utf-8'?>
 # Global variables
 
 echo "	<declaration>
-//Inspired from UPPAAL demo model introduced in Section 5 in:
+//Inspired from the UPPAAL model introduced in Section 5 in:
 //Martin Wehrle, Sebastian Kupferschmid:
 //Mcta: Heuristics and Search for Timed Systems. FORMATS 2012: 252-266"
 if [ $N -eq 1 ]; then

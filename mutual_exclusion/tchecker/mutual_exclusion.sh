@@ -47,7 +47,7 @@ echo "#clock:size:name
 #   events is a colon-separated list of process@event
 "
 
-echo "# Inspired from UPPAAL demo model introduced in Section 5 in:
+echo "# Inspired from the UPPAAL model introduced in Section 5 in:
 #Martin Wehrle, Sebastian Kupferschmid:
 #Mcta: Heuristics and Search for Timed Systems. FORMATS 2012: 252-266
 "

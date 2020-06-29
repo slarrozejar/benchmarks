@@ -22,5 +22,25 @@ def test_edge():
     else:
         print("Test edge: Failed")
 
+def test_nofile_node():
+    os.system('cat graph.dot | ./dot2dot.py -n label="%color%" "-" > test.dot')
+    test = pgv.AGraph("test.dot")
+    result = pgv.AGraph("test_node.dot")
+    if(test == result):
+        print("Test node: Passed")
+    else:
+        print("Test node: Failed")
+
+def test_nofile_edge():
+    os.system('cat graph.dot | ./dot2dot.py -e label="%color%" "-" > test.dot')
+    test = pgv.AGraph("test.dot")
+    result = pgv.AGraph("test_edge.dot")
+    if(test == result):
+        print("Test edge: Passed")
+    else:
+        print("Test edge: Failed")
+
 test_node()
 test_edge()
+test_nofile_node()
+test_nofile_edge()

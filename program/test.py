@@ -58,9 +58,29 @@ def test_inversion():
     else:
         print("\033[31m" + "Test inversion: Failed")
 
+def test_multiple_nodes():
+    os.system('./dot2dot.py graph.dot -n a=dog -n b=cat > test.dot 2>/dev/null')
+    test = pgv.AGraph("test.dot")
+    result = pgv.AGraph("test_multiple_nodes.dot")
+    if(test == result):
+        print("\033[32m" + "Test test multiple nodes: Passed")
+    else:
+        print("\033[31m" + "Test test multiple nodes: Failed")
+
+def test_multiple_edges():
+    os.system('./dot2dot.py graph.dot -e a=dog -e b=cat > test.dot 2>/dev/null')
+    test = pgv.AGraph("test.dot")
+    result = pgv.AGraph("test_multiple_edges.dot")
+    if(test == result):
+        print("\033[32m" + "Test test multiple edges: Passed")
+    else:
+        print("\033[31m" + "Test test multiple edges: Failed")
+
 test_node()
 test_edge()
 test_nofile_node()
 test_nofile_edge()
 test_format_string()
+test_multiple_nodes()
+test_multiple_edges()
 test_inversion()

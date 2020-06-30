@@ -4,6 +4,15 @@ import pygraphviz as pgv
 import sys
 import os
 
+def test_nochange():
+    os.system('./dot2dot.py graph.dot > test.dot 2>/dev/null')
+    test = pgv.AGraph("test.dot")
+    result = pgv.AGraph("graph.dot")
+    if(test == result):
+        print("\033[32m" + "Test no change: Passed")
+    else:
+        print("Test no change: Failed")
+
 def test_node():
     os.system('./dot2dot.py -n label="%color%" graph.dot > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
@@ -76,6 +85,7 @@ def test_multiple_edges():
     else:
         print("\033[31m" + "Test test multiple edges: Failed")
 
+test_nochange()
 test_node()
 test_edge()
 test_nofile_node()

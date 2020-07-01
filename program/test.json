@@ -1,0 +1,13 @@
+{
+    "condition-edge" : {
+        "a" : "koala*"
+    },
+    "condition-node" : {
+        "b" : "cat"
+    },
+    "dotStyle" : {
+        "color" : "aquamarine",
+        "style" : "filled",
+        "shape" : "polygon"
+    }
+}

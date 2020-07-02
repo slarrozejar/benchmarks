@@ -7,7 +7,9 @@ import json
 
 def get_infos(dct, cond):
     """ From a dictionnary dct containing attributes with their values, extracts
-    a list of pairs (attr, val) """
+    a list of pairs (attr, val). The elements contained in dct must be strings.
+    If cond is 'True', the values 'val' are stored as regular expressions and as
+    strings otherwise. """
     res = []
     for elmt in dct:
         if cond:
@@ -27,7 +29,7 @@ def get_pieces(str):
 
 def parse_format(str):
     """ Takes a string possibly containing substrings separated by '&&'. The substrings
-    have format "attr=val". Return a list of pairs (attr, val). """
+    have format "attr=val" and don't contain "&&". Returns a list of pairs (attr, val). """
     substr_list = str.split("&&")
     res = []
     for s in substr_list:
@@ -57,13 +59,16 @@ def apply_changes(elmt, to_change):
 
 # Create parser
 parser = argparse.ArgumentParser()
-parser.add_argument("graph", type=str, nargs=1, help="graph to change")
-parser.add_argument("-s", "--style", type=str, nargs=1, action='append',
-                    help="Apply changes specified in the file given with json format")
+parser.add_argument("graph", type=str, nargs=1, help="Graph to change")
+parser.add_argument("-s", "--style", type=str, nargs=1,
+                    help=""" Applies changes specified in a json file given as
+                    parameter. """)
 parser.add_argument("-sn", "--style_nodes", nargs='+', type=str, action='append',
-                    help="if condition given by the first argument is verified, aplies changes specified by the second argument on nodes")
+                    help=""" If the condition(s) given by the first argument is/are verified,
+                     applies changes specified by the following arguments on nodes. """)
 parser.add_argument("-se", "--style_edges", type=str, nargs='+', action='append',
-                    help="if condition given by the first argument is verified, aplies changes specified by the second argument on edges")
+                    help=""" If condition(s) given by the first argument is/are verified,
+                     applies changes specified by the following arguments on edges. """)
 args = parser.parse_args()
 
 # Create graph
@@ -94,7 +99,7 @@ if(args.style_nodes):
         # Set new values to attributes
         apply_changes(n, to_change)
 
-# Apply changes on edges 
+# Apply changes on edges
 if(args.style_edges):
     cond = []
     changes = []
@@ -119,48 +124,38 @@ if(args.style_edges):
 # Apply changes with json file
 if(args.style):
     # Exctract datas from json file
-    styles = []
-    for s in args.style:
-        with open(s[0]) as json_data:
-            styles.append(json.load(json_data))
-    cond_nodes = []
-    cond_edges = []
-    changes = []
-    # Create lists of conditions to verify fo edges and nodes and list of changes to apply
-    for dct in styles:
-        if "condition-node" in dct:
-            cond_nodes.append(get_infos(dct["condition-node"], True))
+    with open(args.style[0]) as json_data:
+        dct = json.load(json_data)
+    node_changes = []
+    edge_changes = []
+    # Build a list of changes to apply on nodes and a list of changes to apply on edges
+    for elmt in dct:
+        cond = get_infos(dct[elmt]["condition"], True)
+        style = get_infos(dct[elmt]["dotStyle"], False)
+        if(dct[elmt]["object"] == "node"):
+            node_changes.append((cond, style))
         else:
-            cond_nodes.append(None)
-        if "condition-edge" in dct:
-            cond_edges.append(get_infos(dct["condition-edge"], True))
-        else:
-            cond_edges.append(None)
-        if not "dotStyle" in dct:
-            print("Error no style specified")
-            sys.exit()
-        changes.append(get_infos(dct["dotStyle"], False))
+            edge_changes.append((cond, style))
 
     # Apply necessary changes on nodes
     for n in G.nodes():
         to_change = []
-        for i in range(len(styles)):
-            if(verify_cond(n, cond_nodes[i])):
-                # Store the attributes to replace and the value to give them
-                to_change = to_change + changes[i]
+        # Store the attributes to replace and the value to give them
+        for cond, style in node_changes:
+            if(verify_cond(n, cond)):
+                to_change = to_change + style
         # Set new values to attributes
         apply_changes(n, to_change)
 
     # Apply necessary changes on edges
     for e in G.edges():
         to_change = []
-        for i in range(len(styles)):
-            if(verify_cond(e, cond_edges[i])):
-                # Store the attributes to replace and the value to give them
-                to_change = to_change + changes[i]
+        # Store the attributes to replace and the value to give them
+        for cond, style in edge_changes:
+            if(verify_cond(e, cond)):
+                to_change = to_change + style
         # Set new values to attributes
         apply_changes(e, to_change)
-
 
 
 G.write(sys.stdout)

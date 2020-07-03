@@ -10,7 +10,7 @@ def test_nochange():
     if(test == result):
         print("\033[32m" + "Test no change: Passed")
     else:
-        print("Test no change: Failed")
+        print("\033[31m" + "Test no change: Failed")
 
 def test_node():
     os.system('./dot2dot.py -n label="%color%" graph.dot > test.dot 2>/dev/null')
@@ -19,7 +19,7 @@ def test_node():
     if(test == result):
         print("\033[32m" + "Test node: Passed")
     else:
-        print("Test node: Failed")
+        print("\033[31m" +"Test node: Failed")
 
 def test_edge():
     os.system('./dot2dot.py -e label="%color%" graph.dot > test.dot 2>/dev/null')

@@ -30,15 +30,12 @@ def get_pieces(str):
 def parse_format(str):
     """ Takes a string possibly containing substrings separated by '&&'. The substrings
     have format "attr=val" and don't contain "&&". Returns a list of pairs (attr, val). """
-    print(str)
     substr_list = str.split("&&")
-    print(substr_list)
     res = []
     for s in substr_list:
         attr, val = get_pieces(s)
         val=re.compile(val)
         res.append((attr, val))
-    print(res)
     return res
 
 def verify_cond(elmt, cond_list):

@@ -88,12 +88,12 @@ edge:InOut:init:init:poll_g$pid{provided:g$pid==1&&x>0}
 edge:InOut:init:init:poll_not_g$pid{provided:g$pid==0&&x>0}
 edge:InOut:init:init:poll_unsafe$pid{provided:safe$pid==0&&x>0}
 edge:InOut:init:init:poll_safe$pid{provided:safe$pid==1&&x>0}
-edge:InOut:init:init:set_g$pid{do:g$pid=1;x=0}
-"
+edge:InOut:init:init:set_g$pid{do:g$pid=1;x=0}"
 done
 
 for pid in `seq 1 $N`; do
-    echo "# Process A$pid
+    echo "
+# Process A$pid
 process:A$pid
 clock:1:y_$pid
 clock:1:z_$pid
@@ -112,11 +112,11 @@ edge:A$pid:Unsafe:Unsafe:tau{provided:pc_$pid==1 : do:pc_$pid=3}
 edge:A$pid:Unsafe:Unsafe:tau{provided:pc_$pid==3 : do:pc_$pid=0;z_$pid=0}
 edge:A$pid:Unsafe:Unsafe:poll_not_g$pid{provided:pc_$pid==0&&z_$pid>0 : do:pc_$pid=1;polled_g$pid=0}
 edge:A$pid:Unsafe:Unsafe:poll_g$pid{provided:pc_$pid==0&&z_$pid>0 : do:pc_$pid=1;polled_g$pid=1}
-"
+edge:A$pid:Unsafe:Safe:set_safe$pid{provided:pc_$pid==3 : do:pc_$pid=0;y_$pid=0;z_$pid=0}"
 done
 
-pid=1
-echo "# Process Ctrl
+echo "
+# Process Ctrl
 process:Ctrl
 clock:1:y
 clock:1:z
@@ -126,14 +126,16 @@ location:Ctrl:init{initial: : committed:}"
 for pid in `seq 1 $N`; do
 echo "location:Ctrl:W$pid{invariant:z<=$cycle}
 location:Ctrl:C$pid{invariant:z<=$cycle}
-location:Ctrl:G$pid{invariant:z<=$cycle}
-edge:Ctrl:init:W$pid:set_not_g$pid
-edge:Ctrl:W$pid:W$pid:tau{provided:pc==3&&polled_safe==0 : do:pc=0;z=0}
+location:Ctrl:G$pid{invariant:z<=$cycle}"
+done
+echo "edge:Ctrl:init:W$pid:set_not_g1"
+for pid in `seq 1 $N`; do
+    echo "edge:Ctrl:W$pid:W$pid:tau{provided:pc==3&&polled_safe==0 : do:pc=0;z=0}
 edge:Ctrl:W$pid:W$pid:tau{provided:pc==1 : do:pc=3}
 edge:Ctrl:W$pid:W$pid:poll_safe$pid{provided:pc==0&&z>0 : do:pc=1;polled_safe=1}
 edge:Ctrl:W$pid:W$pid:poll_unsafe$pid{provided:pc==0&&z>0 : do:pc=1;polled_safe=0}
 edge:Ctrl:W$pid:C$pid:tau{provided:pc==3&&polled_safe==1 : do:pc=0;y=0;z=0}
-edge:Ctrl:W$pid:C$pid:tau{provided:pc==3&&polled_safe==0 : do:pc=0;y=0;z=0}
+edge:Ctrl:C$pid:W$pid:tau{provided:pc==3&&polled_safe==0 : do:pc=0;y=0;z=0}
 edge:Ctrl:C$pid:C$pid:poll_safe$pid{provided:pc==0&&z>0 : do:pc=1;polled_safe=1}
 edge:Ctrl:C$pid:C$pid:poll_unsafe$pid{provided:pc==0&&z>0 : do:pc=1;polled_safe=0}
 edge:Ctrl:C$pid:C$pid:tau{provided:pc==1&&y<=$mutex_delay&&polled_safe==1 : do:pc=2}
@@ -145,20 +147,20 @@ edge:Ctrl:G$pid:G$pid:tau{provided:pc==3&&polled_safe==1 : do:pc=0;z=0}
 edge:Ctrl:G$pid:G$pid:tau{provided:pc==1 : do:pc=3}
 edge:Ctrl:G$pid:G$pid:poll_unsafe$pid{provided:pc==0&&z>0 : do:pc=1;polled_safe=0}
 edge:Ctrl:G$pid:G$pid:poll_safe$pid{provided:pc==0&&z>0 : do:pc=1;polled_safe=1}
-edge:Ctrl:C$pid:G$pid:set_g$((($pid%$N)+1)){provided:pc==3&&polled_safe==1 : do:pc=0;y=0;z=0}
-"
+edge:Ctrl:C$pid:G$((($pid%$N)+1)):set_g$((($pid%$N)+1)){provided:pc==3&&polled_safe==1 : do:pc=0;y=0;z=0}"
 done
 
+echo "
+"
 
 # Synchros
 for pid in `seq 1 $N`; do
     echo "sync:Ctrl@set_g$pid:InOut@set_g$pid
 sync:Ctrl@set_not_g$pid:InOut@set_not_g$pid
-sync:Ctrl@set_g$pid:InOut@poll_g$pid
-sync:Ctrl@set_not_g$pid:InOut@poll_not_g$pid
+sync:Ctrl@poll_safe$pid:InOut@poll_safe$pid
+sync:Ctrl@poll_unsafe$pid:InOut@poll_unsafe$pid
 sync:A$pid@set_safe$pid:InOut@set_safe$pid
 sync:A$pid@set_unsafe$pid:InOut@set_unsafe$pid
-sync:A$pid@set_safe$pid:InOut@poll_safe$pid
-sync:A$pid@set_unsafe$pid:InOut@poll_unsafe$pid
-"
+sync:A$pid@poll_g$pid:InOut@poll_g$pid
+sync:A$pid@poll_not_g$pid:InOut@poll_not_g$pid"
 done

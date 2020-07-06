@@ -39,7 +39,17 @@ def test_line_multiple_nodes():
     else:
         print("\033[31m" + "Test line multiple nodes: Failed")
 
+def test_file():
+    os.system('(./dotStyle.py graph.dot -s test.json) > test.dot 2>/dev/null')
+    test = pgv.AGraph("test.dot")
+    result = pgv.AGraph("test_file.dot")
+    if(test == result):
+        print("\033[32m" + "Test file: Passed")
+    else:
+        print("\033[31m" + "Test file: Failed")
+
 test_nochange()
 test_line_node()
 test_line_edge()
 test_line_multiple_nodes()
+test_file()

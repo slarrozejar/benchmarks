@@ -1,13 +1,25 @@
 {
-    "condition-edge" : {
-        "a" : "koala*"
-    },
-    "condition-node" : {
-        "b" : "cat"
-    },
-    "dotStyle" : {
+   "style1" : {
+     "object" : "node",
+     "condition" : {
+       "a" : "[1-10]*",
+       "b" : "3"
+     },
+     "dotStyle" : {
         "color" : "aquamarine",
         "style" : "filled",
         "shape" : "polygon"
+        }
+    },
+
+    "style2" : {
+        "object" : "edge",
+        "condition" : {
+            "b" : "2"
+        },
+        "dotStyle" : {
+            "color" : "yellow",
+            "splines" : "curved"
+        }
     }
 }

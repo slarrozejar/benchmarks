@@ -95,24 +95,24 @@ for pid in `seq 1 $N`; do
     echo "
 # Process A$pid
 process:A$pid
-clock:1:y_$pid
-clock:1:z_$pid
+clock:1:y$pid
+clock:1:z$pid
 int:1:0:1:1:polled_g$pid
-int:1:0:3:0:pc_$pid
+int:1:0:3:0:pc$pid
 location:A$pid:init{initial: : committed:}
-location:A$pid:Safe{invariant:z<=$cycle}
-location:A$pid:Unsafe{invariant:z<=$cycle}
+location:A$pid:Safe{invariant:z$pid<=$cycle}
+location:A$pid:Unsafe{invariant:z$pid<=$cycle}
 edge:A$pid:init:Safe:set_safe$pid
-edge:A$pid:Safe:Safe:poll_g$pid{provided:pc_$pid==0&&z_$pid>0 : do:pc_$pid=1;polled_g$pid=1}
-edge:A$pid:Safe:Safe:poll_not_g$pid{provided:pc_$pid==0&&z_$pid>0 : do:pc_$pid=1;polled_g$pid=0}
-edge:A$pid:Safe:Safe:tau{provided:pc_$pid==1 : do:pc_$pid=3}
-edge:A$pid:Safe:Safe:tau{provided:pc_$pid==3&&polled_g$pid==0 : do:pc_$pid=0;z_$pid=0}
-edge:A$pid:Safe:Unsafe:set_unsafe$pid{provided:pc_$pid==3&&polled_g$pid==1 : do:pc_$pid=0;y_$pid=0;z_$pid=0}
-edge:A$pid:Unsafe:Unsafe:tau{provided:pc_$pid==1 : do:pc_$pid=3}
-edge:A$pid:Unsafe:Unsafe:tau{provided:pc_$pid==3 : do:pc_$pid=0;z_$pid=0}
-edge:A$pid:Unsafe:Unsafe:poll_not_g$pid{provided:pc_$pid==0&&z_$pid>0 : do:pc_$pid=1;polled_g$pid=0}
-edge:A$pid:Unsafe:Unsafe:poll_g$pid{provided:pc_$pid==0&&z_$pid>0 : do:pc_$pid=1;polled_g$pid=1}
-edge:A$pid:Unsafe:Safe:set_safe$pid{provided:pc_$pid==3 : do:pc_$pid=0;y_$pid=0;z_$pid=0}"
+edge:A$pid:Safe:Safe:poll_g$pid{provided:pc$pid==0&&z$pid>0 : do:pc$pid=1;polled_g$pid=1}
+edge:A$pid:Safe:Safe:poll_not_g$pid{provided:pc$pid==0&&z$pid>0 : do:pc$pid=1;polled_g$pid=0}
+edge:A$pid:Safe:Safe:tau{provided:pc$pid==1 : do:pc$pid=3}
+edge:A$pid:Safe:Safe:tau{provided:pc$pid==3&&polled_g$pid==0 : do:pc$pid=0;z$pid=0}
+edge:A$pid:Safe:Unsafe:set_unsafe$pid{provided:pc$pid==3&&polled_g$pid==1 : do:pc$pid=0;y$pid=0;z$pid=0}
+edge:A$pid:Unsafe:Unsafe:tau{provided:pc$pid==1 : do:pc$pid=3}
+edge:A$pid:Unsafe:Unsafe:tau{provided:pc$pid==3 : do:pc$pid=0;z$pid=0}
+edge:A$pid:Unsafe:Unsafe:poll_not_g$pid{provided:pc$pid==0&&z$pid>0 : do:pc$pid=1;polled_g$pid=0}
+edge:A$pid:Unsafe:Unsafe:poll_g$pid{provided:pc$pid==0&&z$pid>0 : do:pc$pid=1;polled_g$pid=1}
+edge:A$pid:Unsafe:Safe:set_safe$pid{provided:pc$pid==3 : do:pc$pid=0;y$pid=0;z$pid=0}"
 done
 
 echo "

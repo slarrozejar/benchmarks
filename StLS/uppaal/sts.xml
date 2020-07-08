@@ -15,8 +15,8 @@ chan poll_go[pid_t], poll_wait[pid_t], poll_stop[pid_t];
 chan poll_EC_drive[pid_t], poll_not_EC_drive[pid_t], poll_EC_not_drive[pid_t], poll_not_EC_not_drive[pid_t];</declaration>
 	<template>
 		<name>InOut</name>
-		<declaration>int EC[pid_t];
-int CL[pid_t];
+		<declaration>int[0,N] EC[pid_t];
+int[0,N] CL[pid_t];
 bool drive[pid_t];
 bool go[pid_t];
 bool wait[pid_t];
@@ -133,7 +133,7 @@ clock x;</declaration>
 			<target ref="id0"/>
 			<label kind="select" x="144" y="42">i : pid_t</label>
 			<label kind="synchronisation" x="204" y="42">set_CL[i]?</label>
-			<label kind="assignment" x="280" y="42">CL[i]:=CL[i]+1, EC[i]:=EC[i]-1</label>
+			<label kind="assignment" x="280" y="42">CL[i]:=(CL[i] &lt; N ? CL[i]+1 : 0), EC[i]:=(EC[i] &gt; 0 ? EC[i]-1 : 0)</label>
 			<nail x="136" y="42"/>
 			<nail x="128" y="68"/>
 		</transition>
@@ -142,7 +142,7 @@ clock x;</declaration>
 			<target ref="id0"/>
 			<label kind="select" x="144" y="0">i : pid_t</label>
 			<label kind="synchronisation" x="204" y="0">set_EC[i]?</label>
-			<label kind="assignment" x="280" y="0">EC[i]:=EC[i]+1, CL[i]:=CL[i]-1</label>
+			<label kind="assignment" x="280" y="0">EC[i]:=(EC[i] &lt; N ? EC[i]+1 : 0), CL[i]:=(CL[i] &gt; 0 ? CL[i]-1 : 0)</label>
 			<nail x="136" y="0"/>
 			<nail x="136" y="25"/>
 		</transition>

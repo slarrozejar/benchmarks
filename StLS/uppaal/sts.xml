@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
 <nta>
-	<declaration>// Place global declarations here.
+	<declaration>// Inspired from the model introduced in Section 3.3.3 in
+// Henning Dierks, "Time, Abstraction and Heuristics", 
+// Habilitation Thesis, Department of Computer Science, 
+// University of Oldenburg, 2005 (http://www.avacs.org/Publikationen/Open/dierks05.pdf)
 
 const int N = 2;        // Number of processes
 const int CYCLE = 10;

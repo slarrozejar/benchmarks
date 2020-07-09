@@ -169,7 +169,7 @@ clock x;</declaration>
 			<target ref="id0"/>
 			<label kind="select" x="93" y="-127">i : pid_t</label>
 			<label kind="synchronisation" x="153" y="-127">set_stop[i]?</label>
-			<label kind="assignment" x="238" y="-127">stop[i]:=true,x:=0</label>
+			<label kind="assignment" x="238" y="-127">stop[i]:=true,x:=0,go[i]:=false,wait[i]:=false</label>
 			<nail x="68" y="-127"/>
 			<nail x="93" y="-110"/>
 		</transition>
@@ -178,7 +178,7 @@ clock x;</declaration>
 			<target ref="id0"/>
 			<label kind="select" x="42" y="-161">i : pid_t</label>
 			<label kind="synchronisation" x="102" y="-161">set_wait[i]?</label>
-			<label kind="assignment" x="187" y="-161">wait[i]:=true,x:=0</label>
+			<label kind="assignment" x="187" y="-161">wait[i]:=true,go[i]:=false,x:=0,stop[i]:=false</label>
 			<nail x="25" y="-144"/>
 			<nail x="51" y="-136"/>
 		</transition>
@@ -187,7 +187,7 @@ clock x;</declaration>
 			<target ref="id0"/>
 			<label kind="select" x="-34" y="-221">i : pid_t</label>
 			<label kind="synchronisation" x="-34" y="-204">set_go[i]?</label>
-			<label kind="assignment" x="-34" y="-187">go[i]:=true,
+			<label kind="assignment" x="-34" y="-187">go[i]:=true,wait[i]:=false,stop[i]:=false,
     x:=0</label>
 			<nail x="-25" y="-144"/>
 			<nail x="8" y="-144"/>
@@ -410,7 +410,7 @@ clock z;</declaration>
 			<target ref="id7"/>
 			<label kind="guard" x="136" y="-68">pc==3 &amp;&amp; polled_EC==true &amp;&amp; polled_drive==true</label>
 			<label kind="synchronisation" x="110" y="-51">set_go[pid]!</label>
-			<label kind="assignment" x="102" y="-34">pc:=0,y:=0,z:=0</label>
+			<label kind="assignment" x="93" y="-34">pc:=0,y:=0,z:=0</label>
 		</transition>
 		<transition>
 			<source ref="id6"/>
@@ -499,7 +499,7 @@ clock z;</declaration>
 		<transition>
 			<source ref="id5"/>
 			<target ref="id5"/>
-			<label kind="guard" x="-204" y="-348">pc==0&amp;&amp;z&gt;0</label>
+			<label kind="guard" x="-204" y="-348">pc==0 &amp;&amp; z&gt;0</label>
 			<label kind="synchronisation" x="-204" y="-331">poll_EC_not_drive[pid]!</label>
 			<label kind="assignment" x="-204" y="-314">pc:=1,polled_EC:=true,polled_drive:=false</label>
 			<nail x="-170" y="-279"/>
@@ -508,7 +508,7 @@ clock z;</declaration>
 		<transition>
 			<source ref="id5"/>
 			<target ref="id5"/>
-			<label kind="guard" x="-314" y="-331">pc==0&amp;&amp;z&gt;0</label>
+			<label kind="guard" x="-314" y="-331">pc==0 &amp;&amp; z&gt;0</label>
 			<label kind="synchronisation" x="-365" y="-314">poll_not_EC_drive[pid]!</label>
 			<label kind="assignment" x="-467" y="-297">pc:=1,polled_EC:=false,polled_drive:=true</label>
 			<nail x="-204" y="-263"/>

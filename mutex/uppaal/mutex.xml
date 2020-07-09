@@ -7,9 +7,9 @@
 // Comput. 16(2): 104-120 (2004)
 
 const int N = 2;        // Number of processes
-const int cycle = 1;
-typedef int[1,N] pid_t; // Time of a cycle in a state
-
+const int CYCLE = 1;   // Time of a cycle in a state
+const int MUTEX_DELAY = 2; // upper bound of y
+typedef int[1,N] pid_t;
 
 chan set_g[pid_t];
 chan set_not_g[pid_t];
@@ -110,11 +110,11 @@ clock y;
 clock z;</declaration>
 		<location id="id1" x="-136" y="59">
 			<name x="-195" y="17">Unsafe</name>
-			<label kind="invariant" x="-119" y="17">z&lt;=1</label>
+			<label kind="invariant" x="-119" y="17">z&lt;=CYCLE</label>
 		</location>
 		<location id="id2" x="-136" y="-161">
 			<name x="-178" y="-178">Safe</name>
-			<label kind="invariant" x="-187" y="-153">z&lt;=1</label>
+			<label kind="invariant" x="-221" y="-161">z&lt;=CYCLE</label>
 		</location>
 		<location id="id3" x="-331" y="-161">
 			<committed/>
@@ -217,21 +217,21 @@ bool polled_safe := true; // polled value of input safe
 clock y;
 clock z;
 pid_t pid := 1;
-const int mutex_delay = 2; // upper bound of y</declaration>
+</declaration>
 		<location id="id4" x="612" y="59">
 			<committed/>
 		</location>
 		<location id="id5" x="425" y="-221">
 			<name x="399" y="-212">G</name>
-			<label kind="invariant" x="382" y="-195">z&lt;=1</label>
+			<label kind="invariant" x="348" y="-195">z&lt;=CYCLE</label>
 		</location>
 		<location id="id6" x="102" y="59">
 			<name x="120" y="34">C</name>
-			<label kind="invariant" x="119" y="17">z&lt;=1</label>
+			<label kind="invariant" x="119" y="17">z&lt;=CYCLE</label>
 		</location>
 		<location id="id7" x="425" y="59">
-			<name x="399" y="17">W</name>
-			<label kind="invariant" x="382" y="34">z&lt;=1</label>
+			<name x="399" y="8">W</name>
+			<label kind="invariant" x="348" y="25">z&lt;=CYCLE</label>
 		</location>
 		<init ref="id4"/>
 		<transition>
@@ -310,7 +310,7 @@ const int mutex_delay = 2; // upper bound of y</declaration>
 		<transition>
 			<source ref="id6"/>
 			<target ref="id6"/>
-			<label kind="guard" x="-290" y="85">pc==1 &amp;&amp; y&gt;mutex_delay &amp;&amp; polled_safe==true</label>
+			<label kind="guard" x="-290" y="85">pc==1 &amp;&amp; y&gt;MUTEX_DELAY &amp;&amp; polled_safe==true</label>
 			<label kind="assignment" x="-76" y="101">pc:=3</label>
 			<nail x="93" y="67"/>
 			<nail x="17" y="102"/>
@@ -319,7 +319,7 @@ const int mutex_delay = 2; // upper bound of y</declaration>
 		<transition>
 			<source ref="id6"/>
 			<target ref="id6"/>
-			<label kind="guard" x="-272" y="127">pc==1 &amp;&amp; y&lt;=mutex_delay &amp;&amp; polled_safe==true</label>
+			<label kind="guard" x="-272" y="127">pc==1 &amp;&amp; y&lt;=MUTEX_DELAY &amp;&amp; polled_safe==true</label>
 			<label kind="assignment" x="-59" y="145">pc:=2</label>
 			<nail x="51" y="136"/>
 			<nail x="25" y="110"/>

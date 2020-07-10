@@ -6,23 +6,23 @@
 
 # Check parameters
 
-cycle=1
-mutex_delay=2
+CYCLE=1
+MUTEX_DELAY=2
 
 function usage() {
     echo "Usage: $0 N";
-    echo "       $0 N cycle mutex_delay";
+    echo "       $0 N CYCLE MUTEX_DELAY";
     echo "       N number of processes";
-    echo "       cycle time of a cycle in a node"
-    echo "       mutex_delay delay of a mutex control"
+    echo "       CYCLE time of a CYCLE in a node"
+    echo "       MUTEX_DELAY delay of a mutex control"
 }
 
 if [ $# -eq 1 ]; then
     N=$1
 elif [ $# -eq 3 ]; then
     N=$1
-    cycle=$2
-    mutex_delay=$3
+    CYCLE=$2
+    MUTEX_DELAY=$3
 else
     usage
     exit 1
@@ -53,7 +53,7 @@ echo "
 # can't be in their state unsafe at the same time.
 "
 
-echo "system:mutex_${N}_${cycle}_$mutex_delay
+echo "system:mutex_${N}_${CYCLE}_$MUTEX_DELAY
 "
 
 # Events
@@ -100,8 +100,8 @@ clock:1:z$pid
 int:1:0:1:1:polled_g$pid
 int:1:0:3:0:pc$pid
 location:A$pid:init{initial: : committed:}
-location:A$pid:Safe{invariant:z$pid<=$cycle}
-location:A$pid:Unsafe{invariant:z$pid<=$cycle}
+location:A$pid:Safe{invariant:z$pid<=$CYCLE}
+location:A$pid:Unsafe{invariant:z$pid<=$CYCLE}
 edge:A$pid:init:Safe:set_safe$pid
 edge:A$pid:Safe:Safe:poll_g$pid{provided:pc$pid==0&&z$pid>0 : do:pc$pid=1;polled_g$pid=1}
 edge:A$pid:Safe:Safe:poll_not_g$pid{provided:pc$pid==0&&z$pid>0 : do:pc$pid=1;polled_g$pid=0}
@@ -124,9 +124,9 @@ int:1:0:1:1:polled_safe
 int:1:0:3:0:pc
 location:Ctrl:init{initial: : committed:}"
 for pid in `seq 1 $N`; do
-echo "location:Ctrl:W$pid{invariant:z<=$cycle}
-location:Ctrl:C$pid{invariant:z<=$cycle}
-location:Ctrl:G$pid{invariant:z<=$cycle}"
+echo "location:Ctrl:W$pid{invariant:z<=$CYCLE}
+location:Ctrl:C$pid{invariant:z<=$CYCLE}
+location:Ctrl:G$pid{invariant:z<=$CYCLE}"
 done
 echo "edge:Ctrl:init:W$pid:set_not_g1"
 for pid in `seq 1 $N`; do
@@ -138,8 +138,8 @@ edge:Ctrl:W$pid:C$pid:tau{provided:pc==3&&polled_safe==1 : do:pc=0;y=0;z=0}
 edge:Ctrl:C$pid:W$pid:tau{provided:pc==3&&polled_safe==0 : do:pc=0;y=0;z=0}
 edge:Ctrl:C$pid:C$pid:poll_safe$pid{provided:pc==0&&z>0 : do:pc=1;polled_safe=1}
 edge:Ctrl:C$pid:C$pid:poll_unsafe$pid{provided:pc==0&&z>0 : do:pc=1;polled_safe=0}
-edge:Ctrl:C$pid:C$pid:tau{provided:pc==1&&y<=$mutex_delay&&polled_safe==1 : do:pc=2}
-edge:Ctrl:C$pid:C$pid:tau{provided:pc==1&&y>$mutex_delay&&polled_safe==1 : do:pc=3}
+edge:Ctrl:C$pid:C$pid:tau{provided:pc==1&&y<=$MUTEX_DELAY&&polled_safe==1 : do:pc=2}
+edge:Ctrl:C$pid:C$pid:tau{provided:pc==1&&y>$MUTEX_DELAY&&polled_safe==1 : do:pc=3}
 edge:Ctrl:C$pid:C$pid:tau{provided:pc==1&&polled_safe==0 : do:pc=3}
 edge:Ctrl:C$pid:C$pid:tau{provided:pc==2 : do:pc=0;z=0}
 edge:Ctrl:G$pid:W$pid:set_not_g$pid{provided:pc==3&&polled_safe==0 : do:pc=0;y=0;z=0}

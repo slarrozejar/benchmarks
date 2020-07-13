@@ -4,26 +4,37 @@ import pygraphviz as pgv
 import sys
 import re
 import json
+import os
 
-def get_infos(dct, cond):
+Change = namedtuple('Change', ['cond', 'attr'])
+
+def get_infos(dct):
     """ From a dictionnary dct containing attributes with their values, extracts
     a list of pairs (attr, val). The elements contained in dct must be strings.
-    If cond is 'True', the values 'val' are stored as regular expressions and as
-    strings otherwise. """
+    """
     res = []
     for elmt in dct:
-        if cond:
-            res.append((elmt, re.compile(dct[elmt])))
-        else:
-            res.append((elmt, dct[elmt]))
+        res.append((elmt, dct[elmt]))
     return res
 
-def get_pieces(str):
+def get_infos_RE(dct):
+    """ From a dictionnary dct containing attributes with their values, extracts
+    a list of pairs (attr, val). The elements contained in dct must be strings.
+    The values 'val' are stored as regular expressions. """
+    res = []
+    for elmt in dct:
+        res.append((elmt, re.compile(dct[elmt])))
+    return res
+
+def parse_atrr(str):
     """ Takes a string with format a=b where a and b are two substrings and a doesn't
     contain '=' and return substrings a and b. """
     argts = str.partition("=")
     attribute_to_replace = argts[0]
     replace_string = argts[2]
+    if((attribute_to_replace=="") or (replace_string=="")):
+        print("Condition with empty arguments")
+        exit()
     return attribute_to_replace, replace_string
 
 
@@ -33,7 +44,7 @@ def parse_format(str):
     substr_list = str.split("&&")
     res = []
     for s in substr_list:
-        attr, val = get_pieces(s)
+        attr, val = parse_atrr(s)
         val=re.compile(val)
         res.append((attr, val))
     return res
@@ -49,10 +60,10 @@ def extract_changes(obj):
         style = []
         cond=parse_format(elmt[0])
         for i in range(1, len(elmt)):
-            attribute_to_replace, value = get_pieces(elmt[i])
+            attribute_to_replace, value = parse_atrr(elmt[i])
             style.append((attribute_to_replace, value))
-        changes.append((cond, style))
-    print(changes)
+        c = Change(cond,style)
+        changes.append(c)
     return changes
 
 def dct_to_changes(dct):
@@ -65,12 +76,14 @@ def dct_to_changes(dct):
     edge_changes = []
     # Build a list of changes to apply on nodes and a list of changes to apply on edges
     for elmt in dct:
-        cond = get_infos(dct[elmt]["condition"], True)
-        style = get_infos(dct[elmt]["dotStyle"], False)
+        cond = get_infos_RE(dct[elmt]["condition"])
+        style = get_infos(dct[elmt]["dotStyle"])
         if(dct[elmt]["object"] == "node"):
-            node_changes.append((cond, style))
+            c = Change(cond,style)
+            node_changes.append(c)
         else:
-            edge_changes.append((cond, style))
+            c = Change(cond,style)
+            edge_changes.append(c)
     return node_changes, edge_changes
 
 def verify_cond(elmt, cond_list):
@@ -79,7 +92,7 @@ def verify_cond(elmt, cond_list):
     otherwise. """
     res = True
     if(cond_list == None):
-        return False
+        return True
     for attr, val in cond_list:
         if((elmt.attr[attr] == None) or (val.match(elmt.attr[attr]) == None)):
             res = False
@@ -93,12 +106,14 @@ def change_values(elmt, to_change):
 
 def apply_changes(coll, changes):
     """ 'coll' is either the nodes or the edges of a pygraphviz graph. 'changes'
-    is a list of pairs (cond, style) containing a style to apply when the conditions
+    is a list of named tuples (cond, style) containing a style to apply when the conditions
     in cond are verified. Applies the necessary changes on the graph. """
     for elmt in coll:
         to_change = []
         # Store the attributes to replace and the value to give them
-        for cond, style in changes:
+        for change in changes:
+            cond = change[0]
+            style = change[1]
             if(verify_cond(elmt, cond)):
                 to_change = to_change + style
         # Set new values to attributes
@@ -124,6 +139,18 @@ if(args.graph[0] == "-"):
 else:
     G=pgv.AGraph(args.graph[0])
 
+# Apply changes with json file
+if(args.style):
+    # Create dictionnary from json file
+    with open(args.style[0]) as json_data:
+        dct = json.load(json_data)
+    # Extract changes to apply
+    node_changes, edge_changes = dct_to_changes(dct)
+    # Apply necessary changes on nodes
+    apply_changes(G.nodes(), node_changes)
+    # Apply necessary changes on edges
+    apply_changes(G.edges(), edge_changes)
+
 # Apply changes on nodes
 if(args.style_nodes):
     # Create the list of changes to apply depending on conditions
@@ -137,17 +164,5 @@ if(args.style_edges):
     changes = extract_changes(args.style_edges)
     # Apply changes on the graph
     apply_changes(G.edges(), changes)
-
-# Apply changes with json file
-if(args.style):
-    # Create dictionnary from json file
-    with open(args.style[0]) as json_data:
-        dct = json.load(json_data)
-    # Extract changes to apply
-    node_changes, edge_changes = dct_to_changes(dct)
-    # Apply necessary changes on nodes
-    apply_changes(G.nodes(), node_changes)
-    # Apply necessary changes on edges
-    apply_changes(G.edges(), edge_changes)
 
 G.write(sys.stdout)

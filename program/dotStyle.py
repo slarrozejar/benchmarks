@@ -5,6 +5,7 @@ import sys
 import re
 import json
 import os
+from collections import namedtuple
 
 Change = namedtuple('Change', ['cond', 'attr'])
 

@@ -9,9 +9,8 @@
 // The way they enter the critical section is fixed.
 
 const int N = 2;        // Number of processes
-const int CYCLE = 10;   // Time of a cycle in a state
-const int MUTEX_DELAY = 2; // Upper bound of y in Ctrl
-const int TRAIN_DELAY=2; // Upper bound of y in Train
+const int CYCLE = 1;   // Time of a cycle in a state
+const int MUTEX_DELAY = 1; // Upper bound of y in Ctrl
 const int GO=0;  // Value of input Sig
 const int WAIT=1; // Value of input Sig
 const int STOP=2; // Value of input Sig
@@ -181,7 +180,7 @@ clock x;</declaration>
 	<template>
 		<name>Train</name>
 		<parameter>pid_t pid</parameter>
-		<declaration>// This process generates outputs EC and CL which 
+		<declaration>// This process generates outputs EC and CL which
 // are needed by processes A and Ctrl from the paper
 
 int[0,3] pc := 0;   // program counter
@@ -193,11 +192,11 @@ clock z;</declaration>
 		</location>
 		<location id="id2" x="-552" y="-136">
 			<name x="-595" y="-161">EC</name>
-			<label kind="invariant" x="-637" y="-136">z&lt;=CYCLE</label>
+			<label kind="invariant" x="-637" y="-136">z&lt;CYCLE</label>
 		</location>
 		<location id="id3" x="-221" y="-136">
 			<name x="-255" y="-170">CL</name>
-			<label kind="invariant" x="-306" y="-127">z&lt;=CYCLE</label>
+			<label kind="invariant" x="-306" y="-127">z&lt;CYCLE</label>
 		</location>
 		<init ref="id1"/>
 		<transition>
@@ -322,15 +321,15 @@ clock z;</declaration>
 		</location>
 		<location id="id5" x="-161" y="-187">
 			<name x="-170" y="-170">Stop</name>
-			<label kind="invariant" x="-178" y="-153">z&lt;=CYCLE</label>
+			<label kind="invariant" x="-178" y="-153">z&lt;CYCLE</label>
 		</location>
 		<location id="id6" x="42" y="17">
 			<name x="32" y="-17">Wait</name>
-			<label kind="invariant" x="17" y="-34">z&lt;=CYCLE</label>
+			<label kind="invariant" x="17" y="-34">z&lt;CYCLE</label>
 		</location>
 		<location id="id7" x="246" y="-187">
 			<name x="238" y="-170">Go</name>
-			<label kind="invariant" x="212" y="-153">z&lt;=CYCLE</label>
+			<label kind="invariant" x="212" y="-153">z&lt;CYCLE</label>
 		</location>
 		<init ref="id4"/>
 		<transition>
@@ -529,15 +528,15 @@ pid_t pid := 1;
 		</location>
 		<location id="id9" x="-195" y="-17">
 			<name x="-144" y="-34">Ready</name>
-			<label kind="invariant" x="-144" y="-51">z&lt;=CYCLE</label>
+			<label kind="invariant" x="-144" y="-51">z&lt;CYCLE</label>
 		</location>
 		<location id="id10" x="306" y="-323">
 			<name x="289" y="-306">Drive</name>
-			<label kind="invariant" x="281" y="-289">z&lt;=CYCLE</label>
+			<label kind="invariant" x="281" y="-289">z&lt;CYCLE</label>
 		</location>
 		<location id="id11" x="773" y="-17">
 			<name x="696" y="-51">Fin</name>
-			<label kind="invariant" x="671" y="-34">z&lt;=CYCLE</label>
+			<label kind="invariant" x="671" y="-34">z&lt;CYCLE</label>
 		</location>
 		<init ref="id8"/>
 		<transition>

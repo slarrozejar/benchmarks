@@ -24,7 +24,11 @@ def get_infos_RE(dct):
     The values 'val' are stored as regular expressions. """
     res = []
     for elmt in dct:
-        res.append((elmt, re.compile(dct[elmt])))
+        replace_string = re.compile(dct[elmt])
+        if((elmt == "") or (replace_string == "")):
+            print("Condition with empty arguments")
+            exit()
+        res.append((elmt, replace_string))
     return res
 
 def parse_atrr(str):

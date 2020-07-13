@@ -1,0 +1,25 @@
+{
+   "style1" : {
+     "object" : "node",
+     "condition" : {
+       "a" : "",
+       "b" : "3"
+     },
+     "dotStyle" : {
+        "color" : "aquamarine",
+        "style" : "filled",
+        "shape" : "polygon"
+        }
+    },
+
+    "style2" : {
+        "object" : "edge",
+        "condition" : {
+            "" : "2"
+        },
+        "dotStyle" : {
+            "color" : "yellow",
+            "splines" : "curved"
+        }
+    }
+}

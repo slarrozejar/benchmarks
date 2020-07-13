@@ -48,8 +48,38 @@ def test_file():
     else:
         print("\033[31m" + "Test file: Failed")
 
+def test_node_bad_condition():
+    os.system('(./dotStyle.py graph.dot -sn "=blabla" color=blue) > test 2>/dev/null')
+    res = open("test","r")
+    content = res.read()
+    if(content == "Condition with empty arguments\n"):
+        print("\033[32m" + "Test node bad condition: Passed")
+    else:
+        print("\033[31m" + "Test node bad condition: Failed")
+
+def test_edge_bad_condition():
+    os.system('(./dotStyle.py graph.dot -se "=blabla" color=blue) > test 2>/dev/null')
+    res = open("test","r")
+    content = res.read()
+    if(content == "Condition with empty arguments\n"):
+        print("\033[32m" + "Test edge bad condition: Passed")
+    else:
+        print("\033[31m" + "Test edge bad condition: Failed")
+
+def test_file_bad_condition():
+    os.system('(./dotStyle.py graph.dot -s test_bad_condition.json) > test 2>/dev/null')
+    res = open("test","r")
+    content = res.read()
+    if(content == "Condition with empty arguments\n"):
+        print("\033[32m" + "Test file bad condition: Passed")
+    else:
+        print("\033[31m" + "Test file bad condition: Failed")
+
 test_nochange()
 test_line_node()
 test_line_edge()
 test_line_multiple_nodes()
 test_file()
+test_node_bad_condition()
+test_edge_bad_condition()
+test_file_bad_condition()

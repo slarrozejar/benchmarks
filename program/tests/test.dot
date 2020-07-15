@@ -1,0 +1,16 @@
+digraph foo {
+	n1	[a=3,
+		b=4,
+		color=blue];
+	n1 -> n2	[a=2,
+		b=5,
+		color=orchid];
+	n3	[b=3,
+		color=green,
+		label=n3];
+	n3 -> n1	[a=1,
+		color=cyan];
+	n4	[b=toto,
+		color=green,
+		label="n3&&n2"];
+}

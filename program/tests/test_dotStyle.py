@@ -4,7 +4,7 @@ import sys
 import os
 
 def test_nochange():
-    os.system('./dotStyle.py graph.dot > test.dot 2>/dev/null')
+    os.system('./../dotStyle.py graph.dot > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("graph.dot")
     if(test == result):
@@ -13,7 +13,7 @@ def test_nochange():
         print("\033[31m" + "Test no change: Failed")
 
 def test_line_node():
-    os.system('(./dotStyle.py graph.dot -sn "b=3&&a=4" color=yellow) > test.dot 2>/dev/null')
+    os.system('(./../dotStyle.py graph.dot -sn "b=3&&a=4" color=yellow) > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_line_node.dot")
     if(test == result):
@@ -22,7 +22,7 @@ def test_line_node():
         print("\033[31m" + "Test line node: Failed")
 
 def test_line_edge():
-    os.system('(./dotStyle.py graph.dot -se "b=1" color=yellow) > test.dot 2>/dev/null')
+    os.system('(./../dotStyle.py graph.dot -se "b=1" color=yellow) > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_line_edge.dot")
     if(test == result):
@@ -31,7 +31,7 @@ def test_line_edge():
         print("\033[31m" + "Test line edge: Failed")
 
 def test_line_multiple_nodes():
-    os.system('(./dotStyle.py graph.dot -sn "b=3&&a=4" color=yellow -sn label=n3 color=blue) > test.dot 2>/dev/null')
+    os.system('(./../dotStyle.py graph.dot -sn "b=3&&a=4" color=yellow -sn label=n3 color=blue) > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_line_multiple_nodes.dot")
     if(test == result):
@@ -40,7 +40,7 @@ def test_line_multiple_nodes():
         print("\033[31m" + "Test line multiple nodes: Failed")
 
 def test_file():
-    os.system('(./dotStyle.py graph.dot -s test.json) > test.dot 2>/dev/null')
+    os.system('(./../dotStyle.py graph.dot -s test.json) > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_file.dot")
     if(test == result):
@@ -49,7 +49,7 @@ def test_file():
         print("\033[31m" + "Test file: Failed")
 
 def test_node_bad_condition():
-    os.system('(./dotStyle.py graph.dot -sn "=blabla" color=blue) > test 2>/dev/null')
+    os.system('(./../dotStyle.py graph.dot -sn "=blabla" color=blue) > test 2>/dev/null')
     res = open("test","r")
     content = res.read()
     if(content == "Condition with empty arguments\n"):
@@ -58,7 +58,7 @@ def test_node_bad_condition():
         print("\033[31m" + "Test node bad condition: Failed")
 
 def test_edge_bad_condition():
-    os.system('(./dotStyle.py graph.dot -se "=blabla" color=blue) > test 2>/dev/null')
+    os.system('(./../dotStyle.py graph.dot -se "=blabla" color=blue) > test 2>/dev/null')
     res = open("test","r")
     content = res.read()
     if(content == "Condition with empty arguments\n"):
@@ -67,7 +67,7 @@ def test_edge_bad_condition():
         print("\033[31m" + "Test edge bad condition: Failed")
 
 def test_file_bad_condition():
-    os.system('(./dotStyle.py graph.dot -s test_bad_condition.json) > test 2>/dev/null')
+    os.system('(./../dotStyle.py graph.dot -s test_bad_condition.json) > test 2>/dev/null')
     res = open("test","r")
     content = res.read()
     if(content == "Condition with empty arguments\n"):
@@ -76,7 +76,7 @@ def test_file_bad_condition():
         print("\033[31m" + "Test file bad condition: Failed")
 
 def test_and():
-    os.system("""(./dotStyle.py graph.dot -sn "label='n3&&n2'&&a=toto" color=aquamarine) > test.dot 2>/dev/null""")
+    os.system("""(./../dotStyle.py graph.dot -sn "label='n3&&n2'&&a=toto" color=aquamarine) > test.dot 2>/dev/null""")
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_and.dot")
     if(test == result):
@@ -85,7 +85,7 @@ def test_and():
         print("\033[31m" + "Test and: Failed")
 
 def test_bad_spaces():
-    os.system('(./dotStyle.py graph.dot -sn "a=le vent se lève&&b=3") > test 2>/dev/null')
+    os.system('(./../dotStyle.py graph.dot -sn "a=le vent se lève&&b=3") > test 2>/dev/null')
     res = open("test","r")
     content = res.read()
     if(content == "Spaces outside argument value\n"):

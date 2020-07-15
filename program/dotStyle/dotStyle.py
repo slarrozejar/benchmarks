@@ -33,7 +33,7 @@ def get_infos_RE(dct):
 
 def parse_atrr(str):
     """ Takes a string with format a=b where a and b are two substrings and a doesn't
-    contain '=' and return substrings a and b. """
+    contain '=' and return the substrings a and b. """
     str = str.replace("'","") # delete '' so that it won't interfere during matching phase
     argts = str.partition("=")
     attribute_to_replace = argts[0]
@@ -47,7 +47,7 @@ def parse_split(str):
     """ Takes a string possibly containing substrings separated by '&&'.
     Splits the string str according to '&&'. Ignores '&&' if contained inside ''.
     Ends the program if there are spaces outside ''. Returns the list of
-    subtrings which are separated by '&&'. """
+    subtrings separated by '&&'. """
     ignore = False # inside '' or not
     i = 0
     lb = 0 # lower bound of the next substring to extract
@@ -126,9 +126,9 @@ def dct_to_changes(dct):
     return node_changes, edge_changes
 
 def verify_cond(elmt, cond_list):
-    """ From the list of pairs (attr, val) cond_list, verifies if each attribute named attr
-    of elmt has value val. Returns true if all conditions were verified and false
-    otherwise. """
+    """ From the list cond_list, composed of pairs (attr, val), verifies if each
+    attribute named attr of elmt has value val. Returns true if all conditions
+     were verified and false otherwise. """
     res = True
     if(cond_list == None):
         return True

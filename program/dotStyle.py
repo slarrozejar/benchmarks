@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#!/usr/bin/env python3
 import argparse
 import pygraphviz as pgv
 import sys
@@ -34,6 +34,7 @@ def get_infos_RE(dct):
 def parse_atrr(str):
     """ Takes a string with format a=b where a and b are two substrings and a doesn't
     contain '=' and return substrings a and b. """
+    str = str.replace("'","") # delete '' so that it won't interfere during matching phase
     argts = str.partition("=")
     attribute_to_replace = argts[0]
     replace_string = argts[2]
@@ -42,11 +43,44 @@ def parse_atrr(str):
         exit()
     return attribute_to_replace, replace_string
 
+def parse_split(str):
+    """ Takes a string possibly containing substrings separated by '&&'.
+    Splits the string str according to '&&'. Ignores '&&' if contained inside ''.
+    Ends the program if there are spaces outside ''. Returns the list of
+    subtrings which are separated by '&&'. """
+    ignore = False # inside '' or not
+    i = 0
+    lb = 0 # lower bound of the next substring to extract
+    n = len(str)
+    res = []
+    while(i < n):
+        tmp = str[i]
+        # Update boolean ignore
+        if(tmp == "'"):
+            ignore = not ignore
+            i += 1
+        # Append substring to res if necessary
+        elif((tmp == '&') and (i < n-1) and (str[i+1] == '&')):
+            if(not ignore):
+                res.append(str[lb:i])
+                lb = i+2
+            i += 2
+        # Check wether program should end
+        elif((tmp == ' ') and (not ignore)):
+            print("Spaces outside argument value")
+            exit()
+        else:
+            i += 1
+    # Append last subtring to res
+    if(not ignore):
+        res.append(str[lb:n])
+    return res
 
 def parse_format(str):
     """ Takes a string possibly containing substrings separated by '&&'. The substrings
-    have format "attr=val" and don't contain "&&". Returns a list of pairs (attr, val). """
-    substr_list = str.split("&&")
+    have format "attr=val" and can contain '&&' if inside ''. Returns a list of
+    pairs (attr, val). """
+    substr_list = parse_split(str)
     res = []
     for s in substr_list:
         attr, val = parse_atrr(s)
@@ -99,8 +133,12 @@ def verify_cond(elmt, cond_list):
     if(cond_list == None):
         return True
     for attr, val in cond_list:
-        if((elmt.attr[attr] == None) or (val.match(elmt.attr[attr]) == None)):
+        tmp = val.match(elmt.attr[attr])
+        if((elmt.attr[attr] == None) or (tmp == None)):
             res = False
+        elif(tmp.end() != len(elmt.attr[attr])):
+            res = False
+
     return res
 
 def change_values(elmt, to_change):

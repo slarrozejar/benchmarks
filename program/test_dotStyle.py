@@ -75,6 +75,24 @@ def test_file_bad_condition():
     else:
         print("\033[31m" + "Test file bad condition: Failed")
 
+def test_and():
+    os.system("""(./dotStyle.py graph.dot -sn "label='n3&&n2'&&a=toto" color=aquamarine) > test.dot 2>/dev/null""")
+    test = pgv.AGraph("test.dot")
+    result = pgv.AGraph("test_and.dot")
+    if(test == result):
+        print("\033[32m" + "Test and: Passed")
+    else:
+        print("\033[31m" + "Test and: Failed")
+
+def test_bad_spaces():
+    os.system('(./dotStyle.py graph.dot -sn "a=le vent se lève&&b=3") > test 2>/dev/null')
+    res = open("test","r")
+    content = res.read()
+    if(content == "Spaces outside argument value\n"):
+        print("\033[32m" + "Test bad spaces: Passed")
+    else:
+        print("\033[31m" + "Test bad spaces: Failed")
+
 test_nochange()
 test_line_node()
 test_line_edge()
@@ -83,3 +101,5 @@ test_file()
 test_node_bad_condition()
 test_edge_bad_condition()
 test_file_bad_condition()
+test_and()
+test_bad_spaces()

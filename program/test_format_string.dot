@@ -2,6 +2,7 @@ digraph foo {
     n1 [color=blue, b=3, label="blue(3), 3", a=4];
     n2 [label="(), "];
     n3 [color=green, label="green(), ", a=3];
+    n4 [color=green, label="n3&&n2", a=toto];
     n1 -> n2 [color=orchid, b=2, label="orchid(2), 2", a=5];
     n3 -> n1 [color=cyan, label="cyan(1), 1", b=1];
 }

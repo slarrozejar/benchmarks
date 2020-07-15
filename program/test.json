@@ -2,7 +2,7 @@
    "style1" : {
      "object" : "node",
      "condition" : {
-       "a" : "[1-10]*",
+       "a" : "[0-9]+",
        "b" : "3"
      },
      "dotStyle" : {

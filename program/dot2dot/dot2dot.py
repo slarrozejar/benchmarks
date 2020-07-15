@@ -102,11 +102,15 @@ def apply_changes(obj, attributes_to_replace, format_strings, attributes):
 
 # Create parser
 parser = argparse.ArgumentParser()
-parser.add_argument("graph", type=str, nargs=1, help="graph to change")
+parser.add_argument("graph", type=str, nargs=1, help="graph (with dot format) to change")
 parser.add_argument("-n", "--nodes", type=str, nargs=1, action='append',
-                    help="apply changes on nodes")
+                    help="""-n attribute=value, attribute is the name of an attribute already in use in graph or a
+    new attribute and value is a string which can contain the value of other
+    attributes when specified between percent signs. Sets attribute to value.""")
 parser.add_argument("-e", "--edges", type=str, nargs=1, action='append',
-                    help="apply changes on edges")
+                    help="""-e attribute=value, attribute is the name of an attribute already in use in graph or a
+    new attribute and value is a string which can contain the value of other
+    attributes when specified between percent signs. Sets attribute to value.""")
 args = parser.parse_args()
 
 # Create graph

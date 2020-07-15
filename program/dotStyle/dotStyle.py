@@ -84,7 +84,7 @@ def parse_format(str):
     res = []
     for s in substr_list:
         attr, val = parse_atrr(s)
-        val=re.compile(val)
+        val=re.compile(val+'$')
         res.append((attr, val))
     return res
 
@@ -126,19 +126,15 @@ def dct_to_changes(dct):
     return node_changes, edge_changes
 
 def verify_cond(elmt, cond_list):
-    """ From a list of pairs (attr, val), verifies if each attribute named attr
+    """ From the list of pairs (attr, val) cond_list, verifies if each attribute named attr
     of elmt has value val. Returns true if all conditions were verified and false
     otherwise. """
     res = True
     if(cond_list == None):
         return True
     for attr, val in cond_list:
-        tmp = val.match(elmt.attr[attr])
-        if((elmt.attr[attr] == None) or (tmp == None)):
+        if((elmt.attr[attr] == None) or (val.match(elmt.attr[attr]) == None)):
             res = False
-        elif(tmp.end() != len(elmt.attr[attr])):
-            res = False
-
     return res
 
 def change_values(elmt, to_change):

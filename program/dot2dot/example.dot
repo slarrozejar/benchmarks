@@ -1,7 +1,0 @@
-digraph example {
-    n1 [a=4, b=toto];
-    n2 ;
-    n3 [a=6, b=titi];
-    n1 -> n2 [c=5, d=tata];
-    n3 -> n1 [c=6];
-}

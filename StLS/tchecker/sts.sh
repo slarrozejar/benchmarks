@@ -119,9 +119,8 @@ edge:A$pid:Wait:Wait:poll_EC_not_drive$pid{provided:pc$pid==0&&z$pid>0 : do:pc$p
 edge:A$pid:Wait:Wait:poll_not_EC_drive$pid{provided:pc$pid==0&&z$pid>0 : do:pc$pid=1;polled_EC_A$pid=0;polled_drive$pid=1}
 edge:A$pid:Wait:Wait:poll_not_EC_not_drive$pid{provided:pc$pid==0&&z$pid>0 : do:pc$pid=1;polled_EC_A$pid=0;polled_drive$pid=0}
 edge:A$pid:Wait:Wait:tau{provided:pc$pid==1 : do:pc$pid=3}
-edge:A$pid:Wait:Wait:tau{provided:pc$pid==3&&polled_EC_A$pid==0&&polled_drive$pid==1}
-edge:A$pid:Wait:Wait:tau{provided:pc$pid==3&&polled_EC_A$pid==1&&polled_drive$pid==0}
-edge:A$pid:Wait:Wait:tau{provided:pc$pid==3&&polled_EC_A$pid==0&&polled_drive$pid==0}
+edge:A$pid:Wait:Wait:tau{provided:pc$pid==3&&polled_EC_A$pid==0 : do:pc$pid=0;z$pid=0}
+edge:A$pid:Wait:Wait:tau{provided:pc$pid==3&&polled_drive$pid==0 : do:pc$pid=0;z$pid=0}
 edge:A$pid:Wait:Go:tau{provided:pc$pid==3&&polled_EC_A$pid==1&&polled_drive$pid==1 : do:pc$pid=0;y$pid=0;z$pid=0}
 edge:A$pid:Go:Go:poll_EC_drive$pid{provided:pc$pid==0&&z$pid>0 : do:pc$pid=1;polled_EC_A$pid=1;polled_drive$pid=1}
 edge:A$pid:Go:Go:poll_EC_not_drive$pid{provided:pc$pid==0&&z$pid>0 : do:pc$pid=1;polled_EC_A$pid=1;polled_drive$pid=0}

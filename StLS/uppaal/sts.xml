@@ -8,12 +8,11 @@
 // In this model, N trains can enter the criticical section from N different tracks.
 // The way they enter the critical section is fixed.
 
-const int N = 2;        // Number of processes
+const int N = 1;        // Number of processes
 const int CYCLE = 1;   // Time of a cycle in a state
-const int MUTEX_DELAY = 1; // Upper bound of y in Ctrl
+const int MUTEX_DELAY = 2; // Upper bound of y in Ctrl
 typedef int[1,N] pid_t;
 
-chan set_go[pid_t], set_wait[pid_t], set_stop[pid_t];
 chan set_drive[pid_t], set_not_drive[pid_t];
 chan poll_EC[pid_t], poll_not_EC[pid_t];
 chan poll_EC_drive[pid_t], poll_not_EC_drive[pid_t], poll_EC_not_drive[pid_t], poll_not_EC_not_drive[pid_t];</declaration>
@@ -83,7 +82,7 @@ clock x;</declaration>
 			<source ref="id0"/>
 			<target ref="id0"/>
 			<label kind="select" x="144" y="42">i : pid_t</label>
-			<label kind="assignment" x="306" y="42">EC[i]:=false</label>
+			<label kind="assignment" x="204" y="42">EC[i]:=false</label>
 			<nail x="136" y="42"/>
 			<nail x="128" y="68"/>
 		</transition>
@@ -91,7 +90,7 @@ clock x;</declaration>
 			<source ref="id0"/>
 			<target ref="id0"/>
 			<label kind="select" x="144" y="0">i : pid_t</label>
-			<label kind="assignment" x="289" y="0">EC[i]:=true</label>
+			<label kind="assignment" x="204" y="0">EC[i]:=true</label>
 			<nail x="136" y="0"/>
 			<nail x="136" y="25"/>
 		</transition>
@@ -127,7 +126,7 @@ clock z;</declaration>
 		</location>
 		<location id="id2" x="-161" y="-187">
 			<name x="-170" y="-170">Stop</name>
-			<label kind="invariant" x="-178" y="-153">z&lt;CYCLE</label>
+			<label kind="invariant" x="-187" y="-153">z&lt;CYCLE</label>
 		</location>
 		<location id="id3" x="42" y="17">
 			<name x="32" y="-17">Wait</name>
@@ -141,8 +140,7 @@ clock z;</declaration>
 		<transition>
 			<source ref="id4"/>
 			<target ref="id2"/>
-			<label kind="guard" x="8" y="-246">pc==3 &amp;&amp; !polled_drive</label>
-			<label kind="synchronisation" x="8" y="-229">set_stop[pid]!</label>
+			<label kind="guard" x="8" y="-229">pc==3 &amp;&amp; !polled_drive</label>
 			<label kind="assignment" x="8" y="-212">pc:=0,y:=0,z:=0</label>
 		</transition>
 		<transition>
@@ -200,9 +198,8 @@ clock z;</declaration>
 		<transition>
 			<source ref="id3"/>
 			<target ref="id4"/>
-			<label kind="guard" x="136" y="-68">pc==3 &amp;&amp; polled_EC &amp;&amp; polled_drive</label>
-			<label kind="synchronisation" x="110" y="-51">set_go[pid]!</label>
-			<label kind="assignment" x="93" y="-34">pc:=0,y:=0,z:=0</label>
+			<label kind="guard" x="127" y="-68">pc==3 &amp;&amp; polled_EC &amp;&amp; polled_drive</label>
+			<label kind="assignment" x="110" y="-51">pc:=0,y:=0,z:=0</label>
 		</transition>
 		<transition>
 			<source ref="id3"/>
@@ -267,8 +264,7 @@ clock z;</declaration>
 		<transition>
 			<source ref="id2"/>
 			<target ref="id3"/>
-			<label kind="guard" x="-204" y="-93">pc==3 &amp;&amp; polled_EC</label>
-			<label kind="synchronisation" x="-144" y="-76">set_wait[pid]!</label>
+			<label kind="guard" x="-195" y="-76">pc==3 &amp;&amp; polled_EC</label>
 			<label kind="assignment" x="-144" y="-59">pc:=0,y:=0,z:=0</label>
 		</transition>
 		<transition>
@@ -282,8 +278,8 @@ clock z;</declaration>
 		<transition>
 			<source ref="id2"/>
 			<target ref="id2"/>
-			<label kind="guard" x="-484" y="-161">pc==0 &amp;&amp; z&gt;0</label>
-			<label kind="synchronisation" x="-484" y="-144">poll_not_EC_not_drive[pid]!</label>
+			<label kind="guard" x="-314" y="-161">pc==0 &amp;&amp; z&gt;0</label>
+			<label kind="synchronisation" x="-399" y="-144">poll_not_EC_not_drive[pid]!</label>
 			<label kind="assignment" x="-484" y="-127">pc:=1,polled_EC:=false,polled_drive:=false</label>
 			<nail x="-221" y="-136"/>
 			<nail x="-212" y="-127"/>
@@ -318,7 +314,6 @@ clock z;</declaration>
 		<transition>
 			<source ref="id1"/>
 			<target ref="id2"/>
-			<label kind="synchronisation" x="-289" y="-212">set_stop[pid]!</label>
 		</transition>
 	</template>
 	<template>

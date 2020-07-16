@@ -162,14 +162,18 @@ def apply_changes(coll, changes):
 parser = argparse.ArgumentParser()
 parser.add_argument("graph", type=str, nargs=1, help="Graph to change")
 parser.add_argument("-s", "--style", type=str, nargs=1,
-                    help=""" Applies changes specified in a json file given as
+                    help=""" -s file.json, applies changes specified in a json file given as
                     parameter. """)
 parser.add_argument("-sn", "--style_nodes", nargs='+', type=str, action='append',
-                    help=""" If the condition(s) given by the first argument is/are verified,
-                     applies changes specified by the following arguments on nodes. """)
+                    help=""" -sn attr1=val1&&attr2=val2... attr=val attr=val ...,
+                    provided all attributes of a node verify attri=vali
+                    (where vali can be a regular expression) sets the following
+                    attr to value val. """)
 parser.add_argument("-se", "--style_edges", type=str, nargs='+', action='append',
-                    help=""" If condition(s) given by the first argument is/are verified,
-                     applies changes specified by the following arguments on edges. """)
+                    help=""" -se attr1=val1&&attr2=val2... attr=val attr=val ...,
+                    provided all attributes of an edge verify attri=vali
+                    (where vali can be a regular expression) sets the following
+                    attr to value val. """)
 args = parser.parse_args()
 
 # Create graph

@@ -178,6 +178,7 @@ args = parser.parse_args()
 
 # Create graph
 if(args.graph[0] == "-"):
+    sys.stderr.write("Reading from standard input\n")
     G=pgv.AGraph(sys.stdin.read())
 else:
     G=pgv.AGraph(args.graph[0])

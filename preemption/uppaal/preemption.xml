@@ -16,14 +16,14 @@ broadcast chan go;
 bool run := false;
 
 void Idle(){
-    pid_t i;
+    int i;
     for(i=1; i&lt;=N; i++){
         running[i] = 0;
     } 
 }
 
 void selectThread(){
-    pid_t i;
+    int i;
     int res = -1;
     for(i=1; i&lt;=N; i++){
         running[i] = false;
@@ -86,7 +86,6 @@ int offset = 0;
 			<label kind="invariant" x="-51" y="-280">releasedTime&lt;=offset</label>
 		</location>
 		<location id="id5" x="-246" y="-110">
-			<committed/>
 		</location>
 		<location id="id6" x="-25" y="85">
 			<name x="-8" y="76">ExecutingThread</name>

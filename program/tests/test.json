@@ -21,5 +21,15 @@
             "color" : "yellow",
             "splines" : "curved"
         }
+    },
+
+    "style3" : {
+        "object" : "graph",
+        "dotStyle" : {
+            "label" : "Name of the graph",
+            "fontname" : "Helvetica-Oblique",
+		    "fontsize" : "36"
+        }
     }
+
 }

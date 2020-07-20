@@ -107,23 +107,31 @@ def extract_changes(obj):
 
 def dct_to_changes(dct):
     """ From a dictionnary 'dct' where each element contains 'condition', 'dotStyle',
-    'object', extract a list of list of changes to apply to edges and a list of
-    changes to apply to nodes. These lists contain pairs (cond, style) where
-    cond and style are lists of (attr, value). Return the lists node_changes and
-    edge_changes which contain the changes to apply on the graph. """
+    'object', extract a list of changes to apply on the graph, a list of changes
+    to apply to nodes and a list of changes to apply to edges. node_changes and
+    edge_changes contain pairs (cond, style) where cond and style are lists of
+    (attr, value) and graph_changes is a list of pairs (attr, value). Returns the
+    lists graph_changes, node_changes and edge_changes which contain the changes
+    to apply. """
     node_changes = []
     edge_changes = []
+    graph_changes = []
     # Build a list of changes to apply on nodes and a list of changes to apply on edges
     for elmt in dct:
-        cond = get_infos_RE(dct[elmt]["condition"])
-        style = get_infos(dct[elmt]["dotStyle"])
         if(dct[elmt]["object"] == "node"):
+            cond = get_infos_RE(dct[elmt]["condition"])
+            style = get_infos(dct[elmt]["dotStyle"])
             c = Change(cond,style)
             node_changes.append(c)
-        else:
+        elif(dct[elmt]["object"] == "edge"):
+            cond = get_infos_RE(dct[elmt]["condition"])
+            style = get_infos(dct[elmt]["dotStyle"])
             c = Change(cond,style)
             edge_changes.append(c)
-    return node_changes, edge_changes
+        else:
+            style = get_infos(dct[elmt]["dotStyle"])
+            graph_changes += style
+    return graph_changes, node_changes, edge_changes
 
 def verify_cond(elmt, cond_list):
     """ From the list cond_list, composed of pairs (attr, val), verifies if each
@@ -158,6 +166,12 @@ def apply_changes(coll, changes):
         # Set new values to attributes
         change_values(elmt, to_change)
 
+def graph_apply_changes(G, changes):
+    """ 'changes' is a lsit of pairs (attr, value) specifying containing default
+    values which are to add in the graph 'G'. """
+    for attr, value in changes:
+        G.graph_attr[attr] = value
+
 # Create parser
 parser = argparse.ArgumentParser()
 parser.add_argument("graph", type=str, nargs=1, help="Graph to change")
@@ -189,7 +203,9 @@ if(args.style):
     with open(args.style[0]) as json_data:
         dct = json.load(json_data)
     # Extract changes to apply
-    node_changes, edge_changes = dct_to_changes(dct)
+    graph_changes, node_changes, edge_changes = dct_to_changes(dct)
+    # Apply necessary changes on graph
+    graph_apply_changes(G, graph_changes)
     # Apply necessary changes on nodes
     apply_changes(G.nodes(), node_changes)
     # Apply necessary changes on edges

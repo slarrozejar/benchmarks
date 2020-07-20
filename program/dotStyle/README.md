@@ -48,10 +48,19 @@ Here is an example of a json file for this tool:
             "dotStyle" : {
                 "color" : "yellow"
             }
+        },
+
+        "style3" : {
+            "object" : "graph",
+            "dotStyle" : {
+                "label" : "Example graph",
+                "fontname" : "Helvetica-Oblique",
+    		    "fontsize" : "36"
+            }
         }
     }
 
-*object* can be either "node" or "edge", it specifies on which elements of the graph the style will be applied.
+*object* can be graph, "node" or "edge", it specifies on which elements of the graph the style will be applied. If *object* is "graph" then there is no *conditon* section.
 The elements of *condition* are attributes in use in the graph with the expression they should match so that the style is applied on the element considered.
 The elements of *dotStyle* are attributes already in use in the
 graph or new ones with their new value.
@@ -68,6 +77,10 @@ All elements in the file must be strings.
 The launching of the line tool `./dotStyle.py example.dot -s example.json` where example.dot is the graph above and example.json is the json example above produces the following graph:
 
     digraph foo {
+            graph [fontname="Helvetica-Oblique",
+                    fontsize=36,
+                    label="Example graph"
+            ];
             n1      [a=4,
                     b=3,
                     color=blue,
@@ -87,4 +100,4 @@ As specified in the json file, the node n1 where *a* is a positive integer and *
 Example with line tool
 ----------------------
 
-To get the same graph as in the example with the json file above by specifying the changes to apply in the line tool, just launch the command: `./dotStyle.py example.dot -sn "a=[0-9]+&&b=3" color=blue style=filled -se "b=2" color=yellow`
+To get the same graph as in the example with the json file above by specifying the changes to apply in the line tool, just launch the command: `./dotStyle.py example.dot -sg label="Example graph" fontname="Helvetica-Oblique" fontsize=36 -sn "a=[0-9]+&&b=3" color=blue style=filled -se "b=2" color=yellow`

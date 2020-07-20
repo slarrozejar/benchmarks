@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>const int N := 2;
+typedef int[1,N] pid_t;
+
+const int EXEC := 1;
+bool waiting[pid_t];
+bool running[pid_t];
+broadcast chan go;
+
+</declaration>
+	<template>
+		<name x="5" y="5">Scheduler</name>
+		<declaration>clock executionTime;
+bool run := false;
+
+void Idle(){
+    pid_t i;
+    for(i=1; i&lt;=N; i++){
+        running[i] = 0;
+    } 
+}
+
+void selectThread(){
+    pid_t i;
+    int res = -1;
+    for(i=1; i&lt;=N; i++){
+        running[i] = false;
+        if(waiting[i]){
+            res = i;
+        }
+    }
+    if(res&gt;=0){
+        running[res] = true;
+        waiting[res] = false;
+    }
+}</declaration>
+		<location id="id0" x="-144" y="-229">
+			<committed/>
+		</location>
+		<location id="id1" x="-144" y="-85">
+			<label kind="invariant" x="-136" y="-110">executionTime &lt;= EXEC</label>
+		</location>
+		<location id="id2" x="102" y="59">
+			<committed/>
+		</location>
+		<init ref="id0"/>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-127" y="42">!exists(i:pid_t)waiting[i]</label>
+			<label kind="assignment" x="-126" y="59">Idle(), executionTime=0,
+run=false</label>
+			<nail x="-144" y="59"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id1"/>
+			<label kind="guard" x="110" y="-85">exists(i:pid_t)waiting[i]</label>
+			<label kind="assignment" x="110" y="-68">selectThread(), executionTime=0,
+run=true</label>
+			<nail x="102" y="-85"/>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-59" y="-51">executionTime==EXEC</label>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-136" y="-178">go!</label>
+		</transition>
+	</template>
+	<template>
+		<name>Thread</name>
+		<parameter>pid_t pid</parameter>
+		<declaration>clock releasedTime;
+int offset = 0;
+</declaration>
+		<location id="id3" x="-246" y="-263">
+		</location>
+		<location id="id4" x="-68" y="-263">
+			<name x="-68" y="-297">CheckForOffset</name>
+			<label kind="invariant" x="-51" y="-280">releasedTime&lt;=offset</label>
+		</location>
+		<location id="id5" x="-246" y="-110">
+			<committed/>
+		</location>
+		<location id="id6" x="-25" y="85">
+			<name x="-8" y="76">ExecutingThread</name>
+			<label kind="invariant" x="-35" y="102">releasedTime&lt;=EXEC</label>
+		</location>
+		<init ref="id3"/>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-229" y="59">releasedTime==EXEC</label>
+			<label kind="assignment" x="-228" y="85">waiting[pid]=true</label>
+			<nail x="-246" y="85"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-161" y="-68">running[pid]==true</label>
+			<label kind="assignment" x="-153" y="-51">releasedTime=0</label>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-144" y="-195">releasedTime==offset</label>
+			<label kind="assignment" x="-153" y="-178">waiting[pid]=true</label>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-195" y="-306">offset != 0</label>
+			<label kind="synchronisation" x="-195" y="-289">go?</label>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-314" y="-221">offset==0</label>
+			<label kind="synchronisation" x="-314" y="-204">go?</label>
+			<label kind="assignment" x="-357" y="-187">waiting[pid]=true</label>
+		</transition>
+	</template>
+	<system>system Scheduler, Thread;</system>
+	<queries>
+		<query>
+			<formula></formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>

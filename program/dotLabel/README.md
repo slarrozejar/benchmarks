@@ -16,7 +16,7 @@ To execute this tool, simply launch the line tool:
     where:
         graph must be a graphviz graph with dot format
         see -h to get help on the options
-        reads from standard input if no graph is provided.
+        reads from standard input if graph specified by "-".
 
 The options can be used more than once in a line tool and the values considered will be the values of the
 original graph given as parameter.

@@ -12,7 +12,7 @@ requires Python 3 to be executed.
 Usage
 -----
 The style(s) can be specified in the line tool and in this case can be applied either on nodes or on edges.
-It can also be specified in a json file.
+It can also be specified in a json file.   
 
 To execute this tool, launch the line tool:
 
@@ -20,7 +20,7 @@ To execute this tool, launch the line tool:
     where:
         graph must be a graphviz graph with dot format
         see -h to get help on the options
-        reads from standard input if no graph is provided.
+        reads from standard input if graph specified by "-".
 
 Example with json file
 ----------------------
@@ -82,4 +82,9 @@ The launching of the line tool `./dotStyle.py example.dot -s example.json` where
                     color=cyan];
     }
 
-As specified in the json file, the node n1 where *a* is a positive integer and *b* equals 3 have been colored in blue and the edge `n1 -> n2` where *b* equals 2 has been colored in yellow. The other elements remain unchanged.
+As specified in the json file, the node n1 where *a* is a positive integer and *b* equals 3 has been colored in blue and the edge `n1 -> n2` where *b* equals 2 has been colored in yellow. The other elements remain unchanged.
+
+Example with line tool
+----------------------
+
+To get the same graph as in the example with the json file above by specifying the changes to apply in the line tool, just launch the command: `./dotStyle.py example.dot -sn "a=[0-9]+&&b=3" color=blue style=filled -se "b=2" color=yellow`

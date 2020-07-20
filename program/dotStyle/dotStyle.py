@@ -88,8 +88,17 @@ def parse_format(str):
         res.append((attr, val))
     return res
 
+def graph_extract_changes(obj):
+    """ obj is a list of lists where each element of the lists is a string like
+    'attr=val' where attr doesn't contain '='. Returns a list of pairs (attr, value). """
+    changes = []
+    for elmt in obj:
+        attribute_to_replace, value = parse_atrr(elmt)
+        changes.append((attribute_to_replace, value))
+    return changes
+
 def extract_changes(obj):
-    """ obj is a list of lists where all elements of the lists except from the
+    """ obj is a list of lists where each element of the lists except from the
     first one is a string like 'attr=val' where attr doesn't contain '='. The first
     elements are strings with format 'cond1&&cond2&&...&&condN', where condi has
     format attr=value and attr doesn't contain '='. Returns a list of pairs (cond, style)
@@ -178,6 +187,8 @@ parser.add_argument("graph", type=str, nargs=1, help="Graph to change")
 parser.add_argument("-s", "--style", type=str, nargs=1,
                     help=""" -s file.json, applies changes specified in a json file given as
                     parameter. """)
+parser.add_argument("-sg", "--style_graph", nargs='+', type=str, action='append',
+                    help=""" -sn attr=val attr=val ..., sets the attr to value val. """)
 parser.add_argument("-sn", "--style_nodes", nargs='+', type=str, action='append',
                     help=""" -sn attr1=val1&&attr2=val2... attr=val attr=val ...,
                     provided all attributes of a node verify attri=vali
@@ -210,6 +221,13 @@ if(args.style):
     apply_changes(G.nodes(), node_changes)
     # Apply necessary changes on edges
     apply_changes(G.edges(), edge_changes)
+
+# Apply changes on the graph
+if(args.style_graph):
+    # Create the list of changes to apply
+    changes = graph_extract_changes(args.style_graph[0])
+    # Apply changes on the graph
+    graph_apply_changes(G, changes)
 
 # Apply changes on nodes
 if(args.style_nodes):

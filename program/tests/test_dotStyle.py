@@ -30,6 +30,15 @@ def test_line_edge():
     else:
         print("\033[31m" + "Test line edge: Failed")
 
+def test_line_graph():
+    os.system('(./../dotStyle/dotStyle.py graph.dot -sg label="Name of the graph" font="Helvetica") > test.dot 2>/dev/null')
+    test = pgv.AGraph("test.dot")
+    result = pgv.AGraph("test_line_graph.dot")
+    if(test == result):
+        print("\033[32m" + "Test line graph: Passed")
+    else:
+        print("\033[31m" + "Test line graph: Failed")
+
 def test_line_multiple_nodes():
     os.system('(./../dotStyle/dotStyle.py graph.dot -sn "b=3&&a=4" color=yellow -sn label=n3 color=blue) > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
@@ -96,6 +105,7 @@ def test_bad_spaces():
 test_nochange()
 test_line_node()
 test_line_edge()
+test_line_graph()
 test_line_multiple_nodes()
 test_file()
 test_node_bad_condition()

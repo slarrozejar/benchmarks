@@ -58,7 +58,8 @@ echo "system:sts_${N}_${CYCLE}_$MUTEX_DELAY
 
 # Events
 
-echo "event:tau"
+echo "event:tau
+event:go"
 for pid in `seq 1 $N`; do
 echo "event:set_drive$pid
 event:set_not_drive$pid
@@ -79,18 +80,20 @@ for pid in `seq 1 $N`; do
     echo "int:1:0:1:0:EC$pid
 int:1:0:1:0:drive$pid"
 done
-echo "location:InOut:init{initial:}"
+echo "location:InOut:init{initial: : urgent:}
+location:InOut:L"
+echo "edge:InOut:init:L:go"
 for pid in `seq 1 $N`; do
-    echo "edge:InOut:init:init:set_drive$pid{do:drive$pid=1;x=0}
-edge:InOut:init:init:set_not_drive$pid{do:drive$pid=0;x=0}
-edge:InOut:init:init:tau{do:EC$pid=1}
-edge:InOut:init:init:tau{do:EC$pid=0}
-edge:InOut:init:init:poll_EC$pid{provided:EC$pid==1&&x>0}
-edge:InOut:init:init:poll_not_EC$pid{provided:EC$pid==0&&x>0}
-edge:InOut:init:init:poll_EC_drive$pid{provided:EC$pid==1&&drive$pid==1&&x>0}
-edge:InOut:init:init:poll_not_EC_drive$pid{provided:EC$pid==0&&drive$pid==1&&x>0}
-edge:InOut:init:init:poll_EC_not_drive$pid{provided:EC$pid==1&&drive$pid==0&&x>0}
-edge:InOut:init:init:poll_not_EC_not_drive$pid{provided:EC$pid==0&&drive$pid==0&&x>0}"
+    echo "edge:InOut:L:L:set_drive$pid{do:drive$pid=1;x=0}
+edge:InOut:L:L:set_not_drive$pid{do:drive$pid=0;x=0}
+edge:InOut:L:L:tau{do:EC$pid=1}
+edge:InOut:L:L:tau{do:EC$pid=0}
+edge:InOut:L:L:poll_EC$pid{provided:EC$pid==1&&x>0}
+edge:InOut:L:L:poll_not_EC$pid{provided:EC$pid==0&&x>0}
+edge:InOut:L:L:poll_EC_drive$pid{provided:EC$pid==1&&drive$pid==1&&x>0}
+edge:InOut:L:L:poll_not_EC_drive$pid{provided:EC$pid==0&&drive$pid==1&&x>0}
+edge:InOut:L:L:poll_EC_not_drive$pid{provided:EC$pid==1&&drive$pid==0&&x>0}
+edge:InOut:L:L:poll_not_EC_not_drive$pid{provided:EC$pid==0&&drive$pid==0&&x>0}"
 done
 
 for pid in `seq 1 $N`; do
@@ -102,11 +105,11 @@ clock:1:z$pid
 int:1:0:1:0:polled_drive$pid
 int:1:0:1:0:polled_EC_A$pid
 int:1:0:3:0:pc$pid
-location:A$pid:init{initial: : committed:}
+location:A$pid:init{initial: : urgent:}
 location:A$pid:Stop{invariant:z$pid<$CYCLE}
 location:A$pid:Wait{invariant:z$pid<$CYCLE}
 location:A$pid:Go{invariant:z$pid<$CYCLE}
-edge:A$pid:init:Stop:tau
+edge:A$pid:init:Stop:go
 edge:A$pid:Stop:Stop:poll_EC_drive$pid{provided:pc$pid==0&&z$pid>0 : do:pc$pid=1;polled_EC_A$pid=1;polled_drive$pid=1}
 edge:A$pid:Stop:Stop:poll_not_EC_drive$pid{provided:pc$pid==0&&z$pid>0 : do:pc$pid=1;polled_EC_A$pid=0;polled_drive$pid=1}
 edge:A$pid:Stop:Stop:poll_EC_not_drive$pid{provided:pc$pid==0&&z$pid>0 : do:pc$pid=1;polled_EC_A$pid=1;polled_drive$pid=0}
@@ -140,13 +143,13 @@ int:1:0:3:0:pc"
 for pid in `seq 1 $N`; do
     echo "int:1:0:1:0:polled_EC$pid"
 done
-echo "location:Ctrl:init{initial: : committed:}"
+echo "location:Ctrl:init{initial: : urgent:}"
 for pid in `seq 1 $N`; do
 echo "location:Ctrl:Ready$pid{invariant:z<$CYCLE}
 location:Ctrl:Drive$pid{invariant:z<$CYCLE}
 location:Ctrl:Fin$pid{invariant:z<$CYCLE}"
 done
-echo "edge:Ctrl:init:Ready$pid:set_not_drive1"
+echo "edge:Ctrl:init:Ready$pid:go"
 for pid in `seq 1 $N`; do
     echo "edge:Ctrl:Ready$pid:Ready$pid:poll_EC$pid{provided:pc==0&&z>0 : do:pc=1;polled_EC$pid=1}
 edge:Ctrl:Ready$pid:Ready$pid:poll_not_EC$pid{provided:pc==0&&z>0 : do:pc=1;polled_EC$pid=0}
@@ -184,3 +187,8 @@ sync:A$pid@poll_EC_not_drive$pid:InOut@poll_EC_not_drive$pid
 sync:A$pid@poll_not_EC_drive$pid:InOut@poll_not_EC_drive$pid
 sync:A$pid@poll_not_EC_not_drive$pid:InOut@poll_not_EC_not_drive$pid"
 done
+echo -n "sync:InOut@go:Ctrl@go"
+for pid in `seq 1 $N`; do
+    echo -n ":A$pid@go"
+done
+echo ""

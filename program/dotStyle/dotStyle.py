@@ -34,6 +34,8 @@ def get_infos_RE(dct):
 def parse_atrr(str):
     """ Takes a string with format a=b where a and b are two substrings and a doesn't
     contain '=' and return the substrings a and b. """
+    if(str==""):
+        return "",""
     str = str.replace("'","") # delete '' so that it won't interfere during matching phase
     argts = str.partition("=")
     attribute_to_replace = argts[0]
@@ -128,12 +130,18 @@ def dct_to_changes(dct):
     # Build a list of changes to apply on nodes and a list of changes to apply on edges
     for elmt in dct:
         if(dct[elmt]["object"] == "node"):
-            cond = get_infos_RE(dct[elmt]["condition"])
+            if('condition' in dct[elmt].keys()):
+                cond = get_infos_RE(dct[elmt]["condition"])
+            else:
+                cond = [("",re.compile(""))]
             style = get_infos(dct[elmt]["dotStyle"])
             c = Change(cond,style)
             node_changes.append(c)
         elif(dct[elmt]["object"] == "edge"):
-            cond = get_infos_RE(dct[elmt]["condition"])
+            if('condition' in dct[elmt].keys()):
+                cond = get_infos_RE(dct[elmt]["condition"])
+            else:
+                cond = [("",re.compile(""))]
             style = get_infos(dct[elmt]["dotStyle"])
             c = Change(cond,style)
             edge_changes.append(c)
@@ -150,8 +158,9 @@ def verify_cond(elmt, cond_list):
     if(cond_list == None):
         return True
     for attr, val in cond_list:
-        if((elmt.attr[attr] == None) or (val.match(elmt.attr[attr]) == None)):
-            res = False
+        if(attr!=""):
+            if((elmt.attr[attr] == None) or (val.match(elmt.attr[attr]) == None)):
+                res = False
     return res
 
 def change_values(elmt, to_change):

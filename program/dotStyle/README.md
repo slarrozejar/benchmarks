@@ -1,12 +1,12 @@
 dotStyle
-=======
+========
 
 Description
 -----------
 
-This tool allows to apply a style on a graph with dot format. The style(s) are applied depending on
+This tool allows to apply a style on a graph represented in the [DOT language](https://graphviz.org/doc/info/lang.html). The style(s) are applied depending on
 some conditions on the edges or on the nodes of the graph and
-allows to highlight some pieces of informations with the same style for different graphs. **dotStyle** is written in Python and
+allows to highlight some pieces of information with the same style for different graphs. **dotStyle** is written in Python and
 requires Python 3 to be executed.
 
 Usage
@@ -18,9 +18,9 @@ To execute this tool, launch the line tool:
 
     ./dotStyle.py [graph] [options]
     where:
-        graph must be a graphviz graph with dot format
-        see -h to get help on the options
-        reads from standard input if graph specified by "-".
+        graph is a dot/graphviz file or - if the graph should be read from the standard input.
+
+run command `./dotStyle.py -h` to get help on the options
 
 Example with json file
 ----------------------
@@ -60,8 +60,9 @@ Here is an example of a json file for this tool:
         }
     }
 
-*object* can be graph, "node" or "edge", it specifies on which elements of the graph the style will be applied. If *object* is "graph" then there is no *conditon* section.
-The elements of *condition* are attributes in use in the graph with the expression they should match so that the style is applied on the element considered.
+*object* can be "graph", "node" or "edge", it specifies on which elements of the graph the style will be applied. If *object* is "graph" then there is no *conditon* section.
+The elements of *condition* are attributes in use in the graph with the expression they should match so that the style is applied on the element considered. When there is no *condition* section the changes specified in *dotStyle* will be
+applied to every element *object* of the graph.
 The elements of *dotStyle* are attributes already in use in the
 graph or new ones with their new value.
 All elements in the file must be strings.
@@ -97,7 +98,11 @@ The launching of the line tool `./dotStyle.py example.dot -s example.json` where
 
 As specified in the json file, the node n1 where *a* is a positive integer and *b* equals 3 has been colored in blue and the edge `n1 -> n2` where *b* equals 2 has been colored in yellow. The other elements remain unchanged.
 
+
 Example with line tool
 ----------------------
 
 To get the same graph as in the example with the json file above by specifying the changes to apply in the line tool, just launch the command: `./dotStyle.py example.dot -sg label="Example graph" fontname="Helvetica-Oblique" fontsize=36 -sn "a=[0-9]+&&b=3" color=blue style=filled -se "b=2" color=yellow`
+
+When the first argument of `-sn` or `-se` is *""*, the changes specified by the
+following arguments will be applied to every node or edge of the graph.

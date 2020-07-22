@@ -56,29 +56,20 @@ void idle(){
 }</declaration>
 		<location id="id0" x="102" y="-297">
 			<name x="110" y="-289">Schedule</name>
-			<label kind="invariant" x="25" y="-331">executionTime&lt;=wcet</label>
+			<label kind="invariant" x="-51" y="-297">executionTime&lt;=wcet</label>
 		</location>
 		<location id="id1" x="102" y="-136">
 			<name x="110" y="-170">Running</name>
 		</location>
-		<location id="id2" x="102" y="59">
-			<name x="119" y="50">Initial</name>
+		<location id="id2" x="102" y="-442">
+			<name x="85" y="-476">Initial</name>
 			<committed/>
-		</location>
-		<location id="id3" x="102" y="-42">
-			<label kind="invariant" x="102" y="-25">executionTime&lt;=wcet</label>
 		</location>
 		<init ref="id2"/>
 		<transition>
-			<source ref="id3"/>
-			<target ref="id1"/>
-			<label kind="guard" x="110" y="-119">(exists(i:ThreadID)schedulable[i])</label>
-			<label kind="assignment" x="110" y="-85">selectThread()</label>
-		</transition>
-		<transition>
 			<source ref="id2"/>
-			<target ref="id3"/>
-			<label kind="synchronisation" x="102" y="-9">GO!</label>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="102" y="-386">GO!</label>
 		</transition>
 		<transition>
 			<source ref="id0"/>
@@ -110,69 +101,69 @@ void idle(){
 		<declaration>clock releasedTime;
 const int deadline = 8;
 const int offset = 0;</declaration>
-		<location id="id4" x="-255" y="-340">
+		<location id="id3" x="-255" y="-340">
 			<name x="-265" y="-374">Initial</name>
 		</location>
-		<location id="id5" x="-255" y="-221">
+		<location id="id4" x="-255" y="-221">
 			<name x="-238" y="-246">CheckForOffset</name>
 			<label kind="invariant" x="-238" y="-229">releasedTime&lt;=offset</label>
 		</location>
-		<location id="id6" x="-255" y="-93">
+		<location id="id5" x="-255" y="-93">
 			<name x="-246" y="-127">Tmp1</name>
 		</location>
-		<location id="id7" x="-17" y="-93">
+		<location id="id6" x="-17" y="-93">
 			<name x="-27" y="-127">Tmp2</name>
 		</location>
-		<location id="id8" x="263" y="-93">
+		<location id="id7" x="263" y="-93">
 			<name x="187" y="-127">ReadyToBeScheduled</name>
 		</location>
-		<location id="id9" x="263" y="144">
+		<location id="id8" x="263" y="144">
 			<name x="238" y="161">Executing</name>
 			<label kind="invariant" x="187" y="178">releasedTime&lt;=deadline</label>
 		</location>
-		<location id="id10" x="-34" y="144">
+		<location id="id9" x="-34" y="144">
 			<name x="-272" y="161">Done</name>
 		</location>
-		<location id="id11" x="-255" y="144">
+		<location id="id10" x="-255" y="144">
 		</location>
-		<init ref="id4"/>
-		<transition>
-			<source ref="id10"/>
-			<target ref="id11"/>
-			<label kind="synchronisation" x="-195" y="144">run_scheduler!</label>
-		</transition>
+		<init ref="id3"/>
 		<transition>
 			<source ref="id9"/>
 			<target ref="id10"/>
-			<label kind="synchronisation" x="34" y="144">return_code[pid]?</label>
-			<label kind="assignment" x="34" y="161">schedulable[pid]=false</label>
+			<label kind="synchronisation" x="-195" y="144">run_scheduler!</label>
 		</transition>
 		<transition>
 			<source ref="id8"/>
 			<target ref="id9"/>
-			<label kind="synchronisation" x="272" y="8">invoke_code[pid]!</label>
-			<label kind="assignment" x="263" y="25">releasedTime=0</label>
+			<label kind="synchronisation" x="34" y="144">return_code[pid]?</label>
+			<label kind="assignment" x="34" y="161">schedulable[pid]=false</label>
 		</transition>
 		<transition>
 			<source ref="id7"/>
 			<target ref="id8"/>
-			<label kind="guard" x="51" y="-119">running[pid]==true</label>
+			<label kind="synchronisation" x="272" y="8">invoke_code[pid]!</label>
 		</transition>
 		<transition>
 			<source ref="id6"/>
 			<target ref="id7"/>
-			<label kind="assignment" x="-212" y="-93">releasedTime=0,
-schedulable[pid]=true</label>
+			<label kind="guard" x="51" y="-119">running[pid]</label>
 		</transition>
 		<transition>
 			<source ref="id5"/>
 			<target ref="id6"/>
-			<label kind="guard" x="-255" y="-170">releasedTime==offset</label>
+			<label kind="assignment" x="-212" y="-93">releasedTime=0,
+schedulable[pid]=true</label>
 		</transition>
 		<transition>
 			<source ref="id4"/>
 			<target ref="id5"/>
+			<label kind="guard" x="-255" y="-170">releasedTime==offset</label>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id4"/>
 			<label kind="synchronisation" x="-255" y="-297">GO?</label>
+			<label kind="assignment" x="-255" y="-280">schedulable[pid]=true</label>
 		</transition>
 	</template>
 	<template>
@@ -180,97 +171,103 @@ schedulable[pid]=true</label>
 		<parameter>ThreadID pid</parameter>
 		<declaration>clock executionTime;
 const int EXEC = 1;</declaration>
-		<location id="id12" x="-195" y="-323">
+		<location id="id11" x="-195" y="-323">
 			<name x="-205" y="-357">WaitingForRelease</name>
 		</location>
-		<location id="id13" x="-195" y="-221">
+		<location id="id12" x="-195" y="-221">
 			<name x="-187" y="-246">Ready</name>
 			<label kind="invariant" x="-178" y="-229">executionTime&lt;=EXEC</label>
 		</location>
-		<location id="id14" x="-195" y="-119">
+		<location id="id13" x="-195" y="-119">
 			<name x="-178" y="-153">If</name>
 			<label kind="invariant" x="-178" y="-136">executionTime&lt;=EXEC</label>
 		</location>
-		<location id="id15" x="-255" y="0">
+		<location id="id14" x="-255" y="0">
 			<name x="-314" y="-25">IfThen</name>
 			<label kind="invariant" x="-416" y="-8">executionTime&lt;=EXEC</label>
 		</location>
-		<location id="id16" x="-136" y="0">
+		<location id="id15" x="-136" y="0">
 			<name x="-119" y="-25">IfElse</name>
 			<label kind="invariant" x="-119" y="-8">executionTime&lt;=EXEC</label>
 		</location>
-		<location id="id17" x="-195" y="119">
+		<location id="id16" x="-195" y="119">
 			<name x="-178" y="102">IfEnd</name>
 			<label kind="invariant" x="-178" y="119">executionTime&lt;=EXEC</label>
 		</location>
-		<location id="id18" x="-195" y="280">
+		<location id="id17" x="-195" y="280">
 			<name x="-255" y="263">Return</name>
 			<label kind="invariant" x="-357" y="280">executionTime&lt;=EXEC</label>
 		</location>
-		<location id="id19" x="110" y="280">
+		<location id="id18" x="110" y="280">
 			<name x="102" y="297">End</name>
 			<label kind="invariant" x="8" y="314">executionTime&lt;=EXEC</label>
 		</location>
-		<init ref="id12"/>
+		<init ref="id11"/>
 		<transition>
-			<source ref="id19"/>
-			<target ref="id12"/>
+			<source ref="id18"/>
+			<target ref="id11"/>
 			<label kind="guard" x="-68" y="-374">executionTime==EXEC</label>
 			<label kind="synchronisation" x="-34" y="-357">return_code[pid]!</label>
 			<label kind="assignment" x="-59" y="-340">executionTime=0</label>
 			<nail x="110" y="-323"/>
 		</transition>
 		<transition>
-			<source ref="id18"/>
-			<target ref="id19"/>
+			<source ref="id17"/>
+			<target ref="id18"/>
 			<label kind="guard" x="-144" y="280">executionTime==EXEC</label>
 			<label kind="assignment" x="-110" y="297">executionTime=0</label>
 		</transition>
 		<transition>
-			<source ref="id17"/>
-			<target ref="id18"/>
+			<source ref="id16"/>
+			<target ref="id17"/>
 			<label kind="guard" x="-195" y="187">executionTime==EXEC</label>
 			<label kind="assignment" x="-195" y="199">executionTime=0</label>
 		</transition>
 		<transition>
-			<source ref="id15"/>
-			<target ref="id17"/>
+			<source ref="id14"/>
+			<target ref="id16"/>
 			<label kind="guard" x="-382" y="34">executionTime==EXEC</label>
 			<label kind="assignment" x="-340" y="51">executionTime=0</label>
 		</transition>
 		<transition>
-			<source ref="id16"/>
-			<target ref="id17"/>
+			<source ref="id15"/>
+			<target ref="id16"/>
 			<label kind="guard" x="-153" y="34">executionTime==EXEC</label>
 			<label kind="assignment" x="-161" y="51">executionTime=0</label>
 		</transition>
 		<transition>
-			<source ref="id14"/>
-			<target ref="id16"/>
+			<source ref="id13"/>
+			<target ref="id15"/>
 			<label kind="guard" x="-165" y="-93">executionTime==EXEC</label>
 			<label kind="assignment" x="-161" y="-76">executionTime=0</label>
 		</transition>
 		<transition>
-			<source ref="id14"/>
-			<target ref="id15"/>
+			<source ref="id13"/>
+			<target ref="id14"/>
 			<label kind="guard" x="-365" y="-93">executionTime==EXEC</label>
 			<label kind="assignment" x="-340" y="-76">executionTime=0</label>
 		</transition>
 		<transition>
-			<source ref="id13"/>
-			<target ref="id14"/>
+			<source ref="id12"/>
+			<target ref="id13"/>
 			<label kind="guard" x="-195" y="-187">executionTime==EXEC</label>
 			<label kind="assignment" x="-195" y="-170">executionTime=0</label>
 		</transition>
 		<transition>
-			<source ref="id12"/>
-			<target ref="id13"/>
+			<source ref="id11"/>
+			<target ref="id12"/>
 			<label kind="synchronisation" x="-187" y="-289">invoke_code[pid]?</label>
 			<label kind="assignment" x="-187" y="-272">executionTime=0</label>
 		</transition>
 	</template>
 	<system>system Scheduler, Thread, Execution;</system>
 	<queries>
+		<query>
+			<formula>A[] exists (i : ThreadID) !Thread(i).Done
+
+</formula>
+			<comment></comment>
+		</query>
 		<query>
 			<formula>E&lt;&gt; forall (i : ThreadID) Thread(i).Done</formula>
 			<comment></comment>

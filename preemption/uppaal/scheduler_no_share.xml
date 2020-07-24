@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
 <nta>
-	<declaration>const int N = 2;                   // Number of threads
+	<declaration>const int N = 3;                   // Number of threads
 const int WCET = 1;                // Scheduler worst-case execution time
 const int EXEC = 1;                // Time of an operation
 
@@ -157,8 +157,8 @@ int  period;          // Threads period
 void initialize()
 {
   offset = 0;
-  deadline = 13 * tid;  // Deadlines are expected to increase with i (priorities &lt;=&gt; thread IDs)
-  period = 20 * tid + EXEC * 6;
+  deadline = N*6 + tid  ;  // Deadlines are expected to increase with i (priorities &lt;=&gt; thread IDs)
+  period = deadline + 2 ;
 }</declaration>
 		<location id="id6" x="-1377" y="-621">
 			<name x="-1505" y="-630">Not_Schedulable</name>

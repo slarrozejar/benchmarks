@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
 <nta>
-	<declaration>const int N = 2;              // Number of threads
-const int WCET = 1;           // Scheduler worst-case execution time
+	<declaration>const int N = 2;                   // Number of threads
+const int WCET = 1;                // Scheduler worst-case execution time
+const int EXEC = 1;                // Time of an operation
 
 typedef int[1,N] pid_t;
 
-broadcast chan go;            // Initial synchronization
-chan           run[pid_t];    // Thread start signal
-chan           done;          // Thread stop signal
-chan           ready[pid_t];  // Thread ready signal
-
+broadcast chan go;                 // Initial synchronization
+chan           run[pid_t];         // Thread start signal
+chan           done;               // Thread stop signal
+chan           ready[pid_t];       // Thread ready signal
+chan           invoke_code[pid_t]; // Thread begin execution;
+chan           return_code[pid_t]; // Thread end execution
 
 
   </declaration>
@@ -27,16 +29,18 @@ void initialize()
   }
 }</declaration>
 		<location id="id0" x="-85" y="93">
+			<name x="-127" y="68">Wait</name>
 		</location>
 		<location id="id1" x="153" y="93">
 			<name x="170" y="68">initial</name>
 			<urgent/>
 		</location>
 		<location id="id2" x="153" y="-8">
+			<name x="119" y="-34">Idle</name>
 			<urgent/>
 		</location>
 		<location id="id3" x="153" y="-93">
-			<name x="170" y="-119">Idle</name>
+			<name x="161" y="-119">Busy</name>
 		</location>
 		<location id="id4" x="-85" y="-93">
 			<name x="-68" y="-127">Running</name>
@@ -147,16 +151,14 @@ schedulable[i]</label>
 clock execution_time;
 
 int  offset;          // Delay before thread becomes schedulable first time
-int  duration;        // Threads execution time
 int  deadline;        // Threads deadline
 int  period;          // Threads period
 
 void initialize()
 {
   offset = 0;
-  duration = tid;
-  deadline = 10 * duration;  // Deadlines are expected to increase with i (priorities &lt;=&gt; thread IDs)
-  period = deadline + 5;
+  deadline = 13 * tid;  // Deadlines are expected to increase with i (priorities &lt;=&gt; thread IDs)
+  period = 20 * tid + EXEC * 6;
 }</declaration>
 		<location id="id6" x="-1377" y="-621">
 			<name x="-1505" y="-630">Not_Schedulable</name>
@@ -171,7 +173,6 @@ void initialize()
 		</location>
 		<location id="id9" x="-1224" y="-485">
 			<name x="-1207" y="-510">Running</name>
-			<label kind="invariant" x="-1207" y="-493">execution_time &lt;= duration</label>
 		</location>
 		<location id="id10" x="-1224" y="-731">
 			<name x="-1234" y="-765">Scheduled</name>
@@ -212,7 +213,7 @@ void initialize()
 		<transition>
 			<source ref="id9"/>
 			<target ref="id6"/>
-			<label kind="guard" x="-1487" y="-569">released_time&gt;deadline</label>
+			<label kind="guard" x="-1462" y="-561">released_time&gt;deadline</label>
 		</transition>
 		<transition>
 			<source ref="id11"/>
@@ -227,13 +228,13 @@ void initialize()
 		<transition>
 			<source ref="id9"/>
 			<target ref="id8"/>
-			<label kind="guard" x="-1445" y="-484">execution_time == duration
-&amp;&amp; released_time &lt;= deadline</label>
+			<label kind="guard" x="-1419" y="-484">released_time &lt;= deadline</label>
+			<label kind="synchronisation" x="-1402" y="-467">return_code[tid]?</label>
 		</transition>
 		<transition>
 			<source ref="id10"/>
 			<target ref="id9"/>
-			<label kind="assignment" x="-1215" y="-646">execution_time := 0</label>
+			<label kind="synchronisation" x="-1215" y="-629">invoke_code[tid]!</label>
 		</transition>
 		<transition>
 			<source ref="id12"/>
@@ -254,9 +255,103 @@ void initialize()
 initialize()</label>
 		</transition>
 	</template>
+	<template>
+		<name>Execution</name>
+		<parameter>pid_t pid</parameter>
+		<declaration>clock execution_time;
+</declaration>
+		<location id="id15" x="-195" y="-323">
+			<name x="-205" y="-357">WaitingForRelease</name>
+		</location>
+		<location id="id16" x="-195" y="-221">
+			<name x="-187" y="-246">Ready</name>
+			<label kind="invariant" x="-178" y="-229">execution_time&lt;=EXEC</label>
+		</location>
+		<location id="id17" x="-195" y="-119">
+			<name x="-178" y="-153">If</name>
+			<label kind="invariant" x="-178" y="-136">execution_time&lt;=EXEC</label>
+		</location>
+		<location id="id18" x="-255" y="0">
+			<name x="-314" y="-25">IfThen</name>
+			<label kind="invariant" x="-416" y="-8">execution_time&lt;=EXEC</label>
+		</location>
+		<location id="id19" x="-136" y="0">
+			<name x="-119" y="-25">IfElse</name>
+			<label kind="invariant" x="-119" y="-8">execution_time&lt;=EXEC</label>
+		</location>
+		<location id="id20" x="-195" y="119">
+			<name x="-178" y="102">IfEnd</name>
+			<label kind="invariant" x="-178" y="119">execution_time&lt;=EXEC</label>
+		</location>
+		<location id="id21" x="-195" y="280">
+			<name x="-255" y="263">Return</name>
+			<label kind="invariant" x="-357" y="280">execution_time&lt;=EXEC</label>
+		</location>
+		<location id="id22" x="110" y="280">
+			<name x="102" y="297">End</name>
+			<label kind="invariant" x="8" y="314">execution_time&lt;=EXEC</label>
+		</location>
+		<init ref="id15"/>
+		<transition>
+			<source ref="id22"/>
+			<target ref="id15"/>
+			<label kind="guard" x="-68" y="-374">execution_time==EXEC</label>
+			<label kind="synchronisation" x="-34" y="-357">return_code[pid]!</label>
+			<label kind="assignment" x="-59" y="-340">execution_time=0</label>
+			<nail x="110" y="-323"/>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id22"/>
+			<label kind="guard" x="-144" y="280">execution_time==EXEC</label>
+			<label kind="assignment" x="-110" y="297">execution_time=0</label>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id21"/>
+			<label kind="guard" x="-195" y="187">execution_time==EXEC</label>
+			<label kind="assignment" x="-195" y="199">execution_time=0</label>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id20"/>
+			<label kind="guard" x="-382" y="34">execution_time==EXEC</label>
+			<label kind="assignment" x="-340" y="51">execution_time=0</label>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="guard" x="-153" y="34">execution_time==EXEC</label>
+			<label kind="assignment" x="-161" y="51">execution_time=0</label>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id19"/>
+			<label kind="guard" x="-165" y="-93">execution_time==EXEC</label>
+			<label kind="assignment" x="-161" y="-76">execution_time=0</label>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id18"/>
+			<label kind="guard" x="-365" y="-93">execution_time==EXEC</label>
+			<label kind="assignment" x="-340" y="-76">execution_time=0</label>
+		</transition>
+		<transition>
+			<source ref="id16"/>
+			<target ref="id17"/>
+			<label kind="guard" x="-195" y="-187">execution_time==EXEC</label>
+			<label kind="assignment" x="-195" y="-170">execution_time=0</label>
+		</transition>
+		<transition>
+			<source ref="id15"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="-187" y="-289">invoke_code[pid]?</label>
+			<label kind="assignment" x="-187" y="-272">execution_time=0</label>
+		</transition>
+	</template>
 	<system>
 // List one or more processes to be composed into a system.
-system Scheduler, PeriodicThread;
+system Scheduler, PeriodicThread, Execution;
     </system>
 	<queries>
 		<query>

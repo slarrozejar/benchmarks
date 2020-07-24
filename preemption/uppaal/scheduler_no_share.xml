@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
 <nta>
-	<declaration>const int N = 2;             // Number of threads
-const int WCET = 1;          // Scheduler worst-case execution time
+	<declaration>const int N = 2;              // Number of threads
+const int WCET = 1;           // Scheduler worst-case execution time
 
 typedef int[1,N] pid_t;
 
-broadcast chan go;           // Initial synchronization
-chan           run[pid_t];   // Thread start signal
-chan           done;         // Thread stop signal
-chan schedulable_true[pid_t];     // Thread id schedulable
-chan schedulable_false[pid_t]; // Thread is not schedulable
+broadcast chan go;            // Initial synchronization
+chan           run[pid_t];    // Thread start signal
+chan           done;          // Thread stop signal
+chan           ready[pid_t];  // Thread ready signal
 
-</declaration>
+
+
+  </declaration>
 	<template>
 		<name x="5" y="5">Scheduler</name>
 		<declaration>clock execution_time;
@@ -25,71 +26,118 @@ void initialize()
     schedulable[i] := false;
   }
 }</declaration>
-		<location id="id0" x="119" y="-59">
-			<name x="136" y="-85">Idle</name>
+		<location id="id0" x="-85" y="93">
 		</location>
-		<location id="id1" x="-51" y="-59">
-			<name x="-119" y="-93">Running</name>
-			<label kind="invariant" x="-238" y="-76">execution_time &lt;= WCET</label>
-		</location>
-		<location id="id2" x="-51" y="-195">
-			<name x="-127" y="-212">Schedule</name>
+		<location id="id1" x="153" y="93">
+			<name x="170" y="68">initial</name>
 			<urgent/>
 		</location>
-		<location id="id3" x="-51" y="76">
-			<name x="-42" y="51">initial</name>
+		<location id="id2" x="153" y="-8">
 			<urgent/>
 		</location>
-		<init ref="id3"/>
+		<location id="id3" x="153" y="-93">
+			<name x="170" y="-119">Idle</name>
+		</location>
+		<location id="id4" x="-85" y="-93">
+			<name x="-68" y="-127">Running</name>
+			<label kind="invariant" x="-68" y="-110">execution_time &lt;= WCET</label>
+		</location>
+		<location id="id5" x="-85" y="-221">
+			<name x="-161" y="-238">Schedule</name>
+			<urgent/>
+		</location>
+		<init ref="id1"/>
 		<transition>
-			<source ref="id1"/>
-			<target ref="id1"/>
-			<label kind="select" x="-187" y="-25">i : pid_t</label>
-			<label kind="synchronisation" x="-246" y="-9">schedulable_true[i]?</label>
-			<label kind="assignment" x="-246" y="8">schedulable[i]:=true</label>
-			<nail x="-89" y="0"/>
-			<nail x="-115" y="-17"/>
+			<source ref="id2"/>
+			<target ref="id2"/>
+			<label kind="select" x="212" y="-34">i : pid_t</label>
+			<label kind="synchronisation" x="212" y="-17">ready[i]?</label>
+			<label kind="assignment" x="212" y="0">schedulable[i] := true</label>
+			<nail x="204" y="-25"/>
+			<nail x="204" y="8"/>
 		</transition>
 		<transition>
 			<source ref="id0"/>
+			<target ref="id4"/>
+			<label kind="select" x="-144" y="-17">i : pid_t</label>
+			<label kind="synchronisation" x="-153" y="0">ready[i]?</label>
+			<label kind="assignment" x="-246" y="17">schedulable[i] := true,
+execution_time := 0</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
 			<target ref="id0"/>
-			<label kind="synchronisation" x="170" y="-25">schedulable_false[pid]?</label>
-			<label kind="assignment" x="170" y="-8">schedulable[pid]:=false</label>
-			<nail x="178" y="-34"/>
-			<nail x="153" y="-8"/>
+			<label kind="guard" x="-51" y="51">forall (i : pid_t)
+not schedulable[i]</label>
+			<nail x="93" y="93"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-25" y="-68">exists (i : pid_t)
+schedulable[i]</label>
+			<label kind="assignment" x="-25" y="-34">execution_time := 0</label>
+			<nail x="-51" y="-8"/>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="161" y="25">go!</label>
+			<label kind="assignment" x="161" y="42">initialize()</label>
 		</transition>
 		<transition>
 			<source ref="id3"/>
-			<target ref="id1"/>
-			<label kind="synchronisation" x="-42" y="-17">go!</label>
-			<label kind="assignment" x="-42" y="0">initialize()</label>
-		</transition>
-		<transition>
-			<source ref="id0"/>
-			<target ref="id1"/>
-			<label kind="synchronisation" x="-17" y="-119">done?</label>
-			<label kind="assignment" x="-17" y="-102">execution_time:=0,
-pid:=(pid%N)+1</label>
-		</transition>
-		<transition>
-			<source ref="id2"/>
-			<target ref="id0"/>
-			<label kind="guard" x="127" y="-178">schedulable[pid]</label>
-			<label kind="synchronisation" x="127" y="-161">run[pid]!</label>
-			<nail x="119" y="-195"/>
-		</transition>
-		<transition>
-			<source ref="id1"/>
 			<target ref="id2"/>
-			<label kind="guard" x="-229" y="-170">execution_time == WCET</label>
+			<label kind="synchronisation" x="161" y="-51">done?</label>
 		</transition>
 		<transition>
-			<source ref="id2"/>
-			<target ref="id2"/>
-			<label kind="guard" x="-85" y="-297">not schedulable[pid]</label>
-			<label kind="assignment" x="-85" y="-280">pid:=(pid%N)+1</label>
-			<nail x="-93" y="-255"/>
-			<nail x="-17" y="-255"/>
+			<source ref="id4"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-263" y="-170">execution_time==WCET</label>
+			<label kind="assignment" x="-144" y="-153">pid:=1</label>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id5"/>
+			<label kind="select" x="-51" y="-323">i : pid_t</label>
+			<label kind="synchronisation" x="-51" y="-306">ready[i]?</label>
+			<label kind="assignment" x="-51" y="-289">schedulable[i]:=true</label>
+			<nail x="-68" y="-280"/>
+			<nail x="-42" y="-263"/>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id4"/>
+			<label kind="select" x="-204" y="-110">i : pid_t</label>
+			<label kind="synchronisation" x="-212" y="-93">ready[i]?</label>
+			<label kind="assignment" x="-289" y="-76">schedulable[i]:=true</label>
+			<nail x="-144" y="-76"/>
+			<nail x="-144" y="-102"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id3"/>
+			<label kind="select" x="221" y="-102">i : pid_t</label>
+			<label kind="synchronisation" x="221" y="-85">ready[i]?</label>
+			<label kind="assignment" x="221" y="-68">schedulable[i]:=true</label>
+			<nail x="212" y="-93"/>
+			<nail x="204" y="-68"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id3"/>
+			<label kind="guard" x="161" y="-204">schedulable[pid]</label>
+			<label kind="synchronisation" x="161" y="-187">run[pid]!</label>
+			<label kind="assignment" x="161" y="-170">schedulable[pid]:=false</label>
+			<nail x="153" y="-221"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-255" y="-306">not schedulable[pid]</label>
+			<label kind="assignment" x="-221" y="-289">pid:=(pid%N)+1</label>
+			<nail x="-119" y="-262"/>
+			<nail x="-93" y="-280"/>
 		</transition>
 	</template>
 	<template>
@@ -107,97 +155,100 @@ void initialize()
 {
   offset = 0;
   duration = tid;
-  deadline = 10*tid;       // Deadlines are expected to increase with i (priorities &lt;=&gt; thread IDs)
-  period = 10*tid;
-
+  deadline = 10 * duration;  // Deadlines are expected to increase with i (priorities &lt;=&gt; thread IDs)
+  period = deadline + 5;
 }</declaration>
-		<location id="id4" x="-1377" y="-621">
+		<location id="id6" x="-1377" y="-621">
 			<name x="-1505" y="-630">Not_Schedulable</name>
 		</location>
-		<location id="id5" x="-1564" y="-484">
+		<location id="id7" x="-1564" y="-484">
 			<name x="-1615" y="-501">Done</name>
-			<label kind="invariant" x="-1768" y="-484">released_time&lt;=period</label>
+			<label kind="invariant" x="-1742" y="-484">released_time&lt;=period</label>
 		</location>
-		<location id="id6" x="-1462" y="-485">
+		<location id="id8" x="-1462" y="-485">
 			<name x="-1471" y="-518">Terminated</name>
 			<urgent/>
 		</location>
-		<location id="id7" x="-1224" y="-485">
+		<location id="id9" x="-1224" y="-485">
 			<name x="-1207" y="-510">Running</name>
 			<label kind="invariant" x="-1207" y="-493">execution_time &lt;= duration</label>
 		</location>
-		<location id="id8" x="-1224" y="-731">
+		<location id="id10" x="-1224" y="-731">
 			<name x="-1234" y="-765">Scheduled</name>
 			<urgent/>
 		</location>
-		<location id="id9" x="-1377" y="-731">
+		<location id="id11" x="-1377" y="-731">
 			<name x="-1445" y="-765">Schedulable</name>
 		</location>
-		<location id="id10" x="-1564" y="-731">
+		<location id="id12" x="-1564" y="-731">
 			<name x="-1632" y="-739">Release</name>
 			<urgent/>
 		</location>
-		<location id="id11" x="-1564" y="-833">
-			<name x="-1683" y="-858">CheckForOffset</name>
-			<label kind="invariant" x="-1768" y="-841">released_time &lt;= offset</label>
+		<location id="id13" x="-1564" y="-807">
+			<name x="-1683" y="-833">CheckForOffset</name>
+			<label kind="invariant" x="-1742" y="-816">released_time &lt;= offset</label>
 		</location>
-		<location id="id12" x="-1564" y="-909">
+		<location id="id14" x="-1564" y="-909">
 			<name x="-1574" y="-943">initial</name>
 			<urgent/>
 		</location>
-		<init ref="id12"/>
-		<transition>
-			<source ref="id9"/>
-			<target ref="id8"/>
-			<label kind="synchronisation" x="-1326" y="-748">run[tid]?</label>
-		</transition>
-		<transition>
-			<source ref="id5"/>
-			<target ref="id10"/>
-			<label kind="guard" x="-1802" y="-646">released_time==period</label>
-			<nail x="-1615" y="-620"/>
-		</transition>
-		<transition>
-			<source ref="id7"/>
-			<target ref="id4"/>
-			<label kind="guard" x="-1496" y="-561">released_time&gt;deadline</label>
-		</transition>
-		<transition>
-			<source ref="id9"/>
-			<target ref="id4"/>
-			<label kind="guard" x="-1573" y="-672">released_time&gt;deadline</label>
-		</transition>
+		<init ref="id14"/>
 		<transition>
 			<source ref="id6"/>
-			<target ref="id5"/>
-			<label kind="synchronisation" x="-1539" y="-510">done!</label>
-		</transition>
-		<transition>
-			<source ref="id7"/>
 			<target ref="id6"/>
-			<label kind="guard" x="-1445" y="-467">execution_time == duration
-&amp;&amp; released_time &lt;= deadline</label>
-			<label kind="synchronisation" x="-1419" y="-484">schedulable_false[tid]!</label>
-		</transition>
-		<transition>
-			<source ref="id8"/>
-			<target ref="id7"/>
-			<label kind="assignment" x="-1215" y="-646">execution_time := 0</label>
-		</transition>
-		<transition>
-			<source ref="id10"/>
-			<target ref="id9"/>
-			<label kind="synchronisation" x="-1546" y="-748">schedulable_true[tid]!</label>
-			<label kind="assignment" x="-1547" y="-731">released_time := 0</label>
+			<nail x="-1334" y="-654"/>
+			<nail x="-1334" y="-620"/>
 		</transition>
 		<transition>
 			<source ref="id11"/>
 			<target ref="id10"/>
-			<label kind="guard" x="-1760" y="-799">released_time == offset</label>
+			<label kind="synchronisation" x="-1326" y="-731">run[tid]?</label>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id12"/>
+			<label kind="guard" x="-1734" y="-612">released_time==period</label>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-1487" y="-569">released_time&gt;deadline</label>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-1547" y="-680">released_time&gt;deadline</label>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="-1538" y="-484">done!</label>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id8"/>
+			<label kind="guard" x="-1445" y="-484">execution_time == duration
+&amp;&amp; released_time &lt;= deadline</label>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id9"/>
+			<label kind="assignment" x="-1215" y="-646">execution_time := 0</label>
 		</transition>
 		<transition>
 			<source ref="id12"/>
 			<target ref="id11"/>
+			<label kind="synchronisation" x="-1538" y="-731">ready[tid]!</label>
+			<label kind="assignment" x="-1538" y="-714">released_time := 0</label>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id12"/>
+			<label kind="guard" x="-1734" y="-782">released_time == offset</label>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id13"/>
 			<label kind="synchronisation" x="-1556" y="-892">go?</label>
 			<label kind="assignment" x="-1556" y="-875">released_time := 0,
 initialize()</label>
@@ -208,6 +259,12 @@ initialize()</label>
 system Scheduler, PeriodicThread;
     </system>
 	<queries>
+		<query>
+			<formula>A[] not deadlock
+			</formula>
+			<comment>
+			</comment>
+		</query>
 		<query>
 			<formula>A[] forall (i : pid_t) not PeriodicThread(i).Not_Schedulable
 			</formula>

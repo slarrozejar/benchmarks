@@ -4,17 +4,13 @@ dotStyle
 Description
 -----------
 
-This tool allows to apply a style on a graph represented in the [DOT language](https://graphviz.org/doc/info/lang.html). The style(s) are applied depending on
-some conditions on the edges or on the nodes of the graph and
-allows to highlight some pieces of information with the same style for different graphs. **dotStyle** is written in Python and
-requires Python 3 to be executed.
+This tool allows to apply a style on a graph represented in the [DOT language](https://graphviz.org/doc/info/lang.html). The style can be used to highlight some pieces of informations in the nodes and edges of the graph. The style applied to the nodes and the edges can be selected using conditions on the attributes of the nodes/edges. Unconditional style can also be applied on the graph. **dotStyle** is written in Python and requires Python 3 to be executed.
 
 Usage
 -----
-The style(s) can be specified in the line tool and in this case can be applied either on nodes or on edges.
-It can also be specified in a json file.   
+The style(s) can be specified as command line arguments or in a JSON file. If both are provided, the command line arguments may overwrite the style provided in the JSON file. The format of the JSON style file is described below.
 
-To execute this tool, launch the line tool:
+To execute this tool, simply run:
 
     ./dotStyle.py [graph] [options]
     where:
@@ -22,10 +18,10 @@ To execute this tool, launch the line tool:
 
 run command `./dotStyle.py -h` to get help on the options
 
-Example with json file
-----------------------
+Example with JSON style file
+----------------------------
 
-Here is an example of a json file for this tool:
+Here is an example of a JSON file for this tool:
 
     {
        "style1" : {
@@ -60,12 +56,14 @@ Here is an example of a json file for this tool:
         }
     }
 
-*object* can be "graph", "node" or "edge", it specifies on which elements of the graph the style will be applied. If *object* is "graph" then there is no *conditon* section.
-The elements of *condition* are attributes in use in the graph with the expression they should match so that the style is applied on the element considered. When there is no *condition* section the changes specified in *dotStyle* will be
-applied to every element *object* of the graph.
-The elements of *dotStyle* are attributes already in use in the
-graph or new ones with their new value.
-All elements in the file must be strings.
+A style file is made of several style sections. Each style section has a name (*style1*, *style2* and *style3* in the example above) and is made of up to three components:
+- *object* is one of "graph", "node" or "edge": it specifies on which elements of the graph the style shall be applied.
+- *condition* is a list of pairs *"attribute": "expression"* that is matched by all objects of the selected type such that each attribute in the condition has a value that matches the corresponding regular expression. The regular expression should follow the Python regular expression language. As an example, *style1* above matches all nodes with an attribute *a* that contains a number and an attribute *b* which has value 3. The condition is optional for nodes and edges, and no condition shall be provided for graph. If no condition is provided, all objects of the selected type match.
+- finally, *dotStyle* is a list of attributes that will be added (or modified) on the selected objects. This tool can be used to set any attribute on graphs, nodes and edges. In particular, it can be used to set [attributes recognised by the graphviz tool](https://graphviz.org/doc/info/attrs.html).
+
+All values in the JSON style file must be strings.
+
+As an example, consider the following dot graph:
 
     digraph foo {
         n1 [color=blue, b=3, a=4];
@@ -75,12 +73,12 @@ All elements in the file must be strings.
         n3 -> n1 [color=cyan, b=1];
     }
 
-The launching of the line tool `./dotStyle.py example.dot -s example.json` where example.dot is the graph above and example.json is the json example above produces the following graph:
+The command `./dotStyle.py example.dot -s example.json` where example.dot is the graph above and example.json is the JSON style file above produces the following graph:
 
     digraph foo {
             graph [fontname="Helvetica-Oblique",
-                    fontsize=36,
-                    label="Example graph"
+                   fontsize=36,
+                   label="Example graph"
             ];
             n1      [a=4,
                     b=3,
@@ -96,13 +94,15 @@ The launching of the line tool `./dotStyle.py example.dot -s example.json` where
                     color=cyan];
     }
 
-As specified in the json file, the node n1 where *a* is a positive integer and *b* equals 3 has been colored in blue and the edge `n1 -> n2` where *b* equals 2 has been colored in yellow. The other elements remain unchanged.
+As specified in the JSON style file, the node n1 where *a* is a positive integer and *b* equals 3 has been colored in blue and the edge `n1 -> n2` where *b* equals 2 has been colored in yellow. The other elements remain unchanged.
 
 
-Example with line tool
-----------------------
+Command line example
+--------------------
 
-To get the same graph as in the example with the json file above by specifying the changes to apply in the line tool, just launch the command: `./dotStyle.py example.dot -sg label="Example graph" fontname="Helvetica-Oblique" fontsize=36 -sn "a=[0-9]+&&b=3" color=blue style=filled -se "b=2" color=yellow`
+The style can also be sepcified using the command line options `-sg` for graph, `-sn` for nodes and `-se` for edges. For instance, the following command applies the same style as the JSON style file above:
+`./dotStyle.py example.dot -sg label="Example graph" fontname="Helvetica-Oblique" fontsize=36 -sn "a=[0-9]+ && b=3" color=blue style=filled -se "b=2" color=yellow`
 
-When the first argument of `-sn` or `-se` is *""*, the changes specified by the
-following arguments will be applied to every node or edge of the graph.
+Notice that the first argument following `-sn` or `-se` is a condition that selects the nodes/edges on which the style shall be applied. The style is specified by the next arguments. Unconditional styles are specified by the empty condition *""*. Graph style `-sg` should not be given any condition.
+
+If both a JSON style file and command line options are provided, the command line options may overwrite the style specified in the JSON file.

@@ -4,7 +4,7 @@ import sys
 import os
 
 def test_node_label():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -n "" label="%color%") > test.dot 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -n "" label="%color%") > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_node.dot")
     if(test == result):
@@ -13,7 +13,7 @@ def test_node_label():
         print("\033[31m" +"Test node label: Failed")
 
 def test_edge_label():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -e "" label="%color%") > test.dot 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -e "" label="%color%") > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_edge.dot")
     if(test == result):
@@ -22,7 +22,7 @@ def test_edge_label():
         print("\033[31m" + "Test edge label: Failed")
 
 def test_format_string():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -n "" label="%color%(%b%), %b%%s%" -e "" label="%color%(%b%), %b%%s%") > test.dot 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -n "" label="%color%(%b%), %b%%s%" -e "" label="%color%(%b%), %b%%s%") > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_format_string.dot")
     if(test == result):
@@ -31,7 +31,7 @@ def test_format_string():
         print("\033[31m" + "Test format string: Failed")
 
 def test_inversion():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -n "" a="%b%" -n "" b="%a%" -e "" a="%b%" -e "" b="%a%") > test.dot 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -n "" a="%b%" -n "" b="%a%" -e "" a="%b%" -e "" b="%a%") > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_inversion.dot")
     if(test == result):
@@ -40,7 +40,7 @@ def test_inversion():
         print("\033[31m" + "Test inversion: Failed")
 
 def test_multiple_nodes_label():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -n "" a=dog -n "" b=cat) > test.dot 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -n "" a=dog -n "" b=cat) > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_multiple_nodes.dot")
     if(test == result):
@@ -49,7 +49,7 @@ def test_multiple_nodes_label():
         print("\033[31m" + "Test test multiple nodes label: Failed")
 
 def test_multiple_edges_label():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -e "" a=dog -e "" b=cat) > test.dot 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -e "" a=dog -e "" b=cat) > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_multiple_edges.dot")
     if(test == result):
@@ -58,7 +58,7 @@ def test_multiple_edges_label():
         print("\033[31m" + "Test test multiple edges label: Failed")
 
 def test_nochange():
-    os.system('./../dotStyle/dotStyle.py graph.dot > test.dot 2>/dev/null')
+    os.system('./../dot-attributes/dot-attributes.py graph.dot > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("graph.dot")
     if(test == result):
@@ -67,7 +67,7 @@ def test_nochange():
         print("\033[31m" + "Test no change: Failed")
 
 def test_line_node():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -n "b=3&&a=4" color=yellow) > test.dot 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -n "b=3&&a=4" color=yellow) > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_line_node.dot")
     if(test == result):
@@ -76,7 +76,7 @@ def test_line_node():
         print("\033[31m" + "Test line node: Failed")
 
 def test_line_edge():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -e "b=1" color=yellow) > test.dot 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -e "b=1" color=yellow) > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_line_edge.dot")
     if(test == result):
@@ -85,7 +85,7 @@ def test_line_edge():
         print("\033[31m" + "Test line edge: Failed")
 
 def test_line_graph():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -g label="Name of the graph" font="Helvetica") > test.dot 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -g label="Name of the graph" font="Helvetica") > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_line_graph.dot")
     if(test == result):
@@ -94,7 +94,7 @@ def test_line_graph():
         print("\033[31m" + "Test line graph: Failed")
 
 def test_line_multiple_nodes():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -n "b=3&&a=4" color=yellow -n label=n3 color=blue) > test.dot 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -n "b=3&&a=4" color=yellow -n label=n3 color=blue) > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_line_multiple_nodes.dot")
     if(test == result):
@@ -103,7 +103,7 @@ def test_line_multiple_nodes():
         print("\033[31m" + "Test line multiple nodes: Failed")
 
 def test_file():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -s test.json) > test.dot 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -s test.json) > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_file.dot")
     if(test == result):
@@ -112,7 +112,7 @@ def test_file():
         print("\033[31m" + "Test file: Failed")
 
 def test_node_bad_condition():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -n "=blabla" color=blue) > test 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -n "=blabla" color=blue) > test 2>/dev/null')
     res = open("test","r")
     content = res.read()
     if(content == "Condition with empty arguments\n"):
@@ -121,7 +121,7 @@ def test_node_bad_condition():
         print("\033[31m" + "Test node bad condition: Failed")
 
 def test_edge_bad_condition():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -e "=blabla" color=blue) > test 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -e "=blabla" color=blue) > test 2>/dev/null')
     res = open("test","r")
     content = res.read()
     if(content == "Condition with empty arguments\n"):
@@ -130,7 +130,7 @@ def test_edge_bad_condition():
         print("\033[31m" + "Test edge bad condition: Failed")
 
 def test_file_bad_condition():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -s test_bad_condition.json) > test 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -s test_bad_condition.json) > test 2>/dev/null')
     res = open("test","r")
     content = res.read()
     if(content == "Condition with empty arguments\n"):
@@ -139,7 +139,7 @@ def test_file_bad_condition():
         print("\033[31m" + "Test file bad condition: Failed")
 
 def test_and():
-    os.system("""(./../dotStyle/dotStyle.py graph.dot -n "label='n3&&n2'&&a=toto" color=aquamarine) > test.dot 2>/dev/null""")
+    os.system("""(./../dot-attributes/dot-attributes.py graph.dot -n "label='n3&&n2'&&a=toto" color=aquamarine) > test.dot 2>/dev/null""")
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_and.dot")
     if(test == result):
@@ -148,7 +148,7 @@ def test_and():
         print("\033[31m" + "Test and: Failed")
 
 def test_bad_spaces():
-    os.system('(./../dotStyle/dotStyle.py graph.dot -n "a=le vent e lève&&b=3") > test 2>/dev/null')
+    os.system('(./../dot-attributes/dot-attributes.py graph.dot -n "a=le vent e lève&&b=3") > test 2>/dev/null')
     res = open("test","r")
     content = res.read()
     if(content == "Spaces outside argument value\n"):
@@ -157,7 +157,7 @@ def test_bad_spaces():
         print("\033[31m" + "Test bad spaces: Failed")
 
 def test_no_condition_line():
-    os.system("""(./../dotStyle/dotStyle.py graph.dot -n "" color=red -e "" color=blue) > test.dot 2>/dev/null""")
+    os.system("""(./../dot-attributes/dot-attributes.py graph.dot -n "" color=red -e "" color=blue) > test.dot 2>/dev/null""")
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_no_condition.dot")
     if(test == result):
@@ -166,7 +166,7 @@ def test_no_condition_line():
         print("\033[31m" + "Test no condition line: Failed")
 
 def test_no_condition_file():
-    os.system("""(./../dotStyle/dotStyle.py graph.dot -s test_no_condition.json) > test.dot 2>/dev/null""")
+    os.system("""(./../dot-attributes/dot-attributes.py graph.dot -s test_no_condition.json) > test.dot 2>/dev/null""")
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_no_condition.dot")
     if(test == result):

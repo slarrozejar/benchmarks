@@ -1,0 +1,27 @@
+{
+   "style1" : {
+     "object" : "node",
+     "dotStyle" : {
+        "color" : "blue",
+        "style" : "filled"
+        }
+    },
+
+    "style2" : {
+        "object" : "edge",
+        "condition" : {
+        },
+        "dotStyle" : {
+            "color" : "yellow"
+        }
+    },
+
+    "style3" : {
+        "object" : "graph",
+        "dotStyle" : {
+            "label" : "Example graph",
+            "fontname" : "Helvetica-Oblique",
+		    "fontsize" : "36"
+        }
+    }
+}

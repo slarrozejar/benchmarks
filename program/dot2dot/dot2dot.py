@@ -13,14 +13,14 @@ def get_infos(dct):
     """ `dct` is a dictionnary that maps attributes to values. The
     values possibly contain some %str% where str is a string without
     spaces and without '%'. The substrings inbetween %str% don't contain '%' either.
-    Values are used to create formatted strings where all %str% are replaced by '%s'. 
+    Values are used to create formatted strings where all %str% are replaced by '%s'.
     Returns a list of pairs (attr, val) where val is the formatted string and a
     list of all words which were between '%'. The elements contained in dct must
     be strings. """
     res = []
     attributes = []
     for elmt in dct:
-        format_string, attributes_names = parse_format_string(dct[elmt])
+        format_string, attributes_names = parse_references(dct[elmt])
         res.append((elmt, format_string))
         attributes.append(attributes_names)
     return res, attributes
@@ -39,7 +39,7 @@ def get_infos_RE(dct):
         res.append((elmt, replace_string))
     return res
 
-def parse_atrr(str):
+def parse_attr(str):
     """ Takes a string with format a=b where a and b are two substrings and a doesn't
     contain '=' and return the substrings a and b. """
     if(str==""):
@@ -53,7 +53,7 @@ def parse_atrr(str):
         exit()
     return attribute_to_replace, replace_string
 
-def parse_split(str):
+def parse_conjunction(str):
     """ Takes a string possibly containing substrings separated by '&&'.
     Splits the string str according to '&&'. Ignores '&&' if contained inside ''.
     Ends the program if there are spaces outside ''. Returns the list of
@@ -90,15 +90,15 @@ def parse_format(str):
     """ Takes a string possibly containing substrings separated by '&&'. The substrings
     have format "attr=val" and can contain '&&' if inside ''. Returns a list of
     pairs (attr, val). """
-    substr_list = parse_split(str)
+    substr_list = parse_conjunction(str)
     res = []
     for s in substr_list:
-        attr, val = parse_atrr(s)
+        attr, val = parse_attr(s)
         val=re.compile(val+'$')
         res.append((attr, val))
     return res
 
-def parse_format_string(str):
+def parse_references(str):
     """ Takes a string possibly containing some %str% where str is a string without
     spaces and without '%' and creates a formatted string where all %str% are
     replaced by '%s'. The substrings inbetween %str% don't contain '%' either.
@@ -140,7 +140,7 @@ def graph_extract_changes(obj):
     'attr=val' where attr doesn't contain '='. Returns a list of pairs (attr, value). """
     changes = []
     for elmt in obj:
-        attribute_to_replace, value = parse_atrr(elmt)
+        attribute_to_replace, value = parse_attr(elmt)
         changes.append((attribute_to_replace, value))
     return changes
 
@@ -150,7 +150,7 @@ def extract_changes(obj):
     elements are strings with format 'cond1&&cond2&&...&&condN', where condi has
     format attr=value and attr doesn't contain '='. Returns a list of pairs (cond, style, attr_names)
     where cond and style are lists containing the corresponding pairs (attr, value).
-    Values contained in style can be formatted strings as in parse_format_string.
+    Values contained in style can be formatted strings as in parse_references.
     attr_names is a list of attributes' names whose values are needed to update
     other attributes' values. """
     changes = []
@@ -159,8 +159,8 @@ def extract_changes(obj):
         style = []
         cond=parse_format(elmt[0])
         for i in range(1, len(elmt)):
-            attribute_to_replace, value = parse_atrr(elmt[i])
-            format_string, attributes_names = parse_format_string(value)
+            attribute_to_replace, value = parse_attr(elmt[i])
+            format_string, attributes_names = parse_references(value)
             style.append((attribute_to_replace, format_string))
             attributes.append(attributes_names)
         c = Change(cond,style,attributes)

@@ -10,10 +10,10 @@ from collections import namedtuple
 Change = namedtuple('Change', ['cond', 'attr', 'attr_names'])
 
 def get_infos(dct):
-    """ From a dictionnary dct containing attributes with their values, where the
+    """ `dct` is a dictionnary that maps attributes to values. The
     values possibly contain some %str% where str is a string without
-    spaces and without '%' and creates a formatted string where all %str% are
-    replaced by '%s'. The substrings inbetween %str% don't contain '%' either.
+    spaces and without '%'. The substrings inbetween %str% don't contain '%' either.
+    Values are used to create formatted strings where all %str% are replaced by '%s'. 
     Returns a list of pairs (attr, val) where val is the formatted string and a
     list of all words which were between '%'. The elements contained in dct must
     be strings. """
@@ -26,9 +26,10 @@ def get_infos(dct):
     return res, attributes
 
 def get_infos_RE(dct):
-    """ From a dictionnary dct containing attributes with their values, extracts
-    a list of pairs (attr, val). The elements contained in dct must be strings.
-    The values 'val' are stored as regular expressions. """
+    """ From a dictionary `dct` that maps attributes to values, extract a list of
+    pairs (attribute, re) where re is the python regular expression obtained from
+    the value of attribute according to the dictionnary `dct`. Both attributes and
+    values are supposed to be strings in `dct`. """
     res = []
     for elmt in dct:
         replace_string = re.compile(dct[elmt])
@@ -167,7 +168,7 @@ def extract_changes(obj):
     return changes
 
 def dct_to_changes(dct):
-    """ From a dictionnary 'dct' where each element contains 'condition', 'dotStyle',
+    """ From a dictionnary 'dct' where each element contains 'condition', 'updates',
     'object', extract a list of changes to apply on the graph, a list of changes
     to apply to nodes and a list of changes to apply to edges. node_changes and
     edge_changes contain pairs (cond, style, attr_names) where cond and style are lists of
@@ -185,7 +186,7 @@ def dct_to_changes(dct):
                 cond = get_infos_RE(dct[elmt]["condition"])
             else:
                 cond = [("",re.compile(""))]
-            style, attr_names = get_infos(dct[elmt]["dotStyle"])
+            style, attr_names = get_infos(dct[elmt]["updates"])
             c = Change(cond,style,attr_names)
             node_changes.append(c)
         elif(dct[elmt]["object"] == "edge"):
@@ -193,11 +194,11 @@ def dct_to_changes(dct):
                 cond = get_infos_RE(dct[elmt]["condition"])
             else:
                 cond = [("",re.compile(""))]
-            style, attr_names = get_infos(dct[elmt]["dotStyle"])
+            style, attr_names = get_infos(dct[elmt]["updates"])
             c = Change(cond,style,attr_names)
             edge_changes.append(c)
         else:
-            style, attr_names = get_infos(dct[elmt]["dotStyle"])
+            style, attr_names = get_infos(dct[elmt]["updates"])
             graph_changes += style
     return graph_changes, node_changes, edge_changes
 

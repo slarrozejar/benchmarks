@@ -4,11 +4,11 @@ dot2dot
 Description
 -----------
 
-This tool allows to add/modify attributes of the nodes and edges of a graph represented in the [DOT language](https://graphviz.org/doc/info/lang.html). The modification of attributes is conditional and can be computed from the values of other attributes. Unconditional modification can also be applied on the graph. **dot2dot** is written in Python and requires Python 3 to be executed.
+This tool allows to add/modify attributes of the nodes and edges of a graph represented in the [DOT language](https://graphviz.org/doc/info/lang.html). The modification of attributes is conditional and can be computed from the values of other attributes. Unconditional modification can also be applied on the graph. **dot2dot** is written in Python and requires Python 3 with the module [pygraphviz](https://pygraphviz.github.io/) to be executed.
 
 Usage
 -----
-The modification(s) can be specified as command line arguments or in a JSON file. If both are provided, the command line arguments may overwrite the changes provided in the JSON file and vice versa. The format of the JSON file is described below.
+The modification(s) can be specified as command line arguments or in a JSON file. If both are provided, the command line arguments may overwrite the changes provided in the JSON file. The format of the JSON file is described below.
 
 To execute this tool, simply run:
 
@@ -19,7 +19,7 @@ To execute this tool, simply run:
 run command `./dot2dot.py -h` to get help on the options
 
 Application of a style
-----------------------------
+----------------------
 This tool can be used to highlight some pieces of information in the nodes and edges of the graph by applying a style.
 Here is an example of a JSON file for this tool:
 
@@ -30,7 +30,7 @@ Here is an example of a JSON file for this tool:
            "a" : "[0-9]+",
            "b" : "3"
          },
-         "dotStyle" : {
+         "updates" : {
             "color" : "blue",
             "style" : "filled"
             }
@@ -41,14 +41,14 @@ Here is an example of a JSON file for this tool:
             "condition" : {
                 "b" : "2"
             },
-            "dotStyle" : {
+            "updates" : {
                 "color" : "yellow"
             }
         },
 
         "style3" : {
             "object" : "graph",
-            "dotStyle" : {
+            "updates" : {
                 "label" : "Example graph",
                 "fontname" : "Helvetica-Oblique",
     		    "fontsize" : "36"
@@ -59,7 +59,7 @@ Here is an example of a JSON file for this tool:
 A style file is made of several style sections. Each style section has a name (*style1*, *style2* and *style3* in the example above) and is made of up to three components:
 - *object* is one of "graph", "node" or "edge": it specifies on which elements of the graph the style shall be applied.
 - *condition* is a list of pairs *"attribute": "expression"* that is matched by all objects of the selected type such that each attribute in the condition has a value that matches the corresponding regular expression. The regular expression should follow the Python regular expression language. As an example, *style1* above matches all nodes with an attribute *a* that contains a number and an attribute *b* which has value 3. The condition is optional for nodes and edges, and no condition shall be provided for the graph. If no condition is provided, all objects of the selected type match.
-- finally, *dotStyle* is a list of attributes that will be added (or modified) on the selected objects. This tool can be used to set any attribute on graphs, nodes and edges. In particular, it can be used to set [attributes recognised by the graphviz tool](https://graphviz.org/doc/info/attrs.html).
+- finally, *updates* is a list of attributes that will be added (or modified) on the selected objects. This tool can be used to set any attribute on graphs, nodes and edges. In particular, it can be used to set [attributes recognised by the graphviz tool](https://graphviz.org/doc/info/attrs.html).
 
 All values in the JSON file must be strings.
 

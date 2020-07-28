@@ -1,13 +1,13 @@
 {
    "style1" : {
      "object" : "node",
-     "dotStyle" : {
+     "updates" : {
         "label" : "%color%(%b%), %b%%s%"
         }
     },
     "style2" : {
       "object" : "edge",
-      "dotStyle" : {
+      "updates" : {
          "label" : "%color%(%b%), %b%%s%"
          }
      }

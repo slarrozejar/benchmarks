@@ -1,14 +1,14 @@
 {
    "style1" : {
      "object" : "node",
-     "dotStyle" : {
+     "updates" : {
         "color" : "red"
         }
     },
 
     "style2" : {
         "object" : "edge",
-        "dotStyle" : {
+        "updates" : {
             "color" : "blue"
         }
     }

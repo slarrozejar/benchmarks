@@ -5,7 +5,7 @@
        "a" : "[0-9]+",
        "b" : "3"
      },
-     "dotStyle" : {
+     "updates" : {
         "color" : "aquamarine",
         "style" : "filled",
         "shape" : "polygon"
@@ -17,7 +17,7 @@
         "condition" : {
             "b" : "2"
         },
-        "dotStyle" : {
+        "updates" : {
             "color" : "yellow",
             "splines" : "curved"
         }
@@ -25,7 +25,7 @@
 
     "style3" : {
         "object" : "graph",
-        "dotStyle" : {
+        "updates" : {
             "label" : "Name of the graph",
             "fontname" : "Helvetica-Oblique",
 		    "fontsize" : "36"

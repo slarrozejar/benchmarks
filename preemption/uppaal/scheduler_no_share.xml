@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
 <nta>
-	<declaration>const int N = 3;                   // Number of threads
+	<declaration>const int N = 2;                   // Number of threads
+const int CORE = 1;                // Number of cores 
 const int WCET = 1;                // Scheduler worst-case execution time
 const int EXEC = 1;                // Time of an operation
 
+
 typedef int[1,N] pid_t;
+typedef int[1,CORE] core_id; 
 
 broadcast chan go;                 // Initial synchronization
 chan           run[pid_t];         // Thread start signal
-chan           done;               // Thread stop signal
+chan           done[pid_t];               // Thread stop signal
 chan           ready[pid_t];       // Thread ready signal
 chan           invoke_code[pid_t]; // Thread begin execution;
 chan           return_code[pid_t]; // Thread end execution
@@ -18,6 +21,7 @@ chan           return_code[pid_t]; // Thread end execution
   </declaration>
 	<template>
 		<name x="5" y="5">Scheduler</name>
+		<parameter>core_id cid</parameter>
 		<declaration>clock execution_time;
 pid_t pid := 1;
 bool schedulable[pid_t];  // Tells if threads are schedulable or not
@@ -92,7 +96,7 @@ schedulable[i]</label>
 		<transition>
 			<source ref="id3"/>
 			<target ref="id2"/>
-			<label kind="synchronisation" x="161" y="-51">done?</label>
+			<label kind="synchronisation" x="161" y="-51">done[pid]?</label>
 		</transition>
 		<transition>
 			<source ref="id4"/>
@@ -148,7 +152,6 @@ schedulable[i]</label>
 		<name>PeriodicThread</name>
 		<parameter>pid_t tid</parameter>
 		<declaration>clock released_time;
-clock execution_time;
 
 int  offset;          // Delay before thread becomes schedulable first time
 int  deadline;        // Threads deadline
@@ -223,7 +226,7 @@ void initialize()
 		<transition>
 			<source ref="id8"/>
 			<target ref="id7"/>
-			<label kind="synchronisation" x="-1538" y="-484">done!</label>
+			<label kind="synchronisation" x="-1538" y="-484">done[tid]!</label>
 		</transition>
 		<transition>
 			<source ref="id9"/>

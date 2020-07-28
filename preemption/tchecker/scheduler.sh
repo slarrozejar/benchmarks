@@ -64,10 +64,10 @@ echo "system:scheduler_${N}_${CORE}_$WCET
 
 # Events
 echo "event:tau
-event:go"
+event:go
+event:done"
 for pid in `seq 1 $N`; do
     echo "event:run$pid
-event:done$pid
 event:ready$pid
 event:invoke_code$pid
 event:return_code$pid"
@@ -82,16 +82,16 @@ for pid in `seq 1 $N`; do
 # Process PeriodicThread$pid
 process:PeriodicThread$pid
 clock:1:released_time$pid
-location:PeriodicThread$pid:initial{init: : urgent:}
+location:PeriodicThread$pid:initial{initial: : urgent:}
 location:PeriodicThread$pid:Release{urgent:}
 location:PeriodicThread$pid:Scheduled{urgent:}
 location:PeriodicThread$pid:Terminated{urgent:}
-location:PeriodicThread$pid:CheckForOffest{invariant:released_time$pid<=$OFFSET}
+location:PeriodicThread$pid:CheckForOffset{invariant:released_time$pid<=$OFFSET}
 location:PeriodicThread$pid:Schedulable
 location:PeriodicThread$pid:Not_Schedulable
 location:PeriodicThread$pid:Running
 location:PeriodicThread$pid:Done{invariant:released_time$pid<=$PERIOD}
-edge:PeriodicThread$pid:initial:CheckForOffest:go{do:released_time$pid=0}
+edge:PeriodicThread$pid:initial:CheckForOffset:go{do:released_time$pid=0}
 edge:PeriodicThread$pid:CheckForOffset:Release:tau{provided:released_time$pid==$OFFSET}
 edge:PeriodicThread$pid:Release:Schedulable:ready$pid{do:released_time$pid=0}
 edge:PeriodicThread$pid:Schedulable:Scheduled:run$pid
@@ -100,7 +100,7 @@ edge:PeriodicThread$pid:Scheduled:Running:invoke_code$pid
 edge:PeriodicThread$pid:Running:Not_Schedulable:tau{provided:released_time$pid>$DEADLINE}
 edge:PeriodicThread$pid:Not_Schedulable:Not_Schedulable:tau
 edge:PeriodicThread$pid:Running:Terminated:return_code$pid{provided:released_time$pid<=$DEADLINE}
-edge:PeriodicThread$pid:Terminated:Done:done$pid
+edge:PeriodicThread$pid:Terminated:Done:done
 edge:PeriodicThread$pid:Done:Release:tau{provided:released_time$pid==$PERIOD}"
 done
 
@@ -108,55 +108,72 @@ for pid in `seq 1 $N`; do
     echo "
 # Process Execution$pid
 process:Execution$pid
-clock:1:exec_execution_time$pid
+clock:1:execution_time$pid
 location:Execution$pid:WaitingForRelease{initial:}
-location:Execution$pid:Ready{invariant:exec_execution_time$pid<=$EXEC}
-location:Execution$pid:If{invariant:exec_execution_time$pid<=$EXEC}
-location:Execution$pid:IfThen{invariant:exec_execution_time$pid<=$EXEC}
-location:Execution$pid:IfElse{invariant:exec_execution_time$pid<=$EXEC}
-location:Execution$pid:IfEnd{invariant:exec_execution_time$pid<=$EXEC}
-location:Execution$pid:Return{invariant:exec_execution_time$pid<=$EXEC}
-location:Execution$pid:End{invariant:exec_execution_time$pid<=$EXEC}
-edge:Execution$pid:WaitingForRelease:Ready:invoke_code$pid{do:exec_execution_time$pid=0}
-edge:Execution$pid:Ready:If:tau{provided:exec_execution_time$pid==$EXEC : do:exec_execution_time$pid=0}
-edge:Execution$pid:If:IfElse:tau{provided:exec_execution_time$pid==$EXEC : do:exec_execution_time$pid=0}
-edge:Execution$pid:If:IfThen:tau{provided:exec_execution_time$pid==$EXEC : do:exec_execution_time$pid=0}
-edge:Execution$pid:IfThen:IfEnd:tau{provided:exec_execution_time$pid==$EXEC : do:exec_execution_time$pid=0}
-edge:Execution$pid:IfElse:IfEnd:tau{provided:exec_execution_time$pid==$EXEC : do:exec_execution_time$pid=0}
-edge:Execution$pid:IfEnd:Return:tau{provided:exec_execution_time$pid==$EXEC : do:exec_execution_time$pid=0}
-edge:Execution$pid:Return:End:tau{provided:exec_execution_time$pid==$EXEC : do:exec_execution_time$pid=0}
-edge:Execution$pid:Return:End:return_code$pid{provided:exec_execution_time$pid==$EXEC : do:exec_execution_time$pid=0}"
+location:Execution$pid:Ready{invariant:execution_time$pid<=$EXEC}
+location:Execution$pid:If{invariant:execution_time$pid<=$EXEC}
+location:Execution$pid:IfThen{invariant:execution_time$pid<=$EXEC}
+location:Execution$pid:IfElse{invariant:execution_time$pid<=$EXEC}
+location:Execution$pid:IfEnd{invariant:execution_time$pid<=$EXEC}
+location:Execution$pid:Return{invariant:execution_time$pid<=$EXEC}
+location:Execution$pid:End{invariant:execution_time$pid<=$EXEC}
+edge:Execution$pid:WaitingForRelease:Ready:invoke_code$pid{do:execution_time$pid=0}
+edge:Execution$pid:Ready:If:tau{provided:execution_time$pid==$EXEC : do:execution_time$pid=0}
+edge:Execution$pid:If:IfElse:tau{provided:execution_time$pid==$EXEC : do:execution_time$pid=0}
+edge:Execution$pid:If:IfThen:tau{provided:execution_time$pid==$EXEC : do:execution_time$pid=0}
+edge:Execution$pid:IfThen:IfEnd:tau{provided:execution_time$pid==$EXEC : do:execution_time$pid=0}
+edge:Execution$pid:IfElse:IfEnd:tau{provided:execution_time$pid==$EXEC : do:execution_time$pid=0}
+edge:Execution$pid:IfEnd:Return:tau{provided:execution_time$pid==$EXEC : do:execution_time$pid=0}
+edge:Execution$pid:Return:End:tau{provided:execution_time$pid==$EXEC : do:execution_time$pid=0}
+edge:Execution$pid:Return:End:return_code$pid{provided:execution_time$pid==$EXEC : do:execution_time$pid=0}"
 done
 
-for id in `seq 1 $CORE`; do
     echo "
-# Process Scheduler$id
-process:Scheduler$id
-clock:1:schedule_execution_time$id
-int:1:1:$N:1:pid$id
-int:$(($N+1)):0:1:0:schedulable$pid
-location:Scheduler$id:initial{init: : urgent:}
-location:Scheduler$id:Idle{urgent:}
-location:Scheduler$id:Wait
-location:Scheduler$id:Running{invariant:schedule_execution_time$id<=$WCET}
-location:Scheduler$id:Schedule{urgent:}
-location:Scheduler$id:Busy
-edge:Scheduler$id:initial:Idle:go
-edge:Scheduler$id:Running:Schedule:tau{provided:schedule_execution_time$id==$WCET : do:pid$id=1}
-edge:Scheduler$id:Schedule:Schedule:tau{provided:schedulable[pid$id]==0 : do:pid=pid$id%$N+1}"
-    for i in `seq 1 $N`; do
-        echo "edge:Scheduler$id:Wait:Running:ready$i{do:schedulable[$i]=1;schedule_execution_time$id=0}
-edge:Scheduler$id:Running:Running:ready$i{do:schedulable[$i]=1}
-edge:Scheduler$id:Schedule:Schedule:ready$i{do:schedulable[$i]=1}
-edge:Scheduler$id:Busy:Busy:ready$i{do:schedulable[$i]=1}
-edge:Scheduler$id:Idle:Idle:ready$i{do:schedulable[$i]=1}
-edge:Scheduler$id:Schedule:Busy:run$i{provided:pid$id==$i&&schedulable[$i]==1 : do:schedulable[$i]=0}
-edge:Scheduler$id:Busy:Idle:done$i{provided:pid$id==$i}"
-    done
-    TMP=""
-    for i in `seq 1 $(($N-1))`; do
-        TMP="${TMP}schedulable[$i]==0&&"
-    done
-    TMP="${TMP}schedulable[$i]"
-    echo "edge:Scheduler$id:Idle:Wait:tau{provided:$TMP}"
+# Process Scheduler
+process:Scheduler
+clock:1:execution_time
+int:1:1:$N:1:pid
+int:$(($N+1)):0:1:0:schedulable
+int:1:0:$CORE:$CORE:core
+location:Scheduler:initial{initial: : urgent:}
+location:Scheduler:Idle{urgent:}
+location:Scheduler:Wait
+location:Scheduler:Running{invariant:execution_time<=$WCET}
+location:Scheduler:Schedule{urgent:}
+edge:Scheduler:initial:Idle:go
+edge:Scheduler:Running:Schedule:tau{provided:execution_time==$WCET : do:pid=1}
+edge:Scheduler:Schedule:Schedule:tau{provided:schedulable[pid]==0 : do:pid=pid%$N+1}
+edge:Scheduler:Running:Running:done{do:core=core+1}
+edge:Scheduler:Schedule:Schedule:done{do:core=core+1}
+edge:Scheduler:Idle:Idle:done{do:core=core+1}"
+for i in `seq 1 $N`; do
+    echo "edge:Scheduler:Schedule:Idle:run$i{provided:schedulable[pid]==1&&pid==$i : do:schedulable[pid]=0;core=core-1}
+edge:Scheduler:Idle:Running:tau{provided:schedulable[$i]==1&&core>0 : do:execution_time=0}
+edge:Scheduler:Wait:Idle:ready$i{do:schedulable[$i]=1;execution_time=0}
+edge:Scheduler:Running:Running:ready$i{do:schedulable[$i]=1}
+edge:Scheduler:Schedule:Schedule:ready$i{do:schedulable[$i]=1}
+edge:Scheduler:Idle:Idle:ready$i{do:schedulable[$i]=1}"
+done
+TMP=""
+for i in `seq 1 $(($N-1))`; do
+    TMP="${TMP}schedulable[$i]==0&&"
+done
+TMP="${TMP}schedulable[$i]==0"
+echo "edge:Scheduler:Idle:Wait:tau{provided:$TMP}
+edge:Scheduler:Wait:Idle:done{do:core=core+1}
+edge:Scheduler:Idle:Wait:tau{provided:core==0}
+"
+
+TMP="sync:Scheduler@go"
+for pid in `seq 1 $N`; do
+    TMP="${TMP}:PeriodicThread$pid@go?"
+done
+echo "$TMP"
+for pid in `seq 1 $N`; do
+    echo "sync:Scheduler@run$pid:PeriodicThread$pid@run$pid
+sync:PeriodicThread$pid@invoke_code$pid:Execution$pid@invoke_code$pid
+sync:PeriodicThread$pid@ready$pid:Scheduler@ready$pid
+sync:PeriodicThread$pid@done:Scheduler@done
+sync:Execution$pid@return_code$pid:PeriodicThread$pid@return_code$pid
+"
 done

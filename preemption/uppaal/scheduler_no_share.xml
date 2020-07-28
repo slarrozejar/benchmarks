@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
 <nta>
-	<declaration>const int N = 3;                   // Number of threads
-const int CORES = 2;               // Number of cores
+	<declaration>const int N = 2;                   // Number of threads
+const int CORE = 1;               // Number of cores
 const int WCET = 1;                // Scheduler worst-case execution time
 const int EXEC = 1;                // Time of an operation
 
@@ -23,11 +23,11 @@ chan           return_code[pid_t]; // Thread end execution
 		<declaration>clock execution_time;
 pid_t pid := 1;
 bool schedulable[pid_t];  // Tells if threads are schedulable or not
-int[0,CORES] cores; // Number of available cores
+int[0,CORE] core; // Number of available cores
 
 void initialize()
 {
-  cores = CORES;
+  core = CORE;
   for (i : pid_t) {
     schedulable[i] := false;
   }
@@ -56,7 +56,7 @@ void initialize()
 			<source ref="id4"/>
 			<target ref="id4"/>
 			<label kind="synchronisation" x="-187" y="-229">done?</label>
-			<label kind="assignment" x="-187" y="-212">cores++</label>
+			<label kind="assignment" x="-187" y="-212">core++</label>
 			<nail x="-119" y="-187"/>
 			<nail x="-136" y="-221"/>
 		</transition>
@@ -64,7 +64,7 @@ void initialize()
 			<source ref="id3"/>
 			<target ref="id3"/>
 			<label kind="synchronisation" x="-144" y="-34">done?</label>
-			<label kind="assignment" x="-153" y="-17">cores++</label>
+			<label kind="assignment" x="-153" y="-17">core++</label>
 			<nail x="-85" y="-34"/>
 			<nail x="-119" y="-42"/>
 		</transition>
@@ -72,7 +72,7 @@ void initialize()
 			<source ref="id2"/>
 			<target ref="id2"/>
 			<label kind="synchronisation" x="187" y="-93">done?</label>
-			<label kind="assignment" x="187" y="-76">cores++</label>
+			<label kind="assignment" x="187" y="-76">core++</label>
 			<nail x="161" y="-68"/>
 			<nail x="195" y="-51"/>
 		</transition>
@@ -80,7 +80,7 @@ void initialize()
 			<source ref="id0"/>
 			<target ref="id2"/>
 			<label kind="synchronisation" x="-68" y="85">done?</label>
-			<label kind="assignment" x="-85" y="102">cores++</label>
+			<label kind="assignment" x="-85" y="102">core++</label>
 			<nail x="-8" y="85"/>
 		</transition>
 		<transition>
@@ -95,7 +95,7 @@ execution_time:=0</label>
 		<transition>
 			<source ref="id2"/>
 			<target ref="id0"/>
-			<label kind="guard" x="0" y="127">cores==0</label>
+			<label kind="guard" x="0" y="127">core==0</label>
 			<nail x="68" y="144"/>
 		</transition>
 		<transition>
@@ -104,7 +104,7 @@ execution_time:=0</label>
 			<label kind="guard" x="161" y="-204">schedulable[pid]</label>
 			<label kind="synchronisation" x="161" y="-187">run[pid]!</label>
 			<label kind="assignment" x="161" y="-170">schedulable[pid]:=false,
-cores--</label>
+core--</label>
 			<nail x="153" y="-221"/>
 		</transition>
 		<transition>
@@ -127,7 +127,7 @@ not schedulable[i]</label>
 			<source ref="id2"/>
 			<target ref="id3"/>
 			<label kind="guard" x="-34" y="-68">exists (i : pid_t)
-schedulable[i] &amp;&amp; cores&gt;0</label>
+schedulable[i] &amp;&amp; core&gt;0</label>
 			<label kind="assignment" x="-34" y="-34">execution_time := 0</label>
 			<nail x="-51" y="-8"/>
 		</transition>

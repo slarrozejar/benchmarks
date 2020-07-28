@@ -1,10 +1,10 @@
-dot-attributes
+dot2dot
 ========
 
 Description
 -----------
 
-This tool allows to add/modify attributes of the nodes and edges of a graph represented in the [DOT language](https://graphviz.org/doc/info/lang.html). The modification of attributes is conditional and can be computed from the values of other attributes. Unconditional modification can also be applied on the graph. **dot-attributes** is written in Python and requires Python 3 to be executed.
+This tool allows to add/modify attributes of the nodes and edges of a graph represented in the [DOT language](https://graphviz.org/doc/info/lang.html). The modification of attributes is conditional and can be computed from the values of other attributes. Unconditional modification can also be applied on the graph. **dot2dot** is written in Python and requires Python 3 to be executed.
 
 Usage
 -----
@@ -12,11 +12,11 @@ The modification(s) can be specified as command line arguments or in a JSON file
 
 To execute this tool, simply run:
 
-    ./dot-attributes.py [graph] [options]
+    ./dot2dot.py [graph] [options]
     where:
         graph is a dot/graphviz file or - if the graph should be read from the standard input.
 
-run command `./dot-attributes.py -h` to get help on the options
+run command `./dot2dot.py -h` to get help on the options
 
 Application of a style
 ----------------------------
@@ -73,7 +73,7 @@ As an example, consider the following dot graph:
         n3 -> n1 [color=cyan, b=1];
     }
 
-The command `./dot-attributes.py example.dot -s example.json` where example.dot is the graph above and example.json is the JSON file above produces the following graph:
+The command `./dot2dot.py example.dot -s example.json` where example.dot is the graph above and example.json is the JSON file above produces the following graph:
 
     digraph foo {
             graph [fontname="Helvetica-Oblique",
@@ -113,7 +113,7 @@ As an example, consider the following graph expressed in the DOT language:
         n3 -> n1 [c=6];
     }
 
-The command `./dot-attributes.py example.dot -n "" label="%a%, %b%" -e "" label=edge`, where `example.dot` contains the graph above, outputs a graph in dot language whose edges are labelled "edge" and whose nodes are labelled *"%a%, %b%"* where *%a%* and *%b%* are replaced by the values of attributes *a* and *b* of the node. When a node does not possess an attribute *a*, the value of *%a%* is the empty string "". The command above outputs the following graph:
+The command `./dot2dot.py example.dot -n "" label="%a%, %b%" -e "" label=edge`, where `example.dot` contains the graph above, outputs a graph in dot language whose edges are labelled "edge" and whose nodes are labelled *"%a%, %b%"* where *%a%* and *%b%* are replaced by the values of attributes *a* and *b* of the node. When a node does not possess an attribute *a*, the value of *%a%* is the empty string "". The command above outputs the following graph:
 
     digraph example {
             node [label="\N"];

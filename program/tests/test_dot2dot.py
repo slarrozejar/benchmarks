@@ -44,18 +44,28 @@ def test_multiple_nodes_label():
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_multiple_nodes.dot")
     if(test == result):
-        print("\033[32m" + "Test test multiple nodes label: Passed")
+        print("\033[32m" + "Test multiple nodes label: Passed")
     else:
-        print("\033[31m" + "Test test multiple nodes label: Failed")
+        print("\033[31m" + "Test multiple nodes label: Failed")
 
 def test_multiple_edges_label():
     os.system('(./../dot2dot/dot2dot.py graph.dot -e "" a=dog -e "" b=cat) > test.dot 2>/dev/null')
     test = pgv.AGraph("test.dot")
     result = pgv.AGraph("test_multiple_edges.dot")
     if(test == result):
-        print("\033[32m" + "Test test multiple edges label: Passed")
+        print("\033[32m" + "Test multiple edges label: Passed")
     else:
-        print("\033[31m" + "Test test multiple edges label: Failed")
+        print("\033[31m" + "Test multiple edges label: Failed")
+
+def test_file_change_values():
+    os.system('(./../dot2dot/dot2dot.py graph.dot -s test_change_values.json) > test.dot 2>/dev/null')
+    test = pgv.AGraph("test.dot")
+    result = pgv.AGraph("test_format_string.dot")
+    if(test == result):
+        print("\033[32m" + "Test file change values: Passed")
+    else:
+        print("\033[31m" + "Test file change values: Failed")
+
 
 def test_nochange():
     os.system('./../dot2dot/dot2dot.py graph.dot > test.dot 2>/dev/null')
@@ -180,6 +190,7 @@ test_format_string()
 test_inversion()
 test_multiple_nodes_label()
 test_multiple_edges_label()
+test_file_change_values()
 test_nochange()
 test_line_node()
 test_line_edge()

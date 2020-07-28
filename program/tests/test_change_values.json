@@ -1,0 +1,14 @@
+{
+   "style1" : {
+     "object" : "node",
+     "dotStyle" : {
+        "label" : "%color%(%b%), %b%%s%"
+        }
+    },
+    "style2" : {
+      "object" : "edge",
+      "dotStyle" : {
+         "label" : "%color%(%b%), %b%%s%"
+         }
+     }
+}

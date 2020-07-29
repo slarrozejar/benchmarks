@@ -34,4 +34,4 @@ else
 fi
 
 # Model
-cat scheduler_no_share.xml | sed -e s/"N = 2"/"N = $N"/ -e s/"CORE = 1"/"CORE = $CORE"/ -e s/"WCET = 1"/"WCET = $WCET"/ > scheduler_no_share_${N}_${CORE}_${WCET}.xml
+cat scheduler.xml | sed -e s/"N = 2"/"N = $N"/ -e s/"CORE = 1"/"CORE = $CORE"/ -e s/"WCET = 1"/"WCET = $WCET"/ > scheduler_${N}_${CORE}_${WCET}.xml

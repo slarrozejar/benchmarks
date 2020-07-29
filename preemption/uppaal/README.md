@@ -6,6 +6,6 @@ from the model introduced in Section 3 in:
 Model-based schedulability analysis of safety critical hard real-time Java programs.
 JTRES 2008: 106-114*
 
-- `scheduler_no_share.sh` is a timed automaton model of a safety critical protocol
+- `scheduler.sh` is a timed automaton model of a safety critical protocol
 inspired from the one introduced in the article above.
-Run `scheduler_no_share.sh` for help on how to build a UPPAAL model from the script.
+Run `scheduler.sh` for help on how to build a UPPAAL model from the script.

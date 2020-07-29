@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <script src="https://bossanova.uk/jexcel/v4/jexcel.js"></script>
+<script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
+<link rel="stylesheet" href="https://bossanova.uk/jsuites/v2/jsuites.css" type="text/css" />
+<link rel="stylesheet" href="https://bossanova.uk/jexcel/v4/jexcel.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Material+Icons" />
+
+    </head>
+     <body>
+         <br />
+         <br />
+         <div id="demo"></div>
+         </div>
+        </div>
+       </div>
+         <script>
+         table = jexcel(document.getElementById('demo'), {
+           csv:'../models.csv',
+           csvHeaders : true,
+           search : true,
+           columns: [
+            { type:'text', width:300, autocomplete: true},
+            { type:'text', width:300, autocomplete: true},
+            { type:'text', width:300, autocomplete: true}
+        ],
+        toolbar:[
+    {
+        type: 'i',
+        content: 'undo',
+        onclick: function() {
+            table.undo();
+        }
+    },
+    {
+        type: 'i',
+        content: 'redo',
+        onclick: function() {
+            table.redo();
+        }
+    },
+    {
+       type: 'i',
+       content: 'save',
+       onclick: function () {
+           table.download();
+       }
+   }]
+
+         });
+        </script>
+     </body>
+</html>

@@ -87,8 +87,8 @@ def parse_conjunction(str):
     return res
 
 def parse_format(str):
-    """ Takes a string possibly containing substrings separated by '&&'. The substrings
-    have format "attr=val" and can contain '&&' if inside ''. Returns a list of
+    """ Takes a string possibly containing substrings separated by &&. The substrings
+    have format "attr=val" and can contain && if inside ''. Returns a list of
     pairs (attr, val). """
     substr_list = parse_conjunction(str)
     res = []
@@ -121,7 +121,7 @@ def extract_changes(obj):
     first one is a string like 'attr=val' where attr doesn't contain '='. The first
     elements are strings with format 'cond1&&cond2&&...&&condN', where condi has
     format attr=value and attr doesn't contain '='. Returns a list of namedtuple
-    (cond, update, attr_names) where cond and style are lists containing the
+    (cond, update, attr_names) where cond and update are lists containing the
     corresponding pairs (attr, value). Values contained in update can be formatted
     strings as in parse_references. attr_names is a list of attributes' names
     whose values are needed to update other attributes' values. """
@@ -143,7 +143,7 @@ def dct_extract_infos_by_cond(obj,changes):
     """ `obj` is a dictionary possibly containing the key `condition` and containing
     the key `updates`. `cond` and `update` are lists storing the pairs (key,value)
     contained in the sections `condition` and `updates`. `attr_names` contains
-    the keys contained in `updates`. This function appens the named tuple
+    the keys contained in `updates`. This function appens the namedtuple
     (`cond`,`update`,`attr_names`) to the list `changes`. """
     if('condition' in obj.keys()):
         cond = get_infos_RE(obj["condition"])
@@ -157,7 +157,7 @@ def dct_extract_infos(obj,changes):
     """ `obj` is a dictionary containing the key `updates`. `update` is a list
     storing the pairs (key,value) contained in the section `updates`.
     `attr_names` contains the keys contained in `updates`. This function appens
-    the named tuple (`cond`,`update`,`attr_names`) to the list `changes`. """
+    the namedtuple (`cond`,`update`,`attr_names`) to the list `changes`. """
     update, attr_names = get_infos(obj["updates"])
     changes += update
 
@@ -165,7 +165,7 @@ def dct_to_changes(dct):
     """ From a dictionnary 'dct' where each element contains 'condition', 'updates',
     'object', extract a list of changes to apply on the graph, a list of changes
     to apply to nodes and a list of changes to apply to edges. node_changes and
-    edge_changes contain pairs (cond, style, attr_names) where cond and style are lists of
+    edge_changes contain namedtuples (cond, update, attr_names) where cond and update are lists of
     (attr, value) and graph_changes is a list of pairs (attr, value). Returns the
     lists graph_changes, node_changes and edge_changes which contain the changes
     to apply. attr_names is a list of attributes' names whose values are needed to update
@@ -199,7 +199,7 @@ def verify_cond(elmt, cond_list):
 def instantiate_format(elmt, format_string, attributes, unknown_attributes):
     """ elmt is either a node or an edge of a pygraphviz graph, format_string is a formatted
     string containing (multiple) '%s' to replace, attributes are the names of
-    attributes of elmt which will replace the '%s' in the formated string, unknown_attributes
+    attributes of elmt which will replace the '%s' in the formatted string, unknown_attributes
     is a string in which attributes from attributes which do not exist in elmt
     will be added. There must be as much '%s' in format string as elements in
     atttributes_values. Returns the formatted string where '%s' have been replaced by
@@ -222,20 +222,21 @@ def change_values(elmt, to_change):
 
 def apply_changes(coll, changes):
     """ 'coll' is either the nodes or the edges of a pygraphviz graph. 'changes'
-    is a list of named tuples (cond, style, attr_names) containing a style to apply when the conditions
-    if cond are verified. Applies the necessary changes on the graph. """
+    is a list of namedtuples (cond, update, attr_names) containing an update to
+    apply when the conditions if cond are verified. Applies the necessary changes
+    on the graph. """
     for elmt in coll:
         to_change = []
         unknown_attributes = ""
         # Store the attributes to replace and the value to give them
         for change in changes:
             cond = change[0]
-            style = change[1]
+            update = change[1]
             attr_names = change[2]
             if(verify_cond(elmt, cond)):
-                for i in range(len(style)):
-                    string, unknown_attributes = instantiate_format(elmt, style[i][1], attr_names[i], unknown_attributes)
-                    to_change.append((style[i][0], string))
+                for i in range(len(update)):
+                    string, unknown_attributes = instantiate_format(elmt, update[i][1], attr_names[i], unknown_attributes)
+                    to_change.append((update[i][0], string))
         # Warning message if non existing attribute's values are used
         if(len(unknown_attributes) > 0):
             sys.stderr.write("Warning: node " + str(elmt) + " has no attribute(s): " + unknown_attributes + "\n")

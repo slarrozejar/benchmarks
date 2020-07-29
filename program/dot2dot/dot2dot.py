@@ -7,7 +7,7 @@ import json
 import os
 from collections import namedtuple
 
-Change = namedtuple('Change', ['cond', 'attr', 'attr_names'])
+Change = namedtuple('Change', ['cond', 'update', 'attr_names'])
 
 def get_infos(dct):
     """ `dct` is a dictionnary that maps attributes to values. The
@@ -54,10 +54,10 @@ def parse_attr(str):
     return attribute_to_replace, replace_string
 
 def parse_conjunction(str):
-    """ Takes a string possibly containing substrings separated by '&&'.
-    Splits the string str according to '&&'. Ignores '&&' if contained inside ''.
+    """ Takes a string possibly containing substrings separated by &&.
+    Splits the string str according to &&. Ignores && if contained inside ''.
     Ends the program if there are spaces outside ''. Returns the list of
-    subtrings separated by '&&'. """
+    subtrings separated by &&. """
     ignore = False # inside '' or not
     i = 0
     lb = 0 # lower bound of the next substring to extract
@@ -102,38 +102,10 @@ def parse_references(str):
     """ Takes a string possibly containing some %str% where str is a string without
     spaces and without '%' and creates a formatted string where all %str% are
     replaced by '%s'. The substrings inbetween %str% don't contain '%' either.
-    Returns the formatted string and a list of all words which were between '%'. """
-    initial = str
-    attributes_indices = [] # list of pairs (lb, ub) lower and upper bounds to consider
-    i = 0
-
-    # Get lower and upper bounds
-    f=str.find("%")
-    while((str != "") and (f != -1)):
-        tmp = f
-        lb = i+tmp
-        i += tmp + 1
-        str=str[tmp+1:]
-        tmp = str.find("%")
-        ub = i+tmp
-        i += tmp + 1
-        str=str[tmp+1:]
-        attributes_indices.append((lb, ub))
-        f=str.find("%")
-
-    attributes = [] # Names of attributes' values to consider
-    for lb, ub in attributes_indices:
-        attributes.append(initial[lb+1:ub])
-
-    # No attributes to change
-    if(len(attributes_indices)==0):
-        return initial, attributes
-
-    # Create format string
-    format_string = initial[0:attributes_indices[0][0]] + "%s"
-    for i in range(len(attributes_indices)-1):
-        format_string += initial[attributes_indices[i][1]+1:attributes_indices[i+1][0]] + "%s"
-    return format_string, attributes
+    Returns the formatted string and a list of all references which were between '%'. """
+    format_string = re.sub('%[^%]*%','%s',str) # Create formatted string
+    refs = re.findall('%([^%]*)%',str) # Extract references
+    return format_string, refs
 
 def graph_extract_changes(obj):
     """ obj is a list of lists where each element of the lists is a string like
@@ -148,24 +120,46 @@ def extract_changes(obj):
     """ obj is a list of lists where each element of the lists except from the
     first one is a string like 'attr=val' where attr doesn't contain '='. The first
     elements are strings with format 'cond1&&cond2&&...&&condN', where condi has
-    format attr=value and attr doesn't contain '='. Returns a list of pairs (cond, style, attr_names)
-    where cond and style are lists containing the corresponding pairs (attr, value).
-    Values contained in style can be formatted strings as in parse_references.
-    attr_names is a list of attributes' names whose values are needed to update
-    other attributes' values. """
+    format attr=value and attr doesn't contain '='. Returns a list of namedtuple
+    (cond, update, attr_names) where cond and style are lists containing the
+    corresponding pairs (attr, value). Values contained in update can be formatted
+    strings as in parse_references. attr_names is a list of attributes' names
+    whose values are needed to update other attributes' values. """
     changes = []
     for elmt in obj:
         attributes = []
-        style = []
+        update = []
         cond=parse_format(elmt[0])
-        for i in range(1, len(elmt)):
-            attribute_to_replace, value = parse_attr(elmt[i])
+        for e in elmt[1:]:
+            attribute_to_replace, value = parse_attr(e)
             format_string, attributes_names = parse_references(value)
-            style.append((attribute_to_replace, format_string))
+            update.append((attribute_to_replace, format_string))
             attributes.append(attributes_names)
-        c = Change(cond,style,attributes)
+        c = Change(cond,update,attributes)
         changes.append(c)
     return changes
+
+def dct_extract_infos_by_cond(obj,changes):
+    """ `obj` is a dictionary possibly containing the key `condition` and containing
+    the key `updates`. `cond` and `update` are lists storing the pairs (key,value)
+    contained in the sections `condition` and `updates`. `attr_names` contains
+    the keys contained in `updates`. This function appens the named tuple
+    (`cond`,`update`,`attr_names`) to the list `changes`. """
+    if('condition' in obj.keys()):
+        cond = get_infos_RE(obj["condition"])
+    else:
+        cond = [("",re.compile(""))]
+    update, attr_names = get_infos(obj["updates"])
+    c = Change(cond,update,attr_names)
+    changes.append(c)
+
+def dct_extract_infos(obj,changes):
+    """ `obj` is a dictionary containing the key `updates`. `update` is a list
+    storing the pairs (key,value) contained in the section `updates`.
+    `attr_names` contains the keys contained in `updates`. This function appens
+    the named tuple (`cond`,`update`,`attr_names`) to the list `changes`. """
+    update, attr_names = get_infos(obj["updates"])
+    changes += update
 
 def dct_to_changes(dct):
     """ From a dictionnary 'dct' where each element contains 'condition', 'updates',
@@ -182,24 +176,11 @@ def dct_to_changes(dct):
     # Build a list of changes to apply on nodes and a list of changes to apply on edges
     for elmt in dct:
         if(dct[elmt]["object"] == "node"):
-            if('condition' in dct[elmt].keys()):
-                cond = get_infos_RE(dct[elmt]["condition"])
-            else:
-                cond = [("",re.compile(""))]
-            style, attr_names = get_infos(dct[elmt]["updates"])
-            c = Change(cond,style,attr_names)
-            node_changes.append(c)
+            dct_extract_infos_by_cond(dct[elmt],node_changes)
         elif(dct[elmt]["object"] == "edge"):
-            if('condition' in dct[elmt].keys()):
-                cond = get_infos_RE(dct[elmt]["condition"])
-            else:
-                cond = [("",re.compile(""))]
-            style, attr_names = get_infos(dct[elmt]["updates"])
-            c = Change(cond,style,attr_names)
-            edge_changes.append(c)
-        else:
-            style, attr_names = get_infos(dct[elmt]["updates"])
-            graph_changes += style
+            dct_extract_infos_by_cond(dct[elmt],edge_changes)
+        elif(dct[elmt]["object"] == "graph"):
+            dct_extract_infos(dct[elmt],graph_changes)
     return graph_changes, node_changes, edge_changes
 
 def verify_cond(elmt, cond_list):

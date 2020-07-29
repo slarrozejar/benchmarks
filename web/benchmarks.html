@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title></title>
+        <title>Benchmarks</title>
         <script src="https://bossanova.uk/jexcel/v4/jexcel.js"></script>
-<script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
-<link rel="stylesheet" href="https://bossanova.uk/jsuites/v2/jsuites.css" type="text/css" />
-<link rel="stylesheet" href="https://bossanova.uk/jexcel/v4/jexcel.css" type="text/css" />
-<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Material+Icons" />
-
+        <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
+        <link rel="stylesheet" href="https://bossanova.uk/jsuites/v2/jsuites.css" type="text/css" />
+        <link rel="stylesheet" href="https://bossanova.uk/jexcel/v4/jexcel.css" type="text/css" />
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Material+Icons" />
     </head>
      <body>
+         <h1>Benchmarks  of the Tick-Tac project</h1>
          <br />
          <br />
          <div id="demo"></div>
@@ -22,34 +22,42 @@
            csvHeaders : true,
            search : true,
            columns: [
-            { type:'text', width:300, autocomplete: true},
-            { type:'text', width:300, autocomplete: true},
-            { type:'text', width:300, autocomplete: true}
-        ],
-        toolbar:[
-    {
-        type: 'i',
-        content: 'undo',
-        onclick: function() {
-            table.undo();
-        }
-    },
-    {
-        type: 'i',
-        content: 'redo',
-        onclick: function() {
-            table.redo();
-        }
-    },
-    {
-       type: 'i',
-       content: 'save',
-       onclick: function () {
-           table.download();
-       }
-   }]
+            { type:'text', width:300, readOnly:true},
+            { type:'text', width:300, readOnly:true},
+            { type:'text', width:300, readOnly:true}
+            ],
+   //      toolbar:[
+   //  {
+   //      type: 'i',
+   //      content: 'undo',
+   //      onclick: function() {
+   //          table.undo();
+   //      }
+   //  },
+   //  {
+   //      type: 'i',
+   //      content: 'redo',
+   //      onclick: function() {
+   //          table.redo();
+   //      }
+   //  },
+   //  {
+   //     type: 'i',
+   //     content: 'save',
+   //     onclick: function () {
+   //         table.download();
+   //     }
+   // }]
 
          });
         </script>
+        <style>
+            .jexcel tbody tr:nth-child(even){
+              background-color:      #74e6ff ;
+            }
+            .jexcel tbody tr:nth-child(odd){
+              background-color:   #bef3ff  ;
+            }
+        </style>
      </body>
 </html>

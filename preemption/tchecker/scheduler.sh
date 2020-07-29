@@ -125,7 +125,7 @@ edge:Execution$pid:IfThen:IfEnd:tau{provided:execution_time$pid==$EXEC : do:exec
 edge:Execution$pid:IfElse:IfEnd:tau{provided:execution_time$pid==$EXEC : do:execution_time$pid=0}
 edge:Execution$pid:IfEnd:Return:tau{provided:execution_time$pid==$EXEC : do:execution_time$pid=0}
 edge:Execution$pid:Return:End:tau{provided:execution_time$pid==$EXEC : do:execution_time$pid=0}
-edge:Execution$pid:Return:End:return_code$pid{provided:execution_time$pid==$EXEC : do:execution_time$pid=0}"
+edge:Execution$pid:End:WaitingForRelease:return_code$pid{provided:execution_time$pid==$EXEC : do:execution_time$pid=0}"
 done
 
     echo "
@@ -174,6 +174,5 @@ for pid in `seq 1 $N`; do
 sync:PeriodicThread$pid@invoke_code$pid:Execution$pid@invoke_code$pid
 sync:PeriodicThread$pid@ready$pid:Scheduler@ready$pid
 sync:PeriodicThread$pid@done:Scheduler@done
-sync:Execution$pid@return_code$pid:PeriodicThread$pid@return_code$pid
-"
+sync:Execution$pid@return_code$pid:PeriodicThread$pid@return_code$pid"
 done

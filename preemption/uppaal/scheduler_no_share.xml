@@ -174,7 +174,6 @@ schedulable[i] &amp;&amp; core&gt;0</label>
 		<name>PeriodicThread</name>
 		<parameter>pid_t tid</parameter>
 		<declaration>clock released_time;
-clock execution_time;
 
 int  offset;          // Delay before thread becomes schedulable first time
 int  deadline;        // Threads deadline

@@ -8,34 +8,34 @@
         <link rel="stylesheet" href="https://bossanova.uk/jsuites/v2/jsuites.css" type="text/css" />
         <link rel="stylesheet" href="https://bossanova.uk/jexcel/v4/jexcel.css" type="text/css" />
         <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Material+Icons" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jexcel/2.1.0/css/jquery.jexcel.bootstrap.min.css" type="text/css" />
         </head>
      <body>
          <h1>Benchmarks  of the Tick-Tac project</h1>
-         <br />
-         <br />
+         <p>This is the list of test-cases for the Tick-Tac project. The models
+         are available in <a href='https://github.com/ticktac-project/benchmarks'>benchmarks</a></p>
          <div id="demo"></div>
-         </div>
-        </div>
-       </div>
          <script>
-         table = jexcel(document.getElementById("demo"), {
+         var table = jexcel(document.getElementById("demo"), {
                        csv:"models.csv",
                        csvHeaders : true,
                        search : true,
                        columns: [
-                        { type:'text', width:300, readOnly:true},
-                        { type:'text', width:300, readOnly:true},
-                        { type:'text', width:300, readOnly:true}
+                        { type:'text', readOnly:true},
+                        { type:'text', readOnly:true},
+                        { type:'text', readOnly:true}
                         ],
                     });
         </script>
         <style>
-            /* .jexcel tbody tr:nth-child(even){
-              background-color:       ##c0fcf3  ;
-            } */
             .jexcel tbody tr:nth-child(odd){
-              background-color:          #f7f2ff      ;
+                background-color: #f7f2ff;
             }
+            .jexcel {
+                font-family : "Times New Roman", Times, serif;
+                width : 100%;
+            }
+
         </style>
      </body>
 </html>

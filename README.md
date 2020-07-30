@@ -1,37 +1,25 @@
-## Welcome to GitHub Pages
+# Comment publier un site sur GitHub
 
-You can use the [editor on GitHub](https://github.com/slarrozejar/benchmarks/edit/gh-pages/README.md) to maintain and preview the content for your website in Markdown files.
+## Localisation du code source
+Il y a différentes façons de publier un site sur GitHub. Les suivantes concernent
+la création d'un site pour un projet GitHub existant :
+- dossier *docs/* contenant le code source du site. Ce dossier doit se trouver
+à la racine de la branche master
+- branche *gh-pages* dans laquelle se trouve un fichier *index.html* (ou *index.md*...).
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Les solutions précédentes permettent d'avoir accès aux ressources qui se trouvent
+dans la même branche que le code source du site.
 
-### Markdown
+## Publier le site
+La publication du site se fait à partir de la page GitHub du dépôt. Il faut cliquer
+sur l'icône *Settings* se trouvant sur la barre d'outils sous le nom du dépôt. Une
+fois dans *Settings*, il faut se rendre dans la section *GitHub Pages* et choisir
+la source choisie pour le site. Cette source étant soit *gh-pages branch* soit
+*master/docs folder* (il est aussi possible de choisir la branche master pour source
+mais cette option concerne plutôt la publication d'un site qui n'est pas relié à un
+projet existant). Une fois que la source est choisie, le site est publié par défaut
+sur le domaine **username/github.io** et est publié en https. Il est possible
+de le publier sur un autre domaine et ainsi de désactiver https si besoin. L'adresse
+de publication de site est ensuite visible dans la section *GitHub Pages* de *Settings*.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/slarrozejar/benchmarks/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Voir [GitHub Pages](https://docs.github.com/en/github/working-with-github-pages/about-github-pages) pour plus d'explications.

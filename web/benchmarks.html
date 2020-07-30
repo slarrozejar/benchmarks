@@ -2,12 +2,13 @@
 <html>
     <head>
         <title>Benchmarks</title>
+        <meta charset="utf-8"/>
         <script src="https://bossanova.uk/jexcel/v4/jexcel.js"></script>
         <script src="https://bossanova.uk/jsuites/v2/jsuites.js"></script>
         <link rel="stylesheet" href="https://bossanova.uk/jsuites/v2/jsuites.css" type="text/css" />
         <link rel="stylesheet" href="https://bossanova.uk/jexcel/v4/jexcel.css" type="text/css" />
         <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Material+Icons" />
-    </head>
+        </head>
      <body>
          <h1>Benchmarks  of the Tick-Tac project</h1>
          <br />
@@ -17,46 +18,23 @@
         </div>
        </div>
          <script>
-         table = jexcel(document.getElementById('demo'), {
-           csv:'../models.csv',
-           csvHeaders : true,
-           search : true,
-           columns: [
-            { type:'text', width:300, readOnly:true},
-            { type:'text', width:300, readOnly:true},
-            { type:'text', width:300, readOnly:true}
-            ],
-   //      toolbar:[
-   //  {
-   //      type: 'i',
-   //      content: 'undo',
-   //      onclick: function() {
-   //          table.undo();
-   //      }
-   //  },
-   //  {
-   //      type: 'i',
-   //      content: 'redo',
-   //      onclick: function() {
-   //          table.redo();
-   //      }
-   //  },
-   //  {
-   //     type: 'i',
-   //     content: 'save',
-   //     onclick: function () {
-   //         table.download();
-   //     }
-   // }]
-
-         });
+         table = jexcel(document.getElementById("demo"), {
+                       csv:"../models.csv",
+                       csvHeaders : true,
+                       search : true,
+                       columns: [
+                        { type:'text', width:300, readOnly:true},
+                        { type:'text', width:300, readOnly:true},
+                        { type:'text', width:300, readOnly:true}
+                        ],
+                    });
         </script>
         <style>
-            .jexcel tbody tr:nth-child(even){
-              background-color:      #74e6ff ;
-            }
+            /* .jexcel tbody tr:nth-child(even){
+              background-color:       ##c0fcf3  ;
+            } */
             .jexcel tbody tr:nth-child(odd){
-              background-color:   #bef3ff  ;
+              background-color:          #f7f2ff      ;
             }
         </style>
      </body>

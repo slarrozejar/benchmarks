@@ -34,6 +34,21 @@ else
     exit 1
 fi
 
+if [ "$N" -lt 1 ]; then
+    echo "Number of threads should be >= 1"
+    exit 1
+fi
+
+if [ "$CORE" -lt 1 ]; then
+    echo "Number of cores should be >= 1"
+    exit 1
+fi
+
+if [ "$WCET" -le 0 ]; then
+    echo "Worst-case execution time of the scheduler should be >= 0"
+    exit 1
+fi
+
 # Model
 
 echo "#clock:size:name
@@ -48,15 +63,18 @@ echo "#clock:size:name
 #   events is a colon-separated list of process@event
 "
 
-echo "# Safety critical protocol inspired from the model introduced in Section 3 in:
-#Thomas Bøgholm, Henrik Kragh-Hansen, Petur Olsen, Bent Thomsen, Kim Guldstrand Larsen:
-#Model-based schedulability analysis of safety critical hard real-time Java programs.
-#JTRES 2008: 106-114
+echo "# Model for schedulability analysis of real-time programs
+# inspired from the model introduced in Section 3 of:
+# Thomas Bøgholm, Henrik Kragh-Hansen, Petur Olsen, Bent Thomsen, Kim Guldstrand Larsen:
+# Model-based schedulability analysis of safety critical hard real-time Java programs.
+# JTRES 2008: 106-114
 "
 
 echo "
 # Schedulabily of the processes can be verified by checking that no process is
-#in its state Not_Schedulable.
+# in its location Not_Schedulable.
+# Priority is encoded in the process identifiers. Processes with a small 
+# indentifier have priority over processes with a bigger identifier.
 "
 
 echo "system:scheduler_${N}_${CORE}_$WCET
@@ -154,11 +172,12 @@ edge:Scheduler:Running:Running:ready$i{do:schedulable[$i]=1}
 edge:Scheduler:Schedule:Schedule:ready$i{do:schedulable[$i]=1}
 edge:Scheduler:Idle:Idle:ready$i{do:schedulable[$i]=1}"
 done
-TMP=""
-for i in `seq 1 $(($N-1))`; do
-    TMP="${TMP}schedulable[$i]==0&&"
-done
-TMP="${TMP}schedulable[$i]==0"
+TMP="schedulable[1]==0"
+if [ "$N" -ge 2 ]; then
+    for i in `seq 2 $N`; do
+        TMP="${TMP} && schedulable[$i]==0"
+    done
+fi
 echo "edge:Scheduler:Idle:Wait:tau{provided:$TMP}
 edge:Scheduler:Wait:Idle:done{do:core=core+1}
 edge:Scheduler:Idle:Wait:tau{provided:core==0}
